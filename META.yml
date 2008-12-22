@@ -1,0 +1,27 @@
+---
+abstract: 'Perlish declarative templates'
+author:
+  - 'Jesse Vincent <jesse@bestpractical.com>'
+build_requires:
+  HTML::Lint: 0
+  Test::More: 0
+  Test::Warn: 0
+distribution_type: module
+generated_by: 'Module::Install version 0.77'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Template-Declare
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Class::Accessor::Fast: 0
+  Class::Data::Inheritable: 0
+  Class::ISA: 0
+  perl: 5.8.2
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.31_01

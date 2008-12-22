@@ -1,0 +1,368 @@
+NAME
+    Template::Declare - Perlish declarative templates
+
+SYNOPSIS
+    "Template::Declare" is a pure-perl declarative HTML/XUL/RDF/XML
+    templating system.
+
+    Yes. Another one. There are many others like it, but this one is ours.
+
+    A few key features and buzzwords:
+
+    *   All templates are 100% pure perl code
+
+    *   Simple declarative syntax
+
+    *   No angle brackets
+
+    *   "Native" XML namespace and declarator support
+
+    *   Mixins
+
+    *   Inheritance
+
+    *   Public and private templates
+
+USAGE
+  Basic usage
+        ##############################
+        # Basic HTML usage:
+        ###############################
+        package MyApp::Templates;
+        use Template::Declare::Tags; # defaults to 'HTML'
+        use base 'Template::Declare';
+
+        template simple => sub {
+            html {
+                head {}
+                body {
+                    p {'Hello, world wide web!'}
+                }
+            }
+        };
+
+        package main;
+        use Template::Declare;
+        Template::Declare->init( roots => ['MyApp::Templates']);
+        print Template::Declare->show( 'simple');
+
+        # Output:
+        #
+        #
+        # <html>
+        #  <head></head>
+        #  <body>
+        #   <p>Hello, world wide web!
+        #   </p>
+        #  </body>
+        # </html>
+
+        ###############################
+        # Let's do XUL!
+        ###############################
+        package MyApp::Templates;
+        use base 'Template::Declare';
+        use Template::Declare::Tags 'XUL';
+
+        template main => sub {
+            xml_decl { 'xml', version => '1.0' };
+            xml_decl { 'xml-stylesheet',  href => "chrome://global/skin/", type => "text/css" };
+            groupbox {
+                caption { attr { label => 'Colors' } }
+                radiogroup {
+                  for my $id ( qw< orange violet yellow > ) {
+                    radio {
+                        attr {
+                            id => $id,
+                            label => ucfirst($id),
+                            $id eq 'violet' ?
+                                (selected => 'true') : ()
+                        }
+                    }
+                  } # for
+                }
+            }
+        };
+
+        package main;
+        Template::Declare->init( roots => ['MyApp::Templates']);
+        print Template::Declare->show('main')
+
+        # Output:
+        #
+        # <?xml version="1.0"?>
+        # <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+        #
+        # <groupbox>
+        #  <caption label="Colors" />
+        #  <radiogroup>
+        #   <radio id="orange" label="Orange" />
+        #   <radio id="violet" label="Violet" selected="true" />
+        #   <radio id="yellow" label="Yellow" />
+        #  </radiogroup>
+        # </groupbox>
+
+  A slightly more advanced example
+    In this example, we'll show off how to set attributes on HTML tags, how
+    to call other templates and how to declare a *private* template that
+    can't be called directly. We'll also show passing arguments to
+    templates.
+
+     package MyApp::Templates;
+     use Template::Declare::Tags;
+     use base 'Template::Declare';
+
+     private template 'header' => sub {
+            head {
+                title { 'This is a webpage'};
+                meta { attr { generator => "This is not your father's frontpage"}}
+            }
+     };
+
+     private template 'footer' => sub {
+            my $self = shift;
+            my $time = shift || gmtime;
+ 
+            div { attr { id => "footer"};
+                  "Page last generated at $time."
+            }
+     };
+
+     template simple => sub {
+        my $self = shift;
+        my $user = shift || 'world wide web';
+
+        html {
+            show('header');
+            body {
+                p { attr { class => 'greeting'};
+                    "Hello, $user!"};
+                };
+                show('footer');
+            }
+     };
+
+     package main;
+     use Template::Declare;
+     Template::Declare->init( roots => ['MyApp::Templates']);
+     print Template::Declare->show( 'simple', 'TD user');
+
+     # Output:
+     #
+     #  <html>
+     #  <head>
+     #   <title>This is a webpage
+     #   </title>
+     #   <meta generator="This is not your father&#39;s frontpage" />
+     #  </head>
+     #  <body>
+     #   <p class="greeting">Hello, TD user!
+     #   </p>
+     #  </body>
+     #  <div id="footer">Page last generated at Mon Jul  2 17:09:34 2007.</div>
+     # </html>
+
+    For more options, especially the "native" XML namespace support and more
+    samples, see Template::Declare::Tags.
+
+  Postprocessing
+    Sometimes you just want simple syntax for inline elements. The following
+    shows how to use a postprocessor to emphasize text _like this_.
+
+     package MyApp::Templates;
+     use Template::Declare::Tags;
+     use base 'Template::Declare';
+
+     template before => sub {
+         h1 {
+             outs "Welcome to ";
+             em { "my"};
+             outs " site. It's ";
+             em { "great"};
+             outs "!";
+         };
+     };
+
+     template after => sub {
+         h1 { "Welcome to _my_ site. It's _great_!"};
+         h2 { outs_raw "This is _not_ emphasized."};
+     };
+
+     package main;
+     use Template::Declare;
+     Template::Declare->init( roots => ['MyApp::Templates'], postprocessor => \&emphasize);
+     print Template::Declare->show( 'before');
+     print Template::Declare->show( 'after');
+
+     sub emphasize {
+         my $text = shift;
+         $text =~ s{_(.+?)_}{<em>$1</em>}g;
+         return $text;
+     }
+
+     # Output:
+     #
+     # <h1>Welcome to 
+     #  <em>my</em> site. It&#39;s 
+     #  <em>great</em>!</h1>
+     # <h1>Welcome to <em>my</em> site. It&#39;s <em>great</em>!</h1>
+     # <h2>This is _not_ emphasized.</h2>
+
+  Multiple template roots (search paths)
+  Inheritance
+  Aliasing
+METHODS
+  init
+    This *class method* initializes the "Template::Declare" system.
+
+    roots
+    postprocessor
+
+  show TEMPLATE_NAME
+    Call "show" with a "template_name" and "Template::Declare" will render
+    that template. Content generated by show can be accessed with the
+    "output" method if the output method you've chosen returns content
+    instead of outputting it directly.
+
+    (If called in scalar context, this method will also just return the
+    content when available).
+
+  alias
+     alias Some::Clever::Mixin under '/mixin';
+
+  import_templates
+     import_templates Wifty::UI::something under '/something';
+
+  path_for $template
+     Returns the path for the template name to be used for show, adjusted
+     with paths used in import_templates.
+
+  has_template PACKAGE TEMPLATE_NAME SHOW_PRIVATE
+    Takes a package, template name and a boolean. The boolean determines
+    whether to show private templates.
+
+    Returns a reference to the template's code if found. Otherwise, returns
+    undef.
+
+    This method is an alias for "resolve_template"
+
+  resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
+    Turns a template path ("TEMPLATE_PATH") into a "CODEREF". If the boolean
+    "INCLUDE_PRIVATE_TEMPLATES" is true, resolves private template in
+    addition to public ones.
+
+    First it looks through all the valid Template::Declare roots. For each
+    root, it looks to see if the root has a template called $template_name
+    directly (or via an "import" statement). Then it looks to see if there
+    are any "alias"ed paths for the root with prefixes that match the
+    template we're looking for.
+
+  register_template PACKAGE TEMPLATE_NAME CODEREF
+    This method registers a template called "TEMPLATE_NAME" in package
+    "PACKAGE". As you might guess, "CODEREF" defines the template's
+    implementation.
+
+  register_template PACKAGE TEMPLATE_NAME CODEREF
+    This method registers a private template called "TEMPLATE_NAME" in
+    package "PACKAGE". As you might guess, "CODEREF" defines the template's
+    implementation.
+
+    Private templates can't be called directly from user code but only from
+    other templates.
+
+PITFALLS
+    We're reusing the perl interpreter for our templating langauge, but Perl
+    was not designed specifically for our purpose here. Here are some known
+    pitfalls while you're scripting your templates with this module.
+
+    *   It's quite common to see tag sub calling statements without trailing
+        semi-colons right after "}". For instance,
+
+            template foo => {
+                p {
+                    a { attr { src => '1.png' } }
+                    a { attr { src => '2.png' } }
+                    a { attr { src => '3.png' } }
+                }
+            };
+
+        is equivalent to
+
+            template foo => {
+                p {
+                    a { attr { src => '1.png' } };
+                    a { attr { src => '2.png' } };
+                    a { attr { src => '3.png' } };
+                };
+            };
+
+        But "xml_decl" is a notable exception. Please always put a trailing
+        semicolon after "xml_decl { ... }", or you'll mess up the outputs.
+
+    *   Another place that requires trailing semicolon is the statements
+        before a Perl looping statement, an if statement, or a "show" call.
+        For example:
+
+            p { "My links:" };
+            for (@links) {
+                with( src => $_ ), a {}
+            }
+
+        The ";" after " p { ... } " is required here, or Perl will complain
+        about syntax errors.
+
+        Another example is
+
+            h1 { 'heading' };  # this trailing semicolon is mandatory
+            show 'tag_tag'
+
+    *   Literal strings that have tag siblings won't be captured. So the
+        following template
+
+            p { 'hello'; em { 'world' } }
+
+        produces
+
+          <p>
+           <em>world</em>
+          </p>
+
+        instead of the desired output
+
+          <p>
+           hello
+           <em>world</em>
+          </p>
+
+        You can use "outs" here to solve this problem:
+
+            p { outs 'hello'; em { 'world' } }
+
+        Note you can always get rid of the "outs" crap if the string literal
+        is the only element of the containing block:
+
+           p { 'hello, world!' }
+
+BUGS
+    Crawling all over, baby. Be very, very careful. This code is so cutting
+    edge, it can only be fashioned from carbon nanotubes. But we're already
+    using this thing in production :) Make sure you have read the PITFALL
+    section above :)
+
+    Some specific bugs and design flaws that we'd love to see fixed.
+
+    Output isn't streamy.
+
+    If you run into bugs or misfeatures, please report them to
+    "bug-template-declare@rt.cpan.org".
+
+SEE ALSO
+    Template::Declare::Tags, Template::Declare::TagSet,
+    Template::Declare::TagSet::HTML, Template::Declare::TagSet::XUL, Jifty.
+
+AUTHOR
+    Jesse Vincent <jesse@bestpractical.com>
+
+COPYRIGHT
+    Copyright 2006-2007 Best Practical Solutions, LLC
+

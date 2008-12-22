@@ -1,0 +1,88 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 cfdff32101d960dbc52c0abe5abaafada9996aae Changes
+SHA1 58642f7ef09571d417e4f5b0ca8eb508b9edb235 MANIFEST
+SHA1 6f70228d55d21d8a18d86c6d9acb1a9d5a5504fe MANIFEST.SKIP
+SHA1 e3ae118ffed1940a37837917ad13ec1f692201b3 META.yml
+SHA1 84a7277f9ccd12e4f6d1a619bef2e3721dca45fc Makefile.PL
+SHA1 65da83220e6bf55fec475fe014f90ad37a9f4969 README
+SHA1 5c9e093b0facca46d50e3c69d5569aa7a98db0b8 inc/Module/Install.pm
+SHA1 465acb50b9006ce61f58a7bd02d0bb029ddceaa6 inc/Module/Install/Base.pm
+SHA1 8356d82167fc00550b4a3ceea8bd852a374d7509 inc/Module/Install/Can.pm
+SHA1 b47ce07fa6d6e38e3daa6cfc752b23f59a64754c inc/Module/Install/Fetch.pm
+SHA1 37ed4ccd7aba10119e6f2993b8082674ce2e5961 inc/Module/Install/Makefile.pm
+SHA1 4aa1c578faad51f31e62bed7b28d3d42b88219c3 inc/Module/Install/Metadata.pm
+SHA1 d7529d795a1304c88253b26a9089913edf31ae5e inc/Module/Install/Win32.pm
+SHA1 2a74aba5a78e7ab2776382e42106ebe941c2ac28 inc/Module/Install/WriteAll.pm
+SHA1 f1238a601c5921e64c3ea5cd85e9928a72c2bb15 lib/Template/Declare.pm
+SHA1 b53e3d035181a549f2666d4a11b3c52923a96d84 lib/Template/Declare/Buffer.pm
+SHA1 5b8295d842ccea0a21661583446344733f668879 lib/Template/Declare/TagSet.pm
+SHA1 a4b1d4e5e70b6bf928ceb7d6eeb73bc6b2d7d7a9 lib/Template/Declare/TagSet/HTML.pm
+SHA1 f95b68b4c50afcd1c66d225556dcfa2b2f18e619 lib/Template/Declare/TagSet/RDF.pm
+SHA1 4899124cdf56c12fcc7ac1a2b3d99910ed5b8bbb lib/Template/Declare/TagSet/RDF/EM.pm
+SHA1 460ab0856c8aea75c81e8cb1e5fb287515b1b2bf lib/Template/Declare/TagSet/XUL.pm
+SHA1 7477a520aa2ea47100e0594b6f2eba2750b4767a lib/Template/Declare/Tags.pm
+SHA1 7b2832c140109b23ba669db59e5b357dd1d255ec t/99-pod-coverage.t
+SHA1 bb0da54f2b3f2d7955baa41ee458cb3d1887f475 t/99-pod.t
+SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
+SHA1 deb55b4ed7eec5eb29479f047ca9759c76a8b803 t/aliasing.t
+SHA1 9554ad5bd0cd51af54c59b2ac157c33b78ea4158 t/alternative.t
+SHA1 d1f4df2c09918ac0b104c4bab005910d896c2708 t/arg-declaration-styles.t
+SHA1 6a5041bf29232efc4469bc29e32c0ed8ad3b5060 t/arg-passing.t
+SHA1 f4924dcec2850125f5eeda4a40525ae3b4d46c76 t/attributes.t
+SHA1 ced0409f2bcdf847d521e8664bd045442f51df49 t/closures.t
+SHA1 0272bf3a45a9e97eb68399502cbef602eddd1efe t/deep_aliasing.t
+SHA1 5dcb568191fcefc1156cfe6e06b0b3e90c3046e4 t/deep_importing.t
+SHA1 94c78c32ac1e16780ff2dd09c6f3b734035f83ac t/duplicate_element_ids.t
+SHA1 85e2465214c89783cdc2f02e5555ab1c7cc78ae4 t/forms.t
+SHA1 c06058b5de4bed61e600e91a475e021e8999da6f t/importing.t
+SHA1 27634193f9d55414390a02a8c502e57cdf4c6062 t/indent.t
+SHA1 bcc7853609975acb08bb40e65901a63268e378ca t/indexhtml.t
+SHA1 be30fd012d21eb1a667f0f538185d8685b2960dc t/instrumentation.t
+SHA1 5d8b50381640bef07f473caf7e179fb84c4dd698 t/namespace.t
+SHA1 d554f7a04d0b3d18e9ecd661f90030f14bd84ade t/nested_show.t
+SHA1 cd8bf27d877bc26640f99947821c9d874aa8239b t/overloaded.t
+SHA1 6af119980cb391b086c0f66d4037ca59b06b2363 t/pitfalls.t
+SHA1 fb01850a459d3d340bdf688271d14fc55db321e3 t/postprocessor.t
+SHA1 0c00d095bb6ff6fd9d493e8c2ae0f45aa002072b t/private.t
+SHA1 a580daf468f50f09a7828ac57f9d738e6f1f4558 t/relative-aliasing.t
+SHA1 1e57d39c4b40cd19e14efd93179d87b78e8d54e9 t/relative-pathing.t
+SHA1 7a95f27648a60084863ca8db7140f2b601794267 t/rt-37622.t
+SHA1 de23aec78ebc456083d8df85cf11d520bb03544f t/self.t
+SHA1 c09c579c74578fbcb9ede55ed634f7052c35580e t/siblings.t
+SHA1 0183f5c550973540a4f2d275317350664ae94762 t/similar-aliases.t
+SHA1 613d76b8b76c74002da8dff2866539b991b0505a t/smart_tag_wrapper.t
+SHA1 adc48b3337a1f468555afbb6bc9f69eda0eca46a t/subclassing.t
+SHA1 5bf9c06c76830580e6c402ccea5755201a363a5f t/subtemplates.t
+SHA1 44f81200ec38ebf8bc9c836e34942f70990e7207 t/tag_sub_list.t
+SHA1 bab73f849bd1251f55e8b933a12ea7a8f3f2d44a t/tagset_html.t
+SHA1 6eaf0d5fb857c350844f3b70e899d58b8c92ffc8 t/tagset_mix.t
+SHA1 03a32c2247b7a3cc7066c2617605e6391e33cd33 t/tagset_rdf.t
+SHA1 37978589f2dd9465b67ed70cfe7bca806e0f469f t/tagset_rdf_em.t
+SHA1 02301d86757f15e479ca848e7b11c0e625acf304 t/tagset_xul.t
+SHA1 1617716eb384026609ac80f505892af9dfbd3fac t/trivial.t
+SHA1 66f9ab5624ab7e3afd9a6b5940cc93291f560d01 t/utf8.t
+SHA1 888d388aac364fc1c07fc6d5e0ca5be67d41e46d t/utils.pl
+SHA1 6a76d87732069df9fa763e4e69a78eb0aff134ba t/wrappers.t
+SHA1 c07bcff77839e622b8b1ecffd492f5ccf0ab359c t/xss.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+
+iEYEARECAAYFAklLC4IACgkQvH6dkeDZaS9+yACeNP9uXDP5lcbs2P8mcT0TAagP
+r/AAninY5heB1NliP9NwFBXr3YNVAAOx
+=RGVA
+-----END PGP SIGNATURE-----
