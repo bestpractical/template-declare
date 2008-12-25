@@ -73,14 +73,10 @@ sub import {
         my $config = {};
         my $code_str = "package $opts->{package};";
         foreach my $tag (@$tag_list) {
+            my $alternative = $tagset->get_alternate_spelling($tag) || $tag;
 
-            my $alternative = $tagset->get_alternate_spelling($tag);
-            if ( defined $alternative ) {
-                $tag = $alternative;
-            }
-            
-            $code_str .= qq{sub $tag (&);};
-            $config->{$tag} = {
+            $code_str .= qq{sub $alternative (&);};
+            $config->{$alternative} = {
                 const => tag_parser_for($tag, $tagset)
             }
         }
@@ -179,18 +175,6 @@ sub inject_scope {
     };
 }
 
-my %alt = (
-    'cell'      => 'td',
-    'row'       => 'tr',
-    'html_base' => 'base',
-    'html_link' => 'link',
-    'html_map'  => 'map',
-    'html_q'    => 'q',
-    'html_s'    => 's',
-    'html_sub'  => 'sub',
-    'html_tr'   => 'tr',
-);
-
 sub _tag_builder_for {
     my ($tag, $tagset) = @_;
 
@@ -219,7 +203,6 @@ sub _tag_builder_for {
 
 sub tag_parser_for {
     my ($tag, $tagset) = @_;
-    $tag = $alt{$tag} if defined($alt{$tag});
 
     return sub {
         local ($Declarator, $Offset) = @_;
@@ -242,7 +225,6 @@ sub tag_parser_for {
         else {
             inject_before_block("sub");
         }
-
         shadow(_tag_builder_for($tag, $tagset));
     }
 }

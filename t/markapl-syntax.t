@@ -34,12 +34,6 @@ use Test::More tests => 3;
 
 for(1..3) {
     my $out = (Template::Declare->show("t$_"));
-    diag $out;
+    # diag $out;
     like($out, qr{<div(\s+id="id")?>\s*<p>.+?</p>\s*</div>});
 }
-
-
-
-
-
-
