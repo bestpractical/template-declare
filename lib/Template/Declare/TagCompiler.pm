@@ -148,7 +148,7 @@ sub tag_parser_for {
         my $name = strip_name;
         my $proto = strip_proto;
 
-        inject_if_block("{ no strict; BEGIN { Template::Declare::TagCompiler::inject_scope }; };");
+        inject_if_block("no strict; BEGIN { Template::Declare::TagCompiler::inject_scope }; use strict;");
 
         if (defined($proto)) {
             inject_before_block("$proto, sub");
