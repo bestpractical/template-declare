@@ -13,6 +13,8 @@ use vars qw( @EXPORT_OK $PRIVATE $self @TagSubs );
 use base 'Exporter';
 use Carp qw(carp croak);
 use Symbol 'qualify_to_ref';
+use Devel::Declare ();
+use Template::Declare::TagCompiler;
 
 our @EXPORT
     = qw( with template private show show_page attr outs
@@ -65,8 +67,24 @@ sub import {
         ### TagSet options: $opts
         my $tagset = $module->new($opts);
         my $tag_list = $tagset->get_tag_list;
-        Template::Declare::Tags::install_tag($_, $tagset)
-            for @$tag_list;
+
+        my $config = {};
+        my $code_str = "package $opts->{package};";
+        foreach my $tag (@$tag_list) {
+
+            my $alternative = $tagset->get_alternate_spelling($tag);
+            if ( defined $alternative ) {
+                $tag = $alternative;
+            }
+            
+            print STDERR "Will install $tag\n";
+            $code_str .= qq{sub $tag (&);};
+            $config->{$tag} = {
+                const => Template::Declare::TagCompiler::tag_parser_for($tag)
+            }
+        }
+        eval $code_str;
+        Devel::Declare->setup_for($opts->{package}, $config);
     }
    __PACKAGE__->export_to_level(1, $self);
 }
@@ -454,9 +472,10 @@ sub _outs {
     return Template::Declare->end_buffer_frame->data;
 }
 
+
 =head2 get_current_attr
 
-Help! I'm deprecated/
+Help! I am deprecated!
 
 =cut
 
