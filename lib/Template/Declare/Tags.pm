@@ -176,8 +176,10 @@ sub inject_scope {
     on_scope_end {
         my $linestr = Devel::Declare::get_linestr;
         my $offset = Devel::Declare::get_linestr_offset;
-        substr($linestr, $offset, 0) = ';';
-        Devel::Declare::set_linestr($linestr);
+        if (substr($linestr, $offset, 1) ne ",") {
+            substr($linestr, $offset, 0) = ';';
+            Devel::Declare::set_linestr($linestr);
+        }
     };
 }
 
@@ -185,13 +187,16 @@ sub _tag_builder_for {
     my ($tag, $tagset) = @_;
 
     return sub {
-        my $block = pop;
-        if ((ref($block) ne 'CODE')) {
-            push @_, $block;
-            $block = sub {};
+        my @attr;
+        my $block;
+
+        for (@_) {
+            if (ref($_) eq 'CODE') {
+                $block = $_;
+                last;
+            }
+            push @attr, $_;
         }
-        
-        my @attr = @_;
 
         if (@attr == 1) {
             %ATTRIBUTES = ();
@@ -206,9 +211,7 @@ sub _tag_builder_for {
         } elsif(@attr > 1) {
             %ATTRIBUTES = (@attr);
         }
-
         _tag($tag, $tagset, $block);
-        return '';
     }
 }
 
@@ -227,10 +230,10 @@ sub tag_parser_for {
 
         my $name = strip_name;
         my $proto = strip_proto;
-
+        
         inject_if_block("no strict 'subs'; BEGIN { Template::Declare::Tags::inject_scope }; use strict 'subs';");
 
-        unless (inject_before_block(defined $proto ? "$proto, sub" : "sub")) {
+        unless (inject_before_block(defined $proto ? "$proto, sub" : " sub")) {
             inject_right_here("($proto)") if defined $proto;
         }
         
