@@ -77,7 +77,6 @@ sub import {
                 $tag = $alternative;
             }
             
-            print STDERR "Will install $tag\n";
             $code_str .= qq{sub $tag (&);};
             $config->{$tag} = {
                 const => Template::Declare::TagCompiler::tag_parser_for($tag)

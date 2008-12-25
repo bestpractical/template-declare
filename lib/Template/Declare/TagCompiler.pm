@@ -3,6 +3,7 @@ package Template::Declare::TagCompiler;
 use strict;
 use warnings;
 use Devel::Declare ();
+use B::Hooks::EndOfScope;
 
 our $VERSION = 0.02;
 
@@ -74,6 +75,15 @@ sub inject_before_block {
     }
 }
 
+sub inject_scope {
+    on_scope_end {
+        my $linestr = Devel::Declare::get_linestr;
+        my $offset = Devel::Declare::get_linestr_offset;
+        substr($linestr, $offset, 0) = ';';
+        Devel::Declare::set_linestr($linestr);
+    };
+}
+
 my %alt = (
     'cell'      => 'td',
     'row'       => 'tr',
@@ -85,6 +95,41 @@ my %alt = (
     'html_sub'  => 'sub',
     'html_tr'   => 'tr',
 );
+
+sub _tag {
+    my ($tag) = @_;
+
+    return sub {
+        my $block = pop;
+        my @attr = @_;
+
+        my $attr = "";
+
+        if (@attr == 1) {
+            my $css = $attr[0];
+            while ($css =~ /([\#\.])(\w+)/g) {
+                if ($1 eq '#') {
+                    $attr .= qq{ id="$2"};
+                } else {
+                    $attr .= qq{ class="$2"};
+                }
+            }
+        } else {
+            while(my ($k, $v) = splice(@attr, 0, 2)) {
+                $attr .= " $k=\"$v\"";
+            }
+        }
+
+        my $buf = "<${tag}${attr}>";
+        Template::Declare->new_buffer_frame;
+        Template::Declare->buffer->append( $block->() )
+                if defined $block && ref($block) eq 'CODE';
+        $buf .= Template::Declare->end_buffer_frame->data || "";
+        $buf .= "</$tag>";
+        Template::Declare->buffer->append( $buf );
+        return '';
+    }
+}
 
 sub tag_parser_for {
     my ($tag) = @_;
@@ -103,6 +148,8 @@ sub tag_parser_for {
         my $name = strip_name;
         my $proto = strip_proto;
 
+        inject_if_block("{ no strict; BEGIN { Template::Declare::TagCompiler::inject_scope }; };");
+
         if (defined($proto)) {
             inject_before_block("$proto, sub");
         }
@@ -110,47 +157,7 @@ sub tag_parser_for {
             inject_before_block("sub");
         }
 
-        shadow(
-            sub {
-                my $block = pop;
-                my @attr = @_;
-
-                my $attr = "";
-
-                if (@attr == 1) {
-                    my $css = $attr[0];
-                    while ($css =~ /([\#\.])(\w+)/g) {
-                        if ($1 eq '#') {
-                            $attr .= qq{ id="$2"};
-                        } else {
-                            $attr .= qq{ class="$2"};
-                        }
-                    }
-                } else {
-                    my ($k, $v) = (shift @attr, shift @attr);
-                    while ($k && $v) {
-                        $attr .= " $k=\"$v\"";
-                        ($k, $v) = (shift @attr, shift @attr);
-                    }
-                }
-
-                my $buf = "<${tag}${attr}>";
-
-                Template::Declare->new_buffer_frame;
-
-                Template::Declare->buffer->append( $block->() )
-                    if defined $block && ref($block) eq 'CODE';
-
-                $buf .= Template::Declare->end_buffer_frame->data || "";
-
-                $buf .= "</$tag>";
-
-                Template::Declare->buffer->append( $buf );
-
-                return '';
-            }
-        );
-
+        shadow(_tag($tag));
     }
 }
 
