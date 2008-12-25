@@ -15,6 +15,7 @@ use Carp qw(carp croak);
 use Symbol 'qualify_to_ref';
 use Devel::Declare ();
 use B::Hooks::EndOfScope;
+use YAML;
 
 # use Template::Declare::TagCompiler;
 
@@ -67,6 +68,7 @@ sub import {
             croak "Failed to load tagset module $module";
         }
         ### TagSet options: $opts
+
         my $tagset = $module->new($opts);
         my $tag_list = $tagset->get_tag_list;
 
@@ -75,11 +77,10 @@ sub import {
         foreach my $tag (@$tag_list) {
             my $alternative = $tagset->get_alternate_spelling($tag) || $tag;
 
-            $code_str .= qq{sub $alternative (&);};
-            $config->{$alternative} = {
-                const => tag_parser_for($tag, $tagset)
-            }
+            $code_str .= "sub $alternative;";
+            $config->{$alternative} = { const => tag_parser_for($tag, $tagset) };
         }
+
         eval $code_str;
         Devel::Declare->setup_for($opts->{package}, $config);
     }
@@ -146,6 +147,13 @@ sub make_proto_unwrap {
     return (defined($proto) && length($proto)) ? "($proto);" : "";
 }
 
+sub inject_right_here {
+    my $inject = shift;
+    my $linestr = Devel::Declare::get_linestr;
+    substr($linestr, $Offset, 0) = $inject;
+    Devel::Declare::set_linestr($linestr);
+}
+
 sub inject_if_block {
     my $inject = shift;
     skipspace;
@@ -163,6 +171,7 @@ sub inject_before_block {
     if (substr($linestr, $Offset, 1) eq '{') {
         substr($linestr, $Offset, 0) = $inject;
         Devel::Declare::set_linestr($linestr);
+        return 1;
     }
 }
 
@@ -180,6 +189,11 @@ sub _tag_builder_for {
 
     return sub {
         my $block = pop;
+        if ((ref($block) ne 'CODE')) {
+            push @_, $block;
+            $block = sub {};
+        }
+        
         my @attr = @_;
         %ATTRIBUTES = ();
 
@@ -219,12 +233,10 @@ sub tag_parser_for {
 
         inject_if_block("no strict; BEGIN { Template::Declare::TagCompiler::inject_scope }; use strict;");
 
-        if (defined($proto)) {
-            inject_before_block("$proto, sub");
+        unless (inject_before_block(defined $proto ? "$proto, sub" : "sub")) {
+            inject_right_here("($proto)") if defined $proto;
         }
-        else {
-            inject_before_block("sub");
-        }
+        
         shadow(_tag_builder_for($tag, $tagset));
     }
 }

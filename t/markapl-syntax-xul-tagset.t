@@ -26,13 +26,6 @@ Template::Declare->init(roots => [ 'TestView']);
 use Test::More tests => 1;
 
 my $out = (Template::Declare->show("main"));
-diag($out);
+# diag($out);
 
-# like($out, qr{<div(\s+id="id")?>\s*<p>.+?</p>\s*</div>});
-pass;
-
-
-
-
-
-
+like($out, qr{<radio\s+id=".+?".+/>});
