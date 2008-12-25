@@ -15,9 +15,6 @@ use Carp qw(carp croak);
 use Symbol 'qualify_to_ref';
 use Devel::Declare ();
 use B::Hooks::EndOfScope;
-use YAML;
-
-# use Template::Declare::TagCompiler;
 
 our @EXPORT
     = qw( with template private show show_page attr outs
@@ -195,9 +192,9 @@ sub _tag_builder_for {
         }
         
         my @attr = @_;
-        %ATTRIBUTES = ();
 
         if (@attr == 1) {
+            %ATTRIBUTES = ();
             my $css = $attr[0];
             while ($css =~ /([\#\.])(\w+)/g) {
                 if ($1 eq '#') {
@@ -206,7 +203,7 @@ sub _tag_builder_for {
                     $ATTRIBUTES{class} = $2;
                 }
             }
-        } else {
+        } elsif(@attr > 1) {
             %ATTRIBUTES = (@attr);
         }
 
@@ -231,7 +228,7 @@ sub tag_parser_for {
         my $name = strip_name;
         my $proto = strip_proto;
 
-        inject_if_block("no strict; BEGIN { Template::Declare::TagCompiler::inject_scope }; use strict;");
+        inject_if_block("no strict 'subs'; BEGIN { Template::Declare::Tags::inject_scope }; use strict 'subs';");
 
         unless (inject_before_block(defined $proto ? "$proto, sub" : "sub")) {
             inject_right_here("($proto)") if defined $proto;
@@ -530,11 +527,11 @@ Tag attributes can also be specified by using C<is>, as in
 
 =cut
 
-sub attr($;@) {
+sub attr(&;@) {
     my $code = shift;
     my @rv   = $code->();
-    while ( my ( $field, $val ) = splice( @rv, 0, 2 ) ) {
 
+    while ( my ( $field, $val ) = splice( @rv, 0, 2 ) ) {
         # only defined whle in a tag context
         append_attr( $field, $val );
     }
@@ -718,7 +715,6 @@ sub with (@) {
                     "HTML appears to contain illegal duplicate element id: $val";
             }
         }
-
     }
     wantarray ? () : '';
 }
