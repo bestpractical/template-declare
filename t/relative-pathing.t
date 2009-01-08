@@ -39,7 +39,7 @@ package main;
 use Template::Declare::Tags;
 Template::Declare->init( roots => ['Wifty::UI'] );
 
-use Test::More tests => 24;
+use Test::More tests => 25;
 
 ok( Wifty::UI::aliased_pkg->has_template('local') );
 ok( Wifty::UI->has_template('local') );
@@ -71,6 +71,11 @@ for my $template (qw(aliased_pkg/root aliased_pkg/parent relative relative_dot r
 
 {
     my $simple = ( show('up_level_inside/test') );
+    like( $simple, qr{This is up_level_inside/local} );
+}
+
+{
+    my $simple = ( show('/up_level_inside/any/../local') );
     like( $simple, qr{This is up_level_inside/local} );
 }
 
