@@ -757,29 +757,29 @@ sub show_page {
     return Template::Declare->end_buffer_frame->data;
 }
 
-sub _resolve_relative_template_path {
+sub _resolve_template_path {
     my $template = shift;
 
-    return $template if ( $template =~ '^\/' );
-    my $parent = current_template();
+    my @parts;
+    if ( substr($template, 0, 1) ne '/' ) {
+        # relative
+        @parts = split '/', current_template();
+        # Get rid of the parent's template name
+        pop @parts;
+    }
 
-    my @parent   = split( '/', $parent );
-    my @template = split( '/', $template );
+    foreach ( split '/', $template ) {
+        if ( $_ eq '..' ) {
+            pop @parts;
+        }
+        # Get rid of "." and empty entries by the way
+        elsif ( $_ ne '.' && $_ ne '' ) {
+            push @parts, $_;
+        }
+    }
 
-    @template = grep { $_ !~ /^\.$/} @template; # Get rid of "." entries
-
-    # Let's find out how many levels they want to pop up
-    my @uplevels = grep { /^\.\.$/ } @template;
-    @template = grep { $_ !~ /^\.\.$/ } @template;
-
-
-
-    pop @parent;            # Get rid of the parent's template name
-    pop @parent for @uplevels;
-    return (join( '/', @parent, @template ) );
-
+    return join '/', @parts;
 }
-
 
 =head2 current_template
 
@@ -797,7 +797,7 @@ sub _show_template {
     my $inside_template = shift;
     my $args = shift;
     local @TEMPLATE_STACK  = @TEMPLATE_STACK;
-    $template = _resolve_relative_template_path($template);
+    $template = _resolve_template_path($template);
     push @TEMPLATE_STACK, $template;
 
     my $callable =
