@@ -21,7 +21,8 @@ requires:
   Class::Accessor::Fast: 0
   Class::Data::Inheritable: 0
   Class::ISA: 0
+  String::BufferStack: 1.1
   perl: 5.8.2
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.31_01
+version: 0.35

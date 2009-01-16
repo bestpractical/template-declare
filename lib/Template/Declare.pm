@@ -6,8 +6,9 @@ use Carp;
 package Template::Declare;
 use Template::Declare::Buffer;
 use Class::ISA;
+use String::BufferStack;
 
-our $VERSION = "0.31_01";
+our $VERSION = "0.35";
 
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('roots');
@@ -16,7 +17,7 @@ __PACKAGE__->mk_classdata('aliases');
 __PACKAGE__->mk_classdata('alias_metadata');
 __PACKAGE__->mk_classdata('templates');
 __PACKAGE__->mk_classdata('private_templates');
-__PACKAGE__->mk_classdata('buffer_stack');
+__PACKAGE__->mk_classdata('buffer');
 __PACKAGE__->mk_classdata('imported_into');
 __PACKAGE__->mk_classdata('around_template');
 
@@ -26,10 +27,10 @@ __PACKAGE__->aliases(           {} );
 __PACKAGE__->alias_metadata(    {} );
 __PACKAGE__->templates(         {} );
 __PACKAGE__->private_templates( {} );
-__PACKAGE__->buffer_stack( [] );
+__PACKAGE__->buffer( String::BufferStack->new );
 __PACKAGE__->around_template( undef );
 
-__PACKAGE__->new_buffer_frame();
+*String::BufferStack::data = \&String::BufferStack::buffer;
 
 use vars qw/$TEMPLATE_VARS/;
 
@@ -351,20 +352,11 @@ sub init {
 }
 
 sub new_buffer_frame {
-    my $buffer = Template::Declare::Buffer->new();
-    unshift @{ __PACKAGE__->buffer_stack }, $buffer;
-
+    __PACKAGE__->buffer->push( private => 1 );
 }
 
 sub end_buffer_frame {
-    shift @{ __PACKAGE__->buffer_stack };
-}
-
-sub buffer {
-    my $res = __PACKAGE__->buffer_stack->[0];
-    Carp::confess( __PACKAGE__ . "->buffer called with no buffer" )
-        unless $res;
-    return $res;
+    __PACKAGE__->buffer->pop;
 }
 
 =head2 show TEMPLATE_NAME
