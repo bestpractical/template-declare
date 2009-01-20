@@ -1,3 +1,9 @@
+0.35 - 2009-01-20
+* Buffers have been moved to using String::BufferStack, for better
+  interopability with other templating systems.  Code which
+  manipulated Template::Declare::Buffer objects by hand may need to be
+  adjusted.
+
 0.31_01 - 2008-12-19
 * INCOMPATIBLE: there were inconsistency in arguments passing.
   show in TD::Tags could pass arguments into template as array
