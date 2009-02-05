@@ -1,3 +1,7 @@
+0.36 - 2009-02-05
+* Hint to the source of the buffer using a 'from' argument.  This
+  allows us to inspect the call stack by looking at the buffer stack.
+
 0.35 - 2009-01-20
 * Buffers have been moved to using String::BufferStack, for better
   interopability with other templating systems.  Code which

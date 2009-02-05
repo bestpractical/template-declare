@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 330abd699e2f695c8f96457f73642de937aba5c3 Changes
+SHA1 4ec347a5d20c542cedddfc9d7970c447c847fed3 Changes
 SHA1 58642f7ef09571d417e4f5b0ca8eb508b9edb235 MANIFEST
 SHA1 6f70228d55d21d8a18d86c6d9acb1a9d5a5504fe MANIFEST.SKIP
-SHA1 7e4041df0d390d280e700e9a6ca5fe29eaaf5e17 META.yml
+SHA1 bacf9729b4c445b2bd0a4590ce7086485c61ed9e META.yml
 SHA1 905f717b7e4d05ccd5848d785a639b64888fb401 Makefile.PL
 SHA1 65da83220e6bf55fec475fe014f90ad37a9f4969 README
 SHA1 5c9e093b0facca46d50e3c69d5569aa7a98db0b8 inc/Module/Install.pm
@@ -28,14 +28,14 @@ SHA1 37ed4ccd7aba10119e6f2993b8082674ce2e5961 inc/Module/Install/Makefile.pm
 SHA1 4aa1c578faad51f31e62bed7b28d3d42b88219c3 inc/Module/Install/Metadata.pm
 SHA1 d7529d795a1304c88253b26a9089913edf31ae5e inc/Module/Install/Win32.pm
 SHA1 2a74aba5a78e7ab2776382e42106ebe941c2ac28 inc/Module/Install/WriteAll.pm
-SHA1 2cac7241a44a51073555dccb60fc546593fec1bb lib/Template/Declare.pm
+SHA1 dc0d3e1cfe47042f718ef6df509bf2ebcb0026d0 lib/Template/Declare.pm
 SHA1 a44d64624dd8d0ce708a0d056a8945783fd9cd53 lib/Template/Declare/Buffer.pm
 SHA1 5b8295d842ccea0a21661583446344733f668879 lib/Template/Declare/TagSet.pm
 SHA1 a4b1d4e5e70b6bf928ceb7d6eeb73bc6b2d7d7a9 lib/Template/Declare/TagSet/HTML.pm
 SHA1 f95b68b4c50afcd1c66d225556dcfa2b2f18e619 lib/Template/Declare/TagSet/RDF.pm
 SHA1 4899124cdf56c12fcc7ac1a2b3d99910ed5b8bbb lib/Template/Declare/TagSet/RDF/EM.pm
 SHA1 460ab0856c8aea75c81e8cb1e5fb287515b1b2bf lib/Template/Declare/TagSet/XUL.pm
-SHA1 167fa466edec559b81c90c21e17d86a11a187da8 lib/Template/Declare/Tags.pm
+SHA1 0e53d539095fd778f59fc02ae9cd9f9a713d4385 lib/Template/Declare/Tags.pm
 SHA1 7b2832c140109b23ba669db59e5b357dd1d255ec t/99-pod-coverage.t
 SHA1 bb0da54f2b3f2d7955baa41ee458cb3d1887f475 t/99-pod.t
 SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
@@ -82,7 +82,7 @@ SHA1 c07bcff77839e622b8b1ecffd492f5ccf0ab359c t/xss.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.9 (GNU/Linux)
 
-iEYEARECAAYFAkl2MsUACgkQMflWJZZAbqAD/ACeOJtJyYHpD9GZaIN/8/iXEV7P
-1fwAn1nrPevZ18VRueVz01lAc9pbrMRT
-=qZIh
+iEYEARECAAYFAkmLVCYACgkQMflWJZZAbqDi+ACggAa/Eqa6nZ/cwHOSpAEPQNsj
+COkAnjSfOczGtdZXhioiCp2zam6BduJ4
+=2B8H
 -----END PGP SIGNATURE-----
