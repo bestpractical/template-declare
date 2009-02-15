@@ -84,7 +84,7 @@ require "t/utils.pl";
       { $simple = ( Template::Declare->show('private-content') ); }
       qr/could not be found.*private/,
       "got warning";
-    is($simple, undef);
+    is($simple, '');
 }
 
 

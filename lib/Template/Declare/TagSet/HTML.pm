@@ -9,6 +9,7 @@ our %AlternateSpelling = (
     tr   => 'row',
     td   => 'cell',
     base => 'html_base',
+    q    => 'quote',
 );
 
 sub get_alternate_spelling {

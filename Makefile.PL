@@ -13,5 +13,6 @@ build_requires  'Test::Warn';
 requires 'Class::Accessor::Fast';
 requires 'Class::Data::Inheritable';
 requires 'Class::ISA';
+requires 'String::BufferStack' => 1.10;
 
 WriteAll;

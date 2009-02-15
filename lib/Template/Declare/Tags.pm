@@ -593,18 +593,11 @@ sub xml_decl (&;$) {
 
 C<outs> HTML-encodes its arguments and appends them to C<Template::Declare>'s output buffer.
 
-
-=cut
-
-#sub outs { outs_raw( map { _postprocess($_); } grep {defined} @_ ); }
-
 =head2 outs_raw STUFF
 
 C<outs_raw> appends its arguments to C<Template::Declare>'s output buffer without doing any HTML escaping.
 
 =cut
-
-#sub outs_raw { Template::Declare->buffer->append( join( '', grep {defined} @_ )); return ''; }
 
 sub outs     { _outs( 0, @_ ); }
 sub outs_raw { _outs( 1, @_ ); }
@@ -613,11 +606,9 @@ sub _outs {
     my $raw     = shift;
     my @phrases = (@_);
 
-    my $return_data = (defined wantarray and not wantarray)? 1 : 0;
-    Template::Declare->new_buffer_frame if $return_data;
+    Template::Declare->buffer->push( private => (defined wantarray and not wantarray), from => "T::D outs" );
 
     foreach my $item ( grep {defined} @phrases ) {
-
         my $returned = ref($item) eq 'CODE'
             ? $item->()
             : $raw
@@ -625,8 +616,7 @@ sub _outs {
                 : _postprocess($item);
         Template::Declare->buffer->append( $returned );
     }
-    return '' unless $return_data;
-    return Template::Declare->end_buffer_frame->data;
+    return Template::Declare->buffer->pop;
 }
 
 
@@ -767,9 +757,9 @@ care of putting the output in the right place and tidying up after itself.
 
 sub smart_tag_wrapper (&) {
     my $coderef = shift;
-    my $buf     = "\n";
 
-    Template::Declare->new_buffer_frame;
+    Template::Declare->buffer->append("\n");
+    Template::Declare->buffer->push( from => "T::D tag wrapper");
 
     my %attr = %ATTRIBUTES;
     %ATTRIBUTES = ();                              # prevent leakage
@@ -778,18 +768,9 @@ sub smart_tag_wrapper (&) {
         map { ref($_) ? $_ : _postprocess($_) }    #
         $coderef->(%attr);
 
-
-    if ( length( Template::Declare->buffer->data ) ) {
-
-        # We concatenate to force scalarization when $last or
-        # $Template::Declare->buffer is solely a Jifty::Web::Link
-        $buf .= Template::Declare->buffer->data;
-    } elsif ( length $last ) {
-        $buf .= $last;
-    }
-
-    Template::Declare->end_buffer_frame;
-    Template::Declare->buffer->append($buf);
+    my $has_content = Template::Declare->buffer->length;
+    Template::Declare->buffer->pop;
+    Template::Declare->buffer->append( "$last" ) if not $has_content and length $last;
 
     return '';
 }
@@ -808,13 +789,15 @@ sub _tag {
     $tag = $tagset->namespace . ":$tag"
         if defined $tagset->namespace;
 
-    my $buf = "\n" . ( " " x $TAG_NEST_DEPTH ) . "<$tag"
-        . join( '',
-        map { qq{ $_="} . ( $ATTRIBUTES{$_} || '' ) . qq{"} }
-            sort keys %ATTRIBUTES );
+    Template::Declare->buffer->append(
+              "\n" 
+            . ( " " x $TAG_NEST_DEPTH ) . "<$tag"
+            . join( '',
+            map { qq{ $_="} . ( $ATTRIBUTES{$_} || '' ) . qq{"} }
+                sort keys %ATTRIBUTES )
+    );
 
-    my $had_content = 0;
-
+    my $attrs = "";
     {
         no warnings qw( uninitialized redefine once );
 
@@ -837,42 +820,30 @@ sub _tag {
             my $field = shift;
             my $val   = shift;
 
-            $buf .= ' ' . $field . q{="} . _postprocess($val, 1) . q{"};
+            $attrs .= ' ' . $field . q{="} . _postprocess($val, 1) . q{"};
             wantarray ? () : '';
         };
 
         local $TAG_NEST_DEPTH = $TAG_NEST_DEPTH + 1;
         %ATTRIBUTES = ();
-        Template::Declare->new_buffer_frame;
+        Template::Declare->buffer->push( private => 1, from => "T::D tag $tag" );
         my $last = join '', map { ref($_) && $_->isa('Template::Declare::Tag') ? $_ : _postprocess($_) } $code->();
-
-        if ( length( Template::Declare->buffer->data ) ) {
-
-# We concatenate to force scalarization when $last or $Template::Declare->buffer is solely a Jifty::Web::Link
-            $buf .= '>' . Template::Declare->buffer->data;
-            $had_content = 1;
-        } elsif ( length $last ) {
-            $buf .= '>' . $last;
-            $had_content = 1;
-        } else {
-            $had_content = 0;
-        }
-
-        Template::Declare->end_buffer_frame;
-
+        Template::Declare->buffer->append("$last") if not Template::Declare->buffer->length and length $last;
     }
+    my $content = Template::Declare->buffer->pop;
+    Template::Declare->buffer->append($attrs);
 
-    if ($had_content) {
-        $buf .= "\n" . ( " " x $TAG_NEST_DEPTH ) if ( $buf =~ /\>$/ );
-        $buf .= "</$tag>";
+    if (length $content) {
+        Template::Declare->buffer->append(">$content");
+        Template::Declare->buffer->append("\n" . ( " " x $TAG_NEST_DEPTH )) if $content =~ /\</;
+        Template::Declare->buffer->append("</$tag>");
     } elsif ( $tagset->can_combine_empty_tags($tag) ) {
-        $buf .= " />";
+        Template::Declare->buffer->append(" />");
     } else {
         # Otherwise we supply a closing tag.
-        $buf .= "></$tag>";
+        Template::Declare->buffer->append("></$tag>");
     }
 
-    Template::Declare->buffer->append($buf);
     return ( ref($more_code) && $more_code->isa('CODE') )
         ? $more_code->()
         : '';
@@ -904,7 +875,7 @@ sub show {
 
     # if we're inside a template, we should show private templates
     if ( caller->isa('Template::Declare') ) {
-       _show_template( $template, 1, \@_ );
+        _show_template( $template, 1, \@_ );
         return Template::Declare->buffer->data;
     } else {
         show_page( $template, @_);
@@ -912,46 +883,47 @@ sub show {
 
 }
 
-
-
 sub show_page {
-    my $template        = shift;
+    my $template = shift;
     my $args = \@_;
 
-    my $return_data = defined wantarray();
-
-    # if we're inside a template, we should show private templates
-    Template::Declare->new_buffer_frame if $return_data;
-    _show_template( $template, 0, $args );
-    %ELEMENT_ID_CACHE = ();    # We're done. we can clear the cache
-    return undef unless $return_data;
-
-    return Template::Declare->end_buffer_frame->data;
+    if (defined wantarray) {
+        Template::Declare->buffer->push( private => 1, from => "T::D path $template" );
+        _show_template( $template, 0, $args );
+        %ELEMENT_ID_CACHE = ();
+        return Template::Declare->buffer->pop;
+    } else {
+        Template::Declare->buffer->push( from => "T::D path $template" );
+        _show_template( $template, 0, $args );
+        %ELEMENT_ID_CACHE = ();
+        Template::Declare->buffer->pop;
+        return undef;
+    }
 }
 
-sub _resolve_relative_template_path {
+sub _resolve_template_path {
     my $template = shift;
 
-    return $template if ( $template =~ '^\/' );
-    my $parent = current_template();
+    my @parts;
+    if ( substr($template, 0, 1) ne '/' ) {
+        # relative
+        @parts = split '/', current_template();
+        # Get rid of the parent's template name
+        pop @parts;
+    }
 
-    my @parent   = split( '/', $parent );
-    my @template = split( '/', $template );
+    foreach ( split '/', $template ) {
+        if ( $_ eq '..' ) {
+            pop @parts;
+        }
+        # Get rid of "." and empty entries by the way
+        elsif ( $_ ne '.' && $_ ne '' ) {
+            push @parts, $_;
+        }
+    }
 
-    @template = grep { $_ !~ /^\.$/} @template; # Get rid of "." entries
-
-    # Let's find out how many levels they want to pop up
-    my @uplevels = grep { /^\.\.$/ } @template;
-    @template = grep { $_ !~ /^\.\.$/ } @template;
-
-
-
-    pop @parent;            # Get rid of the parent's template name
-    pop @parent for @uplevels;
-    return (join( '/', @parent, @template ) );
-
+    return join '/', @parts;
 }
-
 
 =head2 current_template
 
@@ -968,9 +940,8 @@ sub _show_template {
     my $template        = shift;
     my $inside_template = shift;
     my $args = shift;
-    local @TEMPLATE_STACK  = @TEMPLATE_STACK;
-    $template = _resolve_relative_template_path($template);
-    push @TEMPLATE_STACK, $template;
+    $template = _resolve_template_path($template);
+    local @TEMPLATE_STACK  = (@TEMPLATE_STACK, $template);
 
     my $callable =
         ( ref($template) && $template->isa('Template::Declare::Tag') )
@@ -1112,11 +1083,10 @@ sub stringify {
     my $self = shift;
 
     if ( defined wantarray ) {
-        Template::Declare->new_buffer_frame;
+        Template::Declare->buffer->push( private => 1, from => "T::D stringify" );
         my $returned = $self->();
-        return (Template::Declare->end_buffer_frame->data . $returned);
+        return Template::Declare->buffer->pop . $returned;
     } else {
-
         return $self->();
     }
 }

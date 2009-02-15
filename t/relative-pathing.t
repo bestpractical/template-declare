@@ -29,11 +29,17 @@ template 'local' => sub {
     div { outs( 'This is a template local to ' . __PACKAGE__ ) };
 };
 
+# test '..' inside template name, not leading, may be it's rare, but people
+# do crazy things
+template 'up_level_inside/test'  => sub { show('local/../local') };
+template 'up_level_inside/local' => sub { div { "This is up_level_inside/local" } };
+
+
 package main;
 use Template::Declare::Tags;
 Template::Declare->init( roots => ['Wifty::UI'] );
 
-use Test::More tests => 23;
+use Test::More tests => 25;
 
 ok( Wifty::UI::aliased_pkg->has_template('local') );
 ok( Wifty::UI->has_template('local') );
@@ -61,6 +67,16 @@ for my $template (qw(aliased_pkg/root aliased_pkg/parent relative relative_dot r
     my $simple = ( show( $template ) );
     like( $simple, qr'template local' );
     like( $simple, qr'Wifty::UI', 'Correct package for '.$template);
+}
+
+{
+    my $simple = ( show('up_level_inside/test') );
+    like( $simple, qr{This is up_level_inside/local} );
+}
+
+{
+    my $simple = ( show('/up_level_inside/any/../local') );
+    like( $simple, qr{This is up_level_inside/local} );
 }
 
 1;

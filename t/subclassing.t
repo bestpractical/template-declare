@@ -78,8 +78,8 @@ Template::Declare->init(
       { $simple = ( show('does_not_exist') ); }
       qr/could not be found.*private/,
       "got warning";
-    unlike( ($simple||'') , qr'This is my content' );
-    is ($simple,undef);
+    unlike( $simple , qr'This is my content' );
+    is ($simple,'');
 }
 
 {
