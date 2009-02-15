@@ -211,8 +211,22 @@ sub _tag_builder_for {
         } elsif(@attr > 1) {
             %ATTRIBUTES = (@attr);
         }
-        _tag($tag, $tagset, $block);
-    }
+
+        if ( defined wantarray and not wantarray ) {
+            my @__ = @_;
+            my $_self = $self;
+            my $sub = sub {
+                local $self = $_self;
+                local *__ANON__ = $tag;
+                _tag($tag, $tagset, @__);
+            };
+            bless $sub, 'Template::Declare::Tag';
+            return $sub;
+        }
+        else {
+            _tag($tag, $tagset, $block);
+        }
+    };
 }
 
 sub tag_parser_for {

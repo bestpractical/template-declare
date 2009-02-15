@@ -92,7 +92,7 @@ ok_lint(Template::Declare->buffer->data());
 for (qw(closure_1 closure_2 )) {
 Template::Declare->buffer->clear;
 my $simple = Template::Declare->show($_);
-#diag ($simple);
+# diag ($simple);
 like($simple, qr/<i>\s*<b>\s*Bolded\s*<\/b>\s*<\/i>/ms, "$_ matched");
 ok_lint($simple);
 }
@@ -119,7 +119,7 @@ ok_lint(Template::Declare->buffer->data());
 Template::Declare->buffer->clear;
 my $simple = Template::Declare->show('closure_6');
 ok($simple =~ /I decided to do\s*<i>\s*Something else\s*<\/i>/);
-#diag ($simple);
+# diag ($simple);
 ok_lint(Template::Declare->buffer->data());
 }
 
