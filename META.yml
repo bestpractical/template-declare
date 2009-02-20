@@ -3,11 +3,10 @@ abstract: 'Perlish declarative templates'
 author:
   - 'Jesse Vincent <jesse@bestpractical.com>'
 build_requires:
-  HTML::Lint: 0
   Test::More: 0
   Test::Warn: 0
 distribution_type: module
-generated_by: 'Module::Install version 0.77'
+generated_by: 'Module::Install version 0.79'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
