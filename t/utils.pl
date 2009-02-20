@@ -2,11 +2,15 @@ use warnings;
 use strict;
 
 use Test::More;
-use HTML::Lint;
 
 sub ok_lint {
     my $html = shift;
-   
+  
+    if (! eval { require HTML::Lint } ) {
+        ok(1, "HTML::Lint not installed. Skipping");
+        return
+    }
+
     {
     my $lint = HTML::Lint->new;
      $lint->parse($html); 
