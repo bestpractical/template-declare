@@ -8,7 +8,7 @@ use Template::Declare::Buffer;
 use Class::ISA;
 use String::BufferStack;
 
-our $VERSION = "0.37";
+our $VERSION = "0.38";
 
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('roots');
@@ -30,7 +30,14 @@ __PACKAGE__->private_templates( {} );
 __PACKAGE__->buffer( String::BufferStack->new );
 __PACKAGE__->around_template( undef );
 
-*String::BufferStack::data = \&String::BufferStack::buffer;
+*String::BufferStack::data = sub {
+    my $ref = shift;
+    if (@_) {
+        warn "Template::Declare->buffer->data called with argument; this usage is deprecated";
+        ${$ref->buffer_ref} = join("", @_);
+    }
+    return $ref->buffer;
+};
 
 use vars qw/$TEMPLATE_VARS/;
 
