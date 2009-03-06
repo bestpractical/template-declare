@@ -8,7 +8,7 @@ all_from        'lib/Template/Declare.pm';
 perl_version '5.8.2';
 
 build_requires  'Test::More';
-build_requires  'Test::Warn';
+build_requires  'Test::Warn' => 0.11;
 requires 'Class::Accessor::Fast';
 requires 'Class::Data::Inheritable';
 requires 'Class::ISA';
