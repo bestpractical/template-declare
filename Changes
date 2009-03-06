@@ -1,3 +1,7 @@
+0.39 - 2009-03-05
+* No code changes; increase Test::Warn dependency to 0.11, as 0.10 was
+  broken
+
 0.38 - 2009-02-27
 * Support, but deprecate, Template::Declare->buffer->data(...) usage
 
