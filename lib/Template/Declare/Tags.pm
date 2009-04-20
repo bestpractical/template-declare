@@ -503,12 +503,12 @@ sub install_tag {
             my $sub   = sub {
                 local $self     = $_self;
                 local *__ANON__ = $tag;
-                _tag($tagset, @__);
+                _tag($tagset, $tag, @__);
             };
             bless $sub, 'Template::Declare::Tag';
             return $sub;
         } else {
-            _tag($tagset, @_);
+            _tag($tagset, $tag, @_);
         }
     };
     _install(
@@ -602,20 +602,10 @@ sub smart_tag_wrapper (&) {
 
 sub _tag {
     my $tagset    = shift;
+    my $tag = shift;
     my $code      = shift;
     my $more_code = shift;
-    my ($package,   $filename, $line,       $subroutine, $hasargs,
-        $wantarray, $evaltext, $is_require, $hints,      $bitmask
-        )
-        = caller(1);
-
-    # This is the hash of attributes filled in by attr() calls in the code;
-
-    my $tag = $subroutine;
-    $tag =~ s/^.*\:\://;
-    # "html:foo"
-    $tag = $tagset->namespace . ":$tag"
-        if defined $tagset->namespace;
+    $tag = $tagset->namespace . ":$tag" if defined $tagset->namespace;
 
     Template::Declare->buffer->append(
               "\n" 
