@@ -14,9 +14,9 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 803a429e08a2af0cb0533e893aa8110f92c908d8 Changes
+SHA1 2a7ecafdfee2c1d9823f284abb1cace9b6443ad5 Changes
 SHA1 5afe8e5f287785ce0b2e7dd86297188436e247fb MANIFEST
-SHA1 6f70228d55d21d8a18d86c6d9acb1a9d5a5504fe MANIFEST.SKIP
+SHA1 04ed470d2969b691120bbc2df1dfe1fe351dd4ed MANIFEST.SKIP
 SHA1 ab968279525d26d23e4bf76e3d15e4951f87996f META.yml
 SHA1 ee899bc436e17646223925d431d3e9727c1254d1 Makefile.PL
 SHA1 65da83220e6bf55fec475fe014f90ad37a9f4969 README
@@ -31,14 +31,14 @@ SHA1 9f6beaa2f4749ceb5dd0c9b0c647d0f3289c7b46 inc/Module/Install/Makefile.pm
 SHA1 bd988ba3fb7eee0ad889eadc2f5338a8d98fc2a3 inc/Module/Install/Metadata.pm
 SHA1 e9aa83f3e8b16ccfce544a90a57b63b70a497759 inc/Module/Install/Win32.pm
 SHA1 ade2ac0b0246d4d8e28fa46942e53f6925abda46 inc/Module/Install/WriteAll.pm
-SHA1 f5d7256e29324307d7ad4cf54b57e21e30c49349 lib/Template/Declare.pm
+SHA1 eea7a0ba18931fba4545a22cfbba0bc71e633abb lib/Template/Declare.pm
 SHA1 a44d64624dd8d0ce708a0d056a8945783fd9cd53 lib/Template/Declare/Buffer.pm
 SHA1 5b8295d842ccea0a21661583446344733f668879 lib/Template/Declare/TagSet.pm
 SHA1 a3dd8253f179c0e07ea80db89c40a2755eade801 lib/Template/Declare/TagSet/HTML.pm
 SHA1 f95b68b4c50afcd1c66d225556dcfa2b2f18e619 lib/Template/Declare/TagSet/RDF.pm
 SHA1 4899124cdf56c12fcc7ac1a2b3d99910ed5b8bbb lib/Template/Declare/TagSet/RDF/EM.pm
 SHA1 460ab0856c8aea75c81e8cb1e5fb287515b1b2bf lib/Template/Declare/TagSet/XUL.pm
-SHA1 0e53d539095fd778f59fc02ae9cd9f9a713d4385 lib/Template/Declare/Tags.pm
+SHA1 b21b17b9bedf476cd17a2528720fd5f771ebfadd lib/Template/Declare/Tags.pm
 SHA1 7b2832c140109b23ba669db59e5b357dd1d255ec t/99-pod-coverage.t
 SHA1 bb0da54f2b3f2d7955baa41ee458cb3d1887f475 t/99-pod.t
 SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
@@ -83,9 +83,9 @@ SHA1 70b68474a9925d08b24a7af7354dbb7ab369b448 t/utils.pl
 SHA1 6a76d87732069df9fa763e4e69a78eb0aff134ba t/wrappers.t
 SHA1 c07bcff77839e622b8b1ecffd492f5ccf0ab359c t/xss.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
+Version: GnuPG v1.4.7 (Darwin)
 
-iEYEARECAAYFAkmwepUACgkQMflWJZZAbqC3uQCfUUnCARJ3eK7g2vxOkW1mqe5f
-ILQAoIVWuGwpjWW9FYvIwchBY0HIaSV8
-=adHv
+iD8DBQFKVQBcsxfQtHhyRPoRAoeXAJ9N5X2WeIAgZCK0ow8lbUOTWlatFwCcCSmq
+bWVbz1+k5X2m94gjixfbQkA=
+=e1RY
 -----END PGP SIGNATURE-----
