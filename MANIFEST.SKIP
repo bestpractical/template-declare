@@ -41,4 +41,5 @@ t/zz.*
 test\.[co]
 benchmarks/.*
 \.svn
+\.git
 \.t_$
