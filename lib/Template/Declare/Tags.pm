@@ -6,7 +6,7 @@ use strict;
 
 package Template::Declare::Tags;
 
-our $VERSION = '0.27';
+our $VERSION = '0.40';
 
 use Template::Declare;
 use vars qw( @EXPORT_OK $PRIVATE $self @TagSubs );
