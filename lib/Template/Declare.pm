@@ -8,7 +8,7 @@ use Template::Declare::Buffer;
 use Class::ISA;
 use String::BufferStack;
 
-our $VERSION = "0.39";
+our $VERSION = "0.40";
 
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('roots');
