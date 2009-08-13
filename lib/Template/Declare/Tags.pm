@@ -57,10 +57,12 @@ sub import {
             "Template::Declare::TagSet::$lang";
 
         ### Loading tag set: $module
-        eval "use $module";
-        if ($@) {
-            warn $@;
-            croak "Failed to load tagset module $module";
+        if (! $module->can('get_tag_list') ) {
+            eval "use $module";
+            if ($@) {
+                warn $@;
+                croak "Failed to load tagset module $module";
+            }
         }
         ### TagSet options: $opts
         my $tagset = $module->new($opts);

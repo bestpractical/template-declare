@@ -39,6 +39,7 @@ t/forms.t
 t/importing.t
 t/indent.t
 t/indexhtml.t
+t/inline-tagset.t
 t/instrumentation.t
 t/MyTagSet.pm
 t/namespace.t

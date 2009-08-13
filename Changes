@@ -1,3 +1,8 @@
+0.40_01 2009-08-12
+
+* Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué
+	[rt.cpan.org #48642]
+
 0.40 - 2009-07-08
 * Fix subname issue with the debugger and specifically Devel::NYTProf
 * String::BufferStack usage improvements
