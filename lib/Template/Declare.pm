@@ -454,14 +454,14 @@ sub resolve_template {
 
     # If we're being called as a class method on T::D it means "search in any package"
     # Otherwise, it means search only in this specific package"
-    if ( $self eq 'Template::Declare' ) {
+    if ( $self eq __PACKAGE__ ) {
         @search_packages = reverse @{ Template::Declare->roots };
     } else {
         @search_packages = ($self);
     }
 
     foreach my $package (@search_packages) {
-        next unless ( $package and $package->isa('Template::Declare') );
+        next unless ( $package and $package->isa(__PACKAGE__) );
         if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
             return $coderef;
         } elsif (  $coderef = $package->_has_aliased_template($template_name, $show_private) ) {
@@ -576,7 +576,7 @@ sub alias {
 =cut
 
 sub import_templates {
-    return undef if $_[0] eq 'Template::Declare';
+    return undef if $_[0] eq __PACKAGE__;
     my $import_into      = caller(0);
     my $import_from_base = shift;
     my $prepend_path     = shift;
@@ -585,7 +585,7 @@ sub import_templates {
     $prepend_path =~ s|/$||;
     $import_from_base->imported_into($prepend_path);
 
-    my @packages = reverse grep { $_->isa('Template::Declare') }
+    my @packages = reverse grep { $_->isa(__PACKAGE__) }
         Class::ISA::self_and_super_path( $import_from_base );
 
     foreach my $import_from (@packages) {
