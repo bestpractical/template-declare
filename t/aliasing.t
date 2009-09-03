@@ -44,21 +44,23 @@ package main;
 use Template::Declare::Tags;
 Template::Declare->init( roots => ['Wifty::UI'] );
 
-use Test::More tests => 16;
+use Test::More tests => 19;
 require "t/utils.pl";
 
-ok( Wifty::UI::aliased_pkg->has_template('aliased') );
-ok( !  Wifty::UI->has_template('aliased') );
-ok( Wifty::UI::aliased_subclass_pkg->has_template('aliased') );
+ok( Wifty::UI::aliased_pkg->has_template('aliased'), 'Aliased package should have template' );
+ok( !  Wifty::UI->has_template('aliased'), 'Unrelated package should not' );
+ok( Wifty::UI::aliased_subclass_pkg->has_template('aliased'), 'Subclass should' );
 
-ok( Template::Declare->has_template('aliased_pkg/aliased') );
+ok( Template::Declare->has_template('aliased_pkg/aliased'), 'TD should find alias' );
 
 
-ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'), "When you subclass and then alias, the superclass's aliass are there" );
+ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
+    'Alias should be visible in a subclass, too' );
 
 {
-    my $simple = ( show('aliased_pkg/aliased') );
-    like( $simple, qr'This is aliased' );
+    # Try the first alias with a variable set.
+    ok my $simple = ( show('aliased_pkg/aliased') ), 'Should get output from alias template';
+    like( $simple, qr'This is aliased', 'Its output should be right' );
     like( $simple, qr'Variable SET' , "The variable was set");
     like( $simple, qr'Wifty::UI::aliased_pkg',
         '$self is correct in template block' );
@@ -66,22 +68,22 @@ ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'), "When you s
 }
 
 {
-    my $simple = ( show('aliased_pkg2/aliased') );
-    like( $simple, qr'This is aliased' );
-    unlike( $simple, qr'Varialble SET' , "The variable was  not set on second aliasing");
+    # Try the second alias with no variable.
+    ok my $simple = ( show('aliased_pkg2/aliased') ), 'Should get output from second alias';
+    like( $simple, qr'This is aliased', 'Its output should be right' );
+    unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
     like( $simple, qr'Wifty::UI::aliased_pkg',
         '$self is correct in template block' );
     ok_lint($simple);
 }
 
-
-
 {
-    my $simple = ( show('aliased_subclass_pkg/aliased') );
+    ok my $simple = ( show('aliased_subclass_pkg/aliased') ),
+        'Should get output from superclass template';
     like(
         $simple,
         qr'This is aliased',
-        "We got the aliased version in the subclass"
+        "We should get the aliased version in the subclass"
     );
     like(
         $simple,

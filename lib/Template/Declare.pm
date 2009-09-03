@@ -387,9 +387,29 @@ sub show {
     return Template::Declare::Tags::show_page($template => @_);
 }
 
-=head2 alias
+=head2 alias TEMPLATE_ROOT under PATH
 
  alias Some::Clever::Mixin under '/mixin';
+ alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
+
+Sometimes you want to alias templates to a subpath, or mix them into an
+existing template path. Use C<alias> to do so. In the first example, if
+Some::Clever::Mixin creates templates named "foo" and "bar", they will be
+aliased to "mixin/foo" and "mixin/bar".
+
+The second example mixes in the templates defined in Some::Other::Mixin into
+the "/mymix" path and defines a package variable for use only by the alias.
+If this template was defined in Some::Other::Mixin:
+
+  template 'howdy' => sub {
+      my $self = shift;
+      outs "Howdy, " . $self->package_variable('name') || 'Jesse';
+  };
+
+Then use of the "mymixin/howdy" template will output "Howdy, Lary", while use
+of the original template, "howdy", will output "Howdy, Jesse". In other words,
+package variables defined for the alias are available only to the alias, and
+not to the original.
 
 =cut
 

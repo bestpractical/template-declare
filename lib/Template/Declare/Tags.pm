@@ -816,10 +816,11 @@ sub _postprocess {
     return $val;
 }
 
-=head2 import 'Package' under 'path'
+=head2 import_templates 'Package' under 'path'
 
-Import the templates from C<Package> into the subpath 'path' of the current package, clobbering any
-of your own package's templates that you'd already defined.
+Import the templates from C<Package> into the subpath 'path' of the current
+package, clobbering any of your own package's templates that you'd already
+defined.
 
 =cut
 
