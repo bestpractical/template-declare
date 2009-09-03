@@ -569,9 +569,16 @@ sub alias {
 
 =head2 import_templates
 
+ import_templates MyApp::Templates under '/something';
 
- import_templates Wifty::UI::something under '/something';
-
+Import the templates defined in a template class into a subpath via the
+C<import_templates> function. In this example, the templates defined in
+MyApp::Templates will be imported into the "/something" path. Thus, a template
+deined in MyApp::Templates named "foo" will also be accessible via
+"something/foo". This is not unlike mixing in templates with C<alias>, but is
+lighter-weight and package variables cannot be assigned. This is because it is
+really like a hard link to the template, whereas an alias is a copy with the
+variable information attached to it.
 
 =cut
 
