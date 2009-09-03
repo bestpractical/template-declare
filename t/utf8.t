@@ -7,6 +7,8 @@ use utf8;# 'UTF-8';
 package Wifty::UI;
 use base qw/Template::Declare/;
 use Template::Declare::Tags;
+use Carp;
+$SIG{__WARN__} = \&Carp::cluck;
 
 # 'test' in Russian
 my $str = "\x{442}\x{435}\x{441}\x{442}";
@@ -47,20 +49,14 @@ Template::Declare->buffer->clear;
 {
     my $simple = (show('tag_outs'));
     ok($simple =~ m{^\s*<p>\s*$str\s*</p>\s*$}s);
-    # diag ($simple);
-    TODO: { local $TODO = "lint doesn't handle unicode sometimes";
-        ok_lint($simple);
-    }
+    ok_lint($simple, 1);
 }
 Template::Declare->buffer->clear;
 
 {
     my $simple = (show('double_tag_outs'));
     ok($simple =~ m{^\s*<p>\s*$str\s*</p>\s*<p>\s*$str\s*</p>\s*$}s);
-    # diag ($simple);
-    TODO: { local $TODO = "lint doesn't handle unicode";
-        ok_lint($simple);
-    }
+    ok_lint($simple, 1);
 }
 Template::Declare->buffer->clear;
 
