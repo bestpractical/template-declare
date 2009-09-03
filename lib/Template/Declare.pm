@@ -411,6 +411,10 @@ of the original template, "howdy", will output "Howdy, Jesse". In other words,
 package variables defined for the alias are available only to the alias, and
 not to the original.
 
+In either case, ineritance continues to work. A template package that inherits
+from Some::Other::Mixin, for example, will be able to access both
+"mymixin/howdy" and "howdy".
+
 =cut
 
 sub alias {
