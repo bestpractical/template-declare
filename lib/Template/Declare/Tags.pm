@@ -886,14 +886,15 @@ postprocessing entirely.
 L<Template::Declare::TagSet::HTML>,
 L<Template::Declare::TagSet::XUL>, L<Template::Declare>.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Jesse Vincent <jesse@bestpractical.com>,
+Jesse Vincent <jesse@bestpractical.com>
+
 Agent Zhang <agentzh@yahoo.cn>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2007 Best Practical Solutions, LLC
+Copyright 2006-2009 Best Practical Solutions, LLC
 
 =cut
 

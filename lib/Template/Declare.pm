@@ -89,9 +89,8 @@ Public and private templates
 
 =head2 Basic usage
 
-    ##############################
-    # Basic HTML usage:
-    ###############################
+Here's an example of basic HTML usage:
+
     package MyApp::Templates;
     use Template::Declare::Tags; # defaults to 'HTML'
     use base 'Template::Declare';
@@ -100,133 +99,133 @@ Public and private templates
         html {
             head {}
             body {
-                p {'Hello, world wide web!'}
+                p { 'Hello, world wide web!' }
             }
         }
     };
 
     package main;
     use Template::Declare;
-    Template::Declare->init( roots => ['MyApp::Templates']);
-    print Template::Declare->show( 'simple');
+    Template::Declare->init( roots => ['MyApp::Templates'] );
+    print Template::Declare->show( 'simple' );
 
-    # Output:
-    #
-    #
-    # <html>
-    #  <head></head>
-    #  <body>
-    #   <p>Hello, world wide web!
-    #   </p>
-    #  </body>
-    # </html>
+And here's the output:
 
-    ###############################
-    # Let's do XUL!
-    ###############################
+ <html>
+  <head></head>
+  <body>
+   <p>Hello, world wide web!
+   </p>
+  </body>
+ </html>
+
+Let's do XUL!
+
     package MyApp::Templates;
     use base 'Template::Declare';
     use Template::Declare::Tags 'XUL';
 
     template main => sub {
         xml_decl { 'xml', version => '1.0' };
-        xml_decl { 'xml-stylesheet',  href => "chrome://global/skin/", type => "text/css" };
+        xml_decl { 'xml-stylesheet', href => "chrome://global/skin/", type => "text/css" };
         groupbox {
             caption { attr { label => 'Colors' } }
             radiogroup {
-              for my $id ( qw< orange violet yellow > ) {
-                radio {
-                    attr {
-                        id => $id,
-                        label => ucfirst($id),
-                        $id eq 'violet' ?
-                            (selected => 'true') : ()
+                for my $id ( qw< orange violet yellow > ) {
+                    radio {
+                        attr {
+                            id    => $id,
+                            label => ucfirst($id),
+                            $id eq 'violet' ? (selected => 'true') : ()
+                        }
                     }
-                }
-              } # for
+                } # for
             }
         }
     };
 
     package main;
-    Template::Declare->init( roots => ['MyApp::Templates']);
-    print Template::Declare->show('main')
+    Template::Declare->init( roots => ['MyApp::Templates'] );
+    print Template::Declare->show( 'main' );
 
-    # Output:
-    #
-    # <?xml version="1.0"?>
-    # <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-    #
-    # <groupbox>
-    #  <caption label="Colors" />
-    #  <radiogroup>
-    #   <radio id="orange" label="Orange" />
-    #   <radio id="violet" label="Violet" selected="true" />
-    #   <radio id="yellow" label="Yellow" />
-    #  </radiogroup>
-    # </groupbox>
+The output:
+
+ <?xml version="1.0"?>
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+ <groupbox>
+  <caption label="Colors" />
+  <radiogroup>
+   <radio id="orange" label="Orange" />
+   <radio id="violet" label="Violet" selected="true" />
+   <radio id="yellow" label="Yellow" />
+  </radiogroup>
+ </groupbox>
 
 =head2 A slightly more advanced example
 
-In this example, we'll show off how to set attributes on HTML tags, how to call other templates and how to declare a I<private> template that can't be called directly. We'll also show passing arguments to templates.
+In this example, we'll show off how to set attributes on HTML tags, how to
+call other templates and how to declare a I<private> template that can't be
+called directly. We'll also show passing arguments to templates.
 
  package MyApp::Templates;
  use Template::Declare::Tags;
  use base 'Template::Declare';
 
  private template 'header' => sub {
-        head {
-            title { 'This is a webpage'};
-            meta { attr { generator => "This is not your father's frontpage"}}
-        }
+     head {
+         title { 'This is a webpage' };
+         meta  { attr { generator => "This is not your father's frontpage" } }
+     }
  };
 
  private template 'footer' => sub {
-        my $self = shift;
-        my $time = shift || gmtime;
+     my $self = shift;
+     my $time = shift || gmtime;
 
-        div { attr { id => "footer"};
-              "Page last generated at $time."
-        }
+     div {
+         attr { id => "footer"};
+         "Page last generated at $time."
+     }
  };
 
  template simple => sub {
-    my $self = shift;
-    my $user = shift || 'world wide web';
+     my $self = shift;
+     my $user = shift || 'world wide web';
 
-    html {
-        show('header');
-        body {
-            img { src is 'hello.jpg' }
-            p { attr { class => 'greeting'};
-                "Hello, $user!"};
-            };
-            show('footer');
-        }
+     html {
+         show('header');
+         body {
+             img { src is 'hello.jpg' }
+             p {
+                 attr { class => 'greeting'};
+                 "Hello, $user!"
+             };
+         };
+         show('footer');
+     }
  };
 
  package main;
  use Template::Declare;
- Template::Declare->init( roots => ['MyApp::Templates']);
+ Template::Declare->init( roots => ['MyApp::Templates'] );
  print Template::Declare->show( 'simple', 'TD user');
 
- # Output:
- #
- #  <html>
- #  <head>
- #   <title>This is a webpage
- #   </title>
- #   <meta generator="This is not your father&#39;s frontpage" />
- #  </head>
- #  <body>
- #   <img src="hello.jpg" />
- #   <p class="greeting">Hello, TD user!
- #   </p>
- #  </body>
- #  <div id="footer">Page last generated at Mon Jul  2 17:09:34 2007.</div>
- # </html>
+And the output:
 
-For more options, especially the "native" XML namespace support, 'is' syntax
+ <html>
+  <head>
+   <title>This is a webpage</title>
+   <meta generator="This is not your father&#39;s frontpage" />
+  </head>
+  <body>
+   <img src="hello.jpg" />
+   <p class="greeting">Hello, TD user!</p>
+  </body>
+  <div id="footer">Page last generated at Thu Sep  3 20:56:14 2009.</div>
+ </html>
+
+For more options, especially the "native" XML namespace support, C<is> syntax
 for attributes, and more samples, see L<Template::Declare::Tags>.
 
 =head2 Postprocessing
@@ -241,21 +240,25 @@ how to use a postprocessor to emphasize text _like this_.
  template before => sub {
      h1 {
          outs "Welcome to ";
-         em { "my"};
+         em { "my" };
          outs " site. It's ";
-         em { "great"};
+         em { "great" };
          outs "!";
      };
  };
 
  template after => sub {
-     h1 { "Welcome to _my_ site. It's _great_!"};
-     h2 { outs_raw "This is _not_ emphasized."};
+     h1 { "Welcome to _my_ site. It's _great_!" };
+     h2 { outs_raw "This is _not_ emphasized." };
  };
 
  package main;
  use Template::Declare;
- Template::Declare->init( roots => ['MyApp::Templates'], postprocessor => \&emphasize);
+ Template::Declare->init(
+     roots         => ['MyApp::Templates'],
+     postprocessor => \&emphasize,
+ );
+
  print Template::Declare->show( 'before');
  print Template::Declare->show( 'after');
 
@@ -265,30 +268,31 @@ how to use a postprocessor to emphasize text _like this_.
      return $text;
  }
 
- # Output:
- #
- # <h1>Welcome to
- #  <em>my</em> site. It&#39;s
- #  <em>great</em>!</h1>
- # <h1>Welcome to <em>my</em> site. It&#39;s <em>great</em>!</h1>
- # <h2>This is _not_ emphasized.</h2>
+And the output:
+ <h1>Welcome to
+  <em>my</em> site. It&#39;s
+  <em>great</em>!</h1>
+ <h1>Welcome to <em>my</em> site. It&#39;s <em>great</em>!</h1>
+ <h2>This is _not_ emphasized.</h2>
 
 =head2 Inheritance
 
-Templates are really just methods. You can subclass your template packages
-to override some of those methods. See also L<Jifty::View::Declare::CRUD>.
+Templates are really just methods. You can subclass your template packages to
+override some of those methods. See also L<Jifty::View::Declare::CRUD>.
 
  package MyApp::Templates::GenericItem;
  use Template::Declare::Tags;
  use base 'Template::Declare';
 
  template 'list' => sub {
+     my ($self, @items) = @_;
      div {
-         show('item', $_) for @_;
+         show('item', $_) for @items;
      }
  };
  template 'item' => sub {
-     span { shift }
+     my ($self, $item) = @_;
+     span { $item }
  };
 
  package MyApp::Templates::BlogPost;
@@ -296,10 +300,31 @@ to override some of those methods. See also L<Jifty::View::Declare::CRUD>.
  use base 'MyApp::Templates::GenericItem';
 
  template 'item' => sub {
-     my $post = shift;
-     h1 { $post->title }
+     my ($self, $post) = @_;
+     h1  { $post->title }
      div { $post->body }
  };
+
+ package main;
+ use Template::Declare;
+
+ Template::Declare->init( roots => ['MyApp::Templates::GenericItem'] );
+ print Template::Declare->show( 'list', 'foo', 'bar', 'baz' );
+
+ Template::Declare->init( roots => ['MyApp::Templates::BlogPost'] );
+ my $post = My::Post->new(title => 'Hello', body => 'first post');
+ print Template::Declare->show( 'item', $post );
+
+And the output:
+
+ <div>
+  <span>foo</span>
+  <span>bar</span>
+  <span>baz</span>
+ </div>
+
+ <h1>Hello</h1>
+ <div>first post</div>
 
 =head2 Aliasing
 
@@ -368,15 +393,16 @@ sub end_buffer_frame {
 
 =head2 show TEMPLATE_NAME
 
-Call C<show> with a C<template_name> and C<Template::Declare> will
-render that template. Content generated by show can be accessed with
-the C<output> method if the output method you've chosen returns content
-instead of outputting it directly.
+ Template::Declare->show( 'howdy', name => 'Larry' );
+ my $output = Template::Declare->show('index');
 
-(If called in scalar context, this method will also just return the
-content when available).
+Call C<show> with a C<template_name> and C<Template::Declare> will render that
+template. Subsequent arguments will be passed to the template. Content
+generated by C<show()> can be accessed via the C<output()> method if the
+output method you've chosen returns content instead of outputting it directly.
 
-
+If called in scalar context, this method will also just return the content
+when available.
 
 =cut
 
@@ -386,6 +412,111 @@ sub show {
     local %Template::Declare::Tags::ELEMENT_ID_CACHE = ();
     return Template::Declare::Tags::show_page($template => @_);
 }
+
+=head2 path_for $template
+
+  my $path = Template::Declare->path_for('index');
+
+Returns the path for the template name to be used for show, adjusted
+with paths used in C<import_templates>.
+
+=cut
+
+sub path_for {
+    my $class = shift;
+    my $template = shift;
+    return ($class->imported_into ||'') . '/' . $template;
+}
+
+=head2 resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
+
+    my $code = Template::Declare->resolve_template($template);
+    my $code = Template::Declare->has_template($template, 1);
+
+Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
+boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
+in addition to public ones. C<has_template()> is an alias for this method.
+
+First it looks through all the valid Template::Declare roots. For each
+root, it looks to see if the root has a template called $template_name
+directly (or via an C<import> statement). Then it looks to see if there
+are any L</alias>ed paths for the root with prefixes that match the
+template we're looking for.
+
+=cut
+
+sub resolve_template {
+    my $self          = shift;
+    my $template_name = shift;
+    my $show_private  = shift || 0;
+
+    my @search_packages;
+
+    # If we're being called as a class method on T::D it means "search in any package"
+    # Otherwise, it means search only in this specific package"
+    if ( $self eq 'Template::Declare' ) {
+        @search_packages = reverse @{ Template::Declare->roots };
+    } else {
+        @search_packages = ($self);
+    }
+
+    foreach my $package (@search_packages) {
+        next unless ( $package and $package->isa('Template::Declare') );
+        if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
+            return $coderef;
+        } elsif (  $coderef = $package->_has_aliased_template($template_name, $show_private) ) {
+            return $coderef;
+        }
+    }
+}
+
+sub has_template { resolve_template(@_) }
+
+=head2 register_template( TEMPLATE_NAME, CODEREF )
+
+  MyApp::Templates->register_template( howdy => sub { ... } );
+
+This method registers a template called C<TEMPLATE_NAME> in the calling class.
+As you might guess, C<CODEREF> defines the template's implementation. This
+method is mainly intended to be used internally, as you use the C<template>
+keyword to create templates, right?
+
+=cut
+
+sub register_template {
+    my $class         = shift;
+    my $template_name = shift;
+    my $code          = shift;
+    push @{ __PACKAGE__->templates()->{$class} }, $template_name;
+    _register_template( $class, _template_name_to_sub($template_name), $code )
+
+}
+
+=head2 register_private_template( TEMPLATE_NAME, CODEREF )
+
+  MyApp::Templates->register_private_template( howdy => sub { ... } );
+
+This method registers a private template called C<TEMPLATE_NAME> in the caling
+class. As you might guess, C<CODEREF> defines the template's implementation.
+
+Private templates can't be called directly from user code but only from other
+templates.
+
+This method is mainly intended to be used internally, as you use the
+C<private template> expression to create templates, right?
+
+=cut
+
+sub register_private_template {
+    my $class         = shift;
+    my $template_name = shift;
+    my $code          = shift;
+    push @{ __PACKAGE__->private_templates()->{$class} }, $template_name;
+    _register_template( $class, _template_name_to_private_sub($template_name), $code );
+
+}
+
+=head1 FUNCTIONS
 
 =head2 alias TEMPLATE_ROOT under PATH
 
@@ -470,33 +601,6 @@ sub import_templates {
 
 }
 
-=head2 path_for $template
-
-Returns the path for the template name to be used for show, adjusted
-with paths used in import_templates.
-
-=cut
-
-sub path_for {
-    my $class = shift;
-    my $template = shift;
-    return ($class->imported_into ||'') . '/' . $template;
-}
-
-=head2 has_template PACKAGE TEMPLATE_NAME SHOW_PRIVATE
-
-Takes a package, template name and a boolean. The boolean determines whether to show private templates.
-
-Returns a reference to the template's code if found. Otherwise, returns undef.
-
-This method is an alias for L</resolve_template>
-
-=cut
-
-sub has_template {
-   return resolve_template(@_);
-}
-
 sub _has_template {
 
     # Otherwise find only in specific package
@@ -549,45 +653,6 @@ sub _has_aliased_template {
     }
 }
 
-=head2 resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
-
-Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
-boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
-in addition to public ones.
-
-First it looks through all the valid Template::Declare roots. For each
-root, it looks to see if the root has a template called $template_name
-directly (or via an C<import> statement). Then it looks to see if there
-are any L</alias>ed paths for the root with prefixes that match the
-template we're looking for.
-
-=cut
-
-sub resolve_template {
-    my $self          = shift;
-    my $template_name = shift;
-    my $show_private  = shift || 0;
-
-    my @search_packages;
-
-    # If we're being called as a class method on T::D it means "search in any package"
-    # Otherwise, it means search only in this specific package"
-    if ( $self eq 'Template::Declare' ) {
-        @search_packages = reverse @{ Template::Declare->roots };
-    } else {
-        @search_packages = ($self);
-    }
-
-    foreach my $package (@search_packages) {
-        next unless ( $package and $package->isa('Template::Declare') );
-        if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
-            return $coderef;
-        } elsif (  $coderef = $package->_has_aliased_template($template_name, $show_private) ) {
-            return $coderef;
-        }
-    }
-}
-
 sub _dispatch_template {
     my $class = shift;
     my $code  = shift;
@@ -616,43 +681,6 @@ sub _subname {
     $template =~ s{/+}{/}g;
     $template =~ s{^/}{};
     return join( '', $prefix, $template );
-}
-
-=head2 register_template PACKAGE TEMPLATE_NAME CODEREF
-
-This method registers a template called C<TEMPLATE_NAME> in package
-C<PACKAGE>. As you might guess, C<CODEREF> defines the template's
-implementation.
-
-=cut
-
-sub register_template {
-    my $class         = shift;
-    my $template_name = shift;
-    my $code          = shift;
-    push @{ __PACKAGE__->templates()->{$class} }, $template_name;
-    _register_template( $class, _template_name_to_sub($template_name), $code )
-
-}
-
-=head2 register_template PACKAGE TEMPLATE_NAME CODEREF
-
-This method registers a private template called C<TEMPLATE_NAME> in package
-C<PACKAGE>. As you might guess, C<CODEREF> defines the template's
-implementation.
-
-Private templates can't be called directly from user code but only from other
-templates.
-
-=cut
-
-sub register_private_template {
-    my $class         = shift;
-    my $template_name = shift;
-    my $code          = shift;
-    push @{ __PACKAGE__->private_templates()->{$class} }, $template_name;
-    _register_template( $class, _template_name_to_private_sub($template_name), $code );
-
 }
 
 sub _register_template {
@@ -685,13 +713,16 @@ sub package_variables {
 
 =head1 PITFALLS
 
-We're reusing the perl interpreter for our templating langauge, but Perl was not designed specifically for our purpose here. Here are some known pitfalls while you're scripting your templates with this module.
+We're reusing the perl interpreter for our templating langauge, but Perl was
+not designed specifically for our purpose here. Here are some known pitfalls
+while you're scripting your templates with this module.
 
 =over
 
 =item *
 
-It's quite common to see tag sub calling statements without trailing semi-colons right after C<}>. For instance,
+It's quite common to see tag sub calling statements without trailing
+semi-colons right after C<}>. For instance,
 
     template foo => {
         p {
@@ -711,18 +742,21 @@ is equivalent to
         };
     };
 
-But C<xml_decl> is a notable exception. Please always put a trailing semicolon after C<xml_decl { ... }>, or you'll mess up the outputs.
+But C<xml_decl> is a notable exception. Please always put a trailing semicolon
+after C<xml_decl { ... }>, or you'll mess up the outputs.
 
 =item *
 
-Another place that requires trailing semicolon is the statements before a Perl looping statement, an if statement, or a C<show> call. For example:
+Another place that requires trailing semicolon is the statements before a Perl
+looping statement, an if statement, or a C<show> call. For example:
 
     p { "My links:" };
     for (@links) {
-        with( src => $_ ), a {}
+        with ( src => $_ ), a {}
     }
 
-The C<;> after C< p { ... } > is required here, or Perl will complain about syntax errors.
+The C<;> after C< p { ... } > is required here, or Perl will complain about
+syntax errors.
 
 Another example is
 
@@ -731,7 +765,8 @@ Another example is
 
 =item *
 
-The C<is> syntax for declaring tag attributes also requires a trailing semicolon, unless it is the only statement in a block. For example,
+The C<is> syntax for declaring tag attributes also requires a trailing
+semicolon, unless it is the only statement in a block. For example,
 
     p { class is 'item'; id is 'item1'; outs "This is an item" }
     img { src is 'cat.gif' }
@@ -759,13 +794,15 @@ You can use C<outs> here to solve this problem:
 
     p { outs 'hello'; em { 'world' } }
 
-Note you can always get rid of the C<outs> crap if the string literal is the only element of the containing block:
+Note you can always get rid of the C<outs> crap if the string literal is the
+only element of the containing block:
 
    p { 'hello, world!' }
 
 =item *
 
-Look out! If the if block is the last block/statement and the condition part is evaluated to be 0:
+Look out! If the if block is the last block/statement and the condition part
+is evaluated to be 0:
 
    p { if ( 0 ) { } }
 
@@ -777,9 +814,11 @@ instead of the more intutive output:
 
    <p></p>
 
-This's because 0 is the last expression, so it's returned as the value of the whole block, which is used as the content of <p> tag.
+This's because C<0> is the last expression, so it's returned as the value of the
+whole block, which is used as the content of <p> tag.
 
-To get rid of this, just put an empty string at the end so it returns empty string as the content instead of 0:
+To get rid of this, just put an empty string at the end so it returns empty
+string as the content instead of 0:
 
    p { if ( 0 ) { } '' }
 
@@ -787,7 +826,10 @@ To get rid of this, just put an empty string at the end so it returns empty stri
 
 =head1 BUGS
 
-Crawling all over, baby. Be very, very careful. This code is so cutting edge, it can only be fashioned from carbon nanotubes. But we're already using this thing in production :) Make sure you have read the PITFALL section above :)
+Crawling all over, baby. Be very, very careful. This code is so cutting edge,
+it can only be fashioned from carbon nanotubes. But we're already using this
+thing in production :) Make sure you have read the L<PITFALLS/PITFALLS>
+section above :)
 
 Some specific bugs and design flaws that we'd love to see fixed.
 
@@ -800,10 +842,21 @@ Some specific bugs and design flaws that we'd love to see fixed.
 If you run into bugs or misfeatures, please report them to
 C<bug-template-declare@rt.cpan.org>.
 
-
 =head1 SEE ALSO
 
-L<Template::Declare::Tags>, L<Template::Declare::TagSet>, L<Template::Declare::TagSet::HTML>, L<Template::Declare::TagSet::XUL>, L<Jifty>.
+=over
+
+=item L<Template::Declare::Tags>
+
+=item L<Template::Declare::TagSet>
+
+=item L<Template::Declare::TagSet::HTML>
+
+=item L<Template::Declare::TagSet::XUL>
+
+=item L<Jifty>
+
+=back
 
 =head1 AUTHOR
 
@@ -811,7 +864,7 @@ Jesse Vincent <jesse@bestpractical.com>
 
 =head1 LICENSE
 
-Template::Declare is Copyright 2006-2008 Best Practical Solutions, LLC.
+Template::Declare is Copyright 2006-2009 Best Practical Solutions, LLC.
 
 Template::Declare is distributed under the same terms as Perl itself.
 
