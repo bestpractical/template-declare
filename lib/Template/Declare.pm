@@ -184,7 +184,7 @@ In this example, we'll show off how to set attributes on HTML tags, how to call 
  private template 'footer' => sub {
         my $self = shift;
         my $time = shift || gmtime;
- 
+
         div { attr { id => "footer"};
               "Page last generated at $time."
         }
@@ -267,8 +267,8 @@ how to use a postprocessor to emphasize text _like this_.
 
  # Output:
  #
- # <h1>Welcome to 
- #  <em>my</em> site. It&#39;s 
+ # <h1>Welcome to
+ #  <em>my</em> site. It&#39;s
  #  <em>great</em>!</h1>
  # <h1>Welcome to <em>my</em> site. It&#39;s <em>great</em>!</h1>
  # <h2>This is _not_ emphasized.</h2>
@@ -448,8 +448,8 @@ sub import_templates {
 
 =head2 path_for $template
 
- Returns the path for the template name to be used for show, adjusted
- with paths used in import_templates.
+Returns the path for the template name to be used for show, adjusted
+with paths used in import_templates.
 
 =cut
 
@@ -496,7 +496,7 @@ sub _has_aliased_template {
 
     # XXX Should we consider normalizing the path in a more standard way?
     $template_name = "/$template_name" unless $template_name =~ m{^/};
-    
+
     foreach my $alias_key ( @{ Template::Declare->aliases->{$package} } ) {
         my $alias_info   = $package->alias_metadata()->{$alias_key};
         my $alias_prefix = $alias_info->{path};
@@ -555,7 +555,7 @@ sub resolve_template {
     }
 
     foreach my $package (@search_packages) {
-        next unless ( $package and $package->isa('Template::Declare') ); 
+        next unless ( $package and $package->isa('Template::Declare') );
         if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
             return $coderef;
         } elsif (  $coderef = $package->_has_aliased_template($template_name, $show_private) ) {
@@ -615,9 +615,9 @@ sub register_template {
 
 This method registers a private template called C<TEMPLATE_NAME> in package
 C<PACKAGE>. As you might guess, C<CODEREF> defines the template's
-implementation. 
+implementation.
 
-Private templates can't be called directly from user code but only from other 
+Private templates can't be called directly from user code but only from other
 templates.
 
 =cut
