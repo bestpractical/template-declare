@@ -489,7 +489,6 @@ sub register_template {
     my $code          = shift;
     push @{ __PACKAGE__->templates()->{$class} }, $template_name;
     _register_template( $class, _template_name_to_sub($template_name), $code )
-
 }
 
 =head2 register_private_template( TEMPLATE_NAME, CODEREF )
@@ -596,20 +595,28 @@ sub import_templates {
         Class::ISA::self_and_super_path( $import_from_base );
 
     foreach my $import_from (@packages) {
-        foreach my $template_name ( @{ __PACKAGE__->templates()->{$import_from} } ) {
+        foreach my $template_name (  __PACKAGE__->_templates_for($import_from) ) {
             my $code = $import_from->_find_template_sub( _template_name_to_sub($template_name));
             $import_into->register_template( $prepend_path . "/" . $template_name, $code );
         }
-        foreach my $template_name ( @{ __PACKAGE__->private_templates()->{$import_from} } ) {
+        foreach my $template_name (  __PACKAGE__->_private_templates_for($import_from) ) {
             my $code = $import_from->_find_template_sub( _template_name_to_private_sub($template_name) );
             $import_into->register_private_template( $prepend_path . "/" . $template_name, $code );
         }
     }
+}
 
+sub _templates_for {
+    my $tmpl = shift->templates->{+shift} or return;
+    return wantarray ? @{ $tmpl } : $tmpl;
+}
+
+sub _private_templates_for {
+    my $tmpl = shift->private_templates->{+shift} or return;
+    return wantarray ? @{ $tmpl } : $tmpl;
 }
 
 sub _has_template {
-
     # Otherwise find only in specific package
     my $pkg           = shift;
     my $template_name = shift;
