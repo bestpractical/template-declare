@@ -387,9 +387,26 @@ sub init {
 
 }
 
+=head2 new_buffer_frame
+
+  $td->new_buffer_frame();
+
+Creates a new buffer frame.
+
+=cut
+
 sub new_buffer_frame {
     __PACKAGE__->buffer->push( private => 1 );
 }
+
+=head2 end_buffer_frame
+
+  my $buf = $td->end_buffer_frame();
+
+Deletes and returns the buffer most recently added by a call to
+C<new_buffer_frame()>.
+
+=cut
 
 sub end_buffer_frame {
     __PACKAGE__->buffer->pop;
@@ -446,6 +463,10 @@ root, it looks to see if the root has a template called $template_name
 directly (or via an C<import> statement). Then it looks to see if there
 are any L</alias>ed paths for the root with prefixes that match the
 template we're looking for.
+
+=head2 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
+
+An alias for C<resolve_template>.
 
 =cut
 
@@ -608,6 +629,43 @@ sub import_templates {
     }
 }
 
+=head2 package_variable( VARIABLE )
+
+  $td->package_variable( $varname => $value );
+  $value = $td->package_variable( $varname );
+
+Returns the value set for a template alias's variable. See L<alias/alias> for
+details.
+
+=cut
+
+sub package_variable {
+    my $self = shift;
+    my $var  = shift;
+    if (@_) {
+        $TEMPLATE_VARS->{$self}->{$var} = shift;
+    }
+    return $TEMPLATE_VARS->{$self}->{$var};
+}
+
+=head2 package_variables( VARIABLE )
+
+  $td->package_variables( $variables );
+  $variables = $td->package_variables( );
+
+Get or set a hash reference of variables for a template alias. See
+L<alias/alias> for details.
+
+=cut
+
+sub package_variables {
+    my $self = shift;
+    if (@_) {
+        %{ $TEMPLATE_VARS->{$self} } = shift;
+    }
+    return $TEMPLATE_VARS->{$self};
+}
+
 sub _templates_for {
     my $tmpl = shift->templates->{+shift} or return;
     return wantarray ? @{ $tmpl } : $tmpl;
@@ -706,24 +764,6 @@ sub _register_template {
     no strict 'refs';
     no warnings 'redefine';
     *{ $class . '::' . $subname } = $coderef;
-}
-
-sub package_variable {
-    my $self = shift;
-    my $var  = shift;
-    if (@_) {
-        $TEMPLATE_VARS->{$self}->{$var} = shift;
-    }
-    return $TEMPLATE_VARS->{$self}->{$var};
-}
-
-sub package_variables {
-    my $self = shift;
-    my $var  = shift;
-    if (@_) {
-        %{ $TEMPLATE_VARS->{$self} } = shift;
-    }
-    return $TEMPLATE_VARS->{$self};
 }
 
 =head1 PITFALLS

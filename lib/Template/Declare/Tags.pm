@@ -426,6 +426,16 @@ sub attr (&;@) {
     return @_;
 }
 
+=begin comment
+
+=head2 append_attr
+
+How does this work?
+
+=end comment
+
+=cut
+
 sub append_attr {
     die "Subroutine attr failed: $_[0] => '$_[1]'\n\t".
         "(Perhaps you're using an unknown tag in the outer container?)";
@@ -763,6 +773,16 @@ sub show {
     }
 
 }
+
+=begin comment
+
+=head2 show_page
+
+A private function?
+
+=end comment
+
+=cut
 
 sub show_page {
     my $template = shift;
