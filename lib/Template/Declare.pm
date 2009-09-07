@@ -570,7 +570,7 @@ sub alias {
 
 =head2 import_templates
 
- import_templates MyApp::Templates under '/something';
+    import_templates MyApp::Templates under '/something';
 
 Import the templates defined in a template class into a subpath via the
 C<import_templates> function. In this example, the templates defined in

@@ -1,5 +1,7 @@
 0.41
-* Documented aliasing.
+* Documented aliasing and template importing (mixins).
+* Reworked all the documentation, neatening things and fixing bugs in the
+  examples.
 
 0.40_01 2009-08-12
 * Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué
