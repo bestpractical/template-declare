@@ -47,9 +47,10 @@ Template::Declare - Perlish declarative templates
 
 =head1 SYNOPSIS
 
-C<Template::Declare> is a pure-perl declarative HTML/XUL/RDF/XML templating system.
+C<Template::Declare> is a pure-Perl Peclarative HTML/XUL/RDF/XML templating
+system.
 
-Yes.  Another one. There are many others like it, but this one is ours.
+Yes. Another one. There are many others like it, but this one is ours.
 
 A few key features and buzzwords:
 
@@ -57,7 +58,7 @@ A few key features and buzzwords:
 
 =item *
 
-All templates are 100% pure perl code
+All templates are 100% pure Perl code
 
 =item *
 
@@ -269,6 +270,7 @@ how to use a postprocessor to emphasize text _like this_.
  }
 
 And the output:
+
  <h1>Welcome to
   <em>my</em> site. It&#39;s
   <em>great</em>!</h1>
@@ -515,8 +517,6 @@ sub register_private_template {
 
 }
 
-=head1 FUNCTIONS
-
 =head2 alias TEMPLATE_ROOT under PATH
 
  alias Some::Clever::Mixin under '/mixin';
@@ -682,7 +682,6 @@ sub _find_template_sub {
 
 sub _template_name_to_sub {
     return _subname( "_jifty_template_", shift );
-
 }
 
 sub _template_name_to_private_sub {
@@ -738,7 +737,7 @@ while you're scripting your templates with this module.
 It's quite common to see tag sub calling statements without trailing
 semi-colons right after C<}>. For instance,
 
-    template foo => {
+    template foo => sub {
         p {
             a { attr { src => '1.png' } }
             a { attr { src => '2.png' } }
@@ -748,7 +747,7 @@ semi-colons right after C<}>. For instance,
 
 is equivalent to
 
-    template foo => {
+    template foo => sub {
         p {
             a { attr { src => '1.png' } };
             a { attr { src => '2.png' } };
@@ -808,8 +807,8 @@ You can use C<outs> here to solve this problem:
 
     p { outs 'hello'; em { 'world' } }
 
-Note you can always get rid of the C<outs> crap if the string literal is the
-only element of the containing block:
+Note you can always get rid of C<outs> if the string literal is the only
+element of the containing block:
 
    p { 'hello, world!' }
 
@@ -828,8 +827,8 @@ instead of the more intutive output:
 
    <p></p>
 
-This's because C<0> is the last expression, so it's returned as the value of the
-whole block, which is used as the content of <p> tag.
+This's because C<if ( 0 )> is the last expression, so it's returned as the
+value of the whole block, which is used as the content of <p> tag.
 
 To get rid of this, just put an empty string at the end so it returns empty
 string as the content instead of 0:

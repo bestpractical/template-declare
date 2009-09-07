@@ -106,15 +106,18 @@ Template::Declare::Tags - Build and install XML Tag subroutines for Template::De
         img { src is 'dog.gif' }
     };
 
-    # Produces:
-    # <link />
-    # <table>
-    #  <tr>
-    #   <td>Hello, world!</td>
-    #  </tr>
-    # </table>
-    # <img src="cat.gif" />
-    # <img src="dog.gif" />
+Produces:
+
+ <link />
+ <table>
+  <tr>
+   <td>Hello, world!</td>
+  </tr>
+ </table>
+ <img src="cat.gif" />
+ <img src="dog.gif" />
+
+Using XUL templates with a namespace:
 
     package MyApp::Templates;
 
@@ -130,26 +133,28 @@ Template::Declare::Tags - Build and install XML Tag subroutines for Template::De
         }
     };
 
-    # Produces:
-    #   <groupbox>
-    #    <caption label="Colors" />
-    #    <html:div>
-    #     <html:p>howdy!</html:p>
-    #    </html:div>
-    #    <html:br></html:br>
-    #   </groupbox>
+Produces:
+
+ <groupbox>
+  <caption label="Colors" />
+  <html:div>
+   <html:p>howdy!</html:p>
+  </html:div>
+  <html:br></html:br>
+ </groupbox>
 
 =head1 DESCRIPTION
 
 C<Template::Declare::Tags> is used to generate and install
-subroutines for tags into the user's namespace.
+subroutines for tags into the calling namespace.
 
-You can specify the tag sets used by providing a list of
-module list in the C<use> statement:
+You can specify the tag sets to install by providing a list of
+modules in the C<use> statement:
 
     use Template::Declare::Tags qw/ HTML XUL /;
 
-By default, it uses the tag set provided by L<Template::Declare::TagSet::HTML>. So
+By default, Template::Declare::Tags uses the tag set provided by
+L<Template::Declare::TagSet::HTML>. So
 
     use Template::Declare::Tags;
 
@@ -158,9 +163,10 @@ is equivalent to
     use Template::Declare::Tags 'HTML';
 
 Currently L<Template::Declare> bundles the following tag sets:
-L<Template::Declare::TagSet::HTML>, L<Template::Declare::TagSet::XUL>, L<Template::Declare::TagSet::RDF>, and L<Template::Declare::TagSet::RDF::EM>.
+L<Template::Declare::TagSet::HTML>, L<Template::Declare::TagSet::XUL>,
+L<Template::Declare::TagSet::RDF>, and L<Template::Declare::TagSet::RDF::EM>.
 
-You can certainly specify your own tag set classes, as long
+You can specify your own tag set classes, as long
 as they subclass L<Template::Declare::TagSet> and implement
 the corresponding methods (e.g. C<get_tag_list>).
 
@@ -178,13 +184,12 @@ Then C<Template::Declare::Tags> will no longer try to load C<Template::Declare::
 and C<MyTag::Foo> will be loaded instead.
 
 XML namespaces are emulated by Perl packages. For
-example, you can embed HTML tags within XUL using the C<html> namespace:
+example, to embed HTML tags within XUL using the C<html> namespace:
 
     package MyApp::Templates;
 
     use base 'Template::Declare';
-    use Template::Declare::Tags
-        'XUL', HTML => { namespace => 'html' };
+    use Template::Declare::Tags 'XUL', HTML => { namespace => 'html' };
 
     template main => sub {
         groupbox {
@@ -194,27 +199,33 @@ example, you can embed HTML tags within XUL using the C<html> namespace:
         }
     };
 
-This will give you
+This will output:
 
-       <groupbox>
-        <caption label="Colors" />
-        <html:div>
-         <html:p>howdy!</html:p>
-        </html:div>
-        <html:br></html:br>
-       </groupbox>
+ <groupbox>
+  <caption label="Colors" />
+  <html:div>
+   <html:p>howdy!</html:p>
+  </html:div>
+  <html:br></html:br>
+ </groupbox>
 
-Behind the scene, C<Template::Declare::Tags>  will generate a Perl package named C<html> and install HTML tag subroutines into that package. On the other hand, XUL tag subroutines are installed into the current package, namely, C<MyApp::Templates> in the previous example.
+Behind the scenes, C<Template::Declare::Tags> generates a Perl package named
+C<html> and installs the HTML tag subroutines into that package. On the other
+hand, XUL tag subroutines are installed into the current package, namely,
+C<MyApp::Templates> in the previous example.
 
-There are cases when you want to specify a different Perl package for a perticular XML namespace name. For instance, the C<html> Perl package has already been used for other purposes in your application and you don't want to install subs there and mess things up, then the C<package> option can come to rescue:
+There may be cases when you want to specify a different Perl package for a
+perticular XML namespace. For instance, if the C<html> Perl package has
+already been used for other purposes in your application and you don't want to
+install subs there and mess things up, use the C<package> option to install
+them elsewhere:
 
     package MyApp::Templates;
     use base 'Template::Declare';
-    use Template::Declare::Tags
-        'XUL', HTML => {
-            namespace => 'htm',
-            package => 'MyHtml'
-        };
+    use Template::Declare::Tags 'XUL', HTML => {
+        namespace => 'htm',
+        package   => 'MyHtml'
+    };
 
     template main => sub {
         groupbox {
@@ -224,15 +235,15 @@ There are cases when you want to specify a different Perl package for a perticul
         }
     };
 
-This code snippet will still generate something like the following:
+This code snippet will then generate something like the following:
 
-    <groupbox>
-     <caption label="Colors" />
-     <htm:div>
-      <htm:p>howdy!</htm:p>
-     </htm:div>
-     <htm:br></htm:br>
-    </groupbox>
+ <groupbox>
+  <caption label="Colors" />
+  <htm:div>
+   <htm:p>howdy!</htm:p>
+  </htm:div>
+  <htm:br></htm:br>
+ </groupbox>
 
 =head1 METHODS AND SUBROUTINES
 
@@ -244,7 +255,7 @@ will encode the template as a perl subroutine and stash it to be called
 with C<show()>.
 
 (Did you know that you can have characters like ":" and "/" in your Perl
-subroutine names? The easy way to get at them is with "can").
+subroutine names? The easy way to get at them is with C<can>).
 
 =cut
 
