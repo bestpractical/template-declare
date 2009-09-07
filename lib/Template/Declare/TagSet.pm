@@ -26,7 +26,7 @@ __END__
 
 =head1 NAME
 
-Template::Declare::TagSet - Base class for tag set classes used by Template::Declare::Tags
+Template::Declare::TagSet - Base class for tag sets used by Template::Declare::Tags
 
 =head1 SYNOPSIS
 
@@ -35,15 +35,16 @@ Template::Declare::TagSet - Base class for tag set classes used by Template::Dec
 
     # returns an array ref for the tag names
     sub get_tag_list {
-        [ qw/ html body tr td table
-             base meta link hr
-            / ]
+        [ qw(
+            html body tr td table
+            base meta link hr
+        )]
     }
 
     # prevents potential naming conflicts:
     sub get_alternate_spelling {
         my ($self, $tag) = @_;
-        return 'row' if $tag eq 'tr';
+        return 'row'  if $tag eq 'tr';
         return 'cell' if $tag eq 'td';
     }
 
@@ -51,59 +52,72 @@ Template::Declare::TagSet - Base class for tag set classes used by Template::Dec
     # combined to "<tag />":
     sub can_combine_empty_tags {
         my ($self, $tag) = @_;
-        $tag =~ /^ base | meta | link | hr $/x;
+        $tag =~ /^ (?: base | meta | link | hr ) $/x;
     }
+
+=head1 DESCRIPTION
+
+Template::Declare::TagSet is the base class for declaring packages of
+Template::Delcare tags. If you need to create new tags for use in your
+temlates, this is the base class for you! Review the source code of
+L<Template::Declare::TagSet::HTML|Template::Declare::TagSet::HTML> for a
+useful example.
 
 =head1 METHODS
 
-=over
+=head2 new( \%PARAMS )
 
-=item C<< $obj = Template::Declare::TagSet->new({ package => 'Foo::Bar', namespace => undef }); >>
+    my $tag_set = Template::Declare::TagSet->new({
+        package   => 'Foo::Bar',
+        namespace => undef,
+    });
 
-Constructor created by C<Class::Accessor::Fast>,
-accepting an optional option list.
+Constructor created by C<Class::Accessor::Fast>, accepting an optional hash
+reference of parameters.
 
-=item C<< $list = $obj->get_tag_list() >>
+=head2 get_tag_list
 
-Returns an array ref for the tag names.
+    my $list = $tag_set->get_tag_list();
 
-=item C<< $bool = $obj->get_alternate_spelling($tag) >>
+Returns an array ref for the tag names offered by a tag set.
 
-Returns whether a tag has an alternative spelling. Basically
-it provides a way to work around naming conflicts, for
-examples, the C<tr> tag in HTML conflicts with the C<tr>
-operator in Perl and the C<template> tag in XUL conflicts
-with the C<template> sub exported by C<Template::Declare::Tags>.
+=head2 get_alternate_spelling( TAG )
 
-=item C<< $bool = $obj->can_combine_empty_tags($tag) >>
+    $bool = $obj->get_alternate_spelling($tag);
 
-Specifies whether "<tag></tag>" can be combined into a single
-token "<tag />".
+Returns true if a tag has an alternative spelling. Basically it provides a way
+to work around naming conflicts. For example, the C<tr> tag in HTML conflicts
+with Perl's C<tr> operator, and the C<template> tag in XUL conflicts with the
+C<template> sub exported by C<Template::Declare::Tags>.
 
-Always returns true (value 1) in this base class.
+=head2 can_combine_empty_tags( TAG )
 
-But there's some cases where you want to override the
-deafault implementation. For example,
-C<< Template::Declare::TagSet::HTML->can_combine_empty_tags('img') >> returns true (1) since C<< <img src="..." /> >> is always
-required for HTML pages.
+    $bool = $obj->can_combine_empty_tags($tag);
 
-=back
+Specifies whether C<< <tag></tag> >> can be combined into a single token, C<<
+<tag /> >>. By default, all tags can be combined into a single token; override
+in a subclass to change this value where appropriate. For example,
+C<< Template::Declare::TagSet::HTML->can_combine_empty_tags('img') >> returns
+true since C<< <img src="..." /> >> is always required for HTML pages.
+C<< Template::Declare::TagSet::HTML->can_combine_empty_tags('script') >>, on
+the other hand, returns false, since some browsers can't handle a single
+script token.
 
 =head1 ACCESSORS
 
 This class has two read-only accessors:
 
-=over
+=head2 package
 
-=item C<< $obj->package() >>
+    my $package = $obj->package();
 
-Retrieves the value of the C<package> option set via
-the constructor.
+Retrieves the value of the C<package> option set via the constructor.
 
-=item C<< $obj->namespace() >>
+=head2 namespace
 
-Retrieves the value of the C<namespace> option set by
-the constructor.
+    my $namespace = $obj->namespace();
+
+Retrieves the value of the C<namespace> option set via the constructor.
 
 =back
 
