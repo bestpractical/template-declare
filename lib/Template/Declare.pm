@@ -47,6 +47,38 @@ Template::Declare - Perlish declarative templates
 
 =head1 SYNOPSIS
 
+Here's an example of basic HTML usage:
+
+    package MyApp::Templates;
+    use Template::Declare::Tags; # defaults to 'HTML'
+    use base 'Template::Declare';
+
+    template simple => sub {
+        html {
+            head {}
+            body {
+                p { 'Hello, world wide web!' }
+            }
+        }
+    };
+
+    package main;
+    use Template::Declare;
+    Template::Declare->init( roots => ['MyApp::Templates'] );
+    print Template::Declare->show( 'simple' );
+
+And here's the output:
+
+ <html>
+  <head></head>
+  <body>
+   <p>Hello, world wide web!
+   </p>
+  </body>
+ </html>
+
+=head1 DESCRIPTION
+
 C<Template::Declare> is a pure-Perl Peclarative HTML/XUL/RDF/XML templating
 system.
 
@@ -90,37 +122,7 @@ Public and private templates
 
 =head2 Basic usage
 
-Here's an example of basic HTML usage:
-
-    package MyApp::Templates;
-    use Template::Declare::Tags; # defaults to 'HTML'
-    use base 'Template::Declare';
-
-    template simple => sub {
-        html {
-            head {}
-            body {
-                p { 'Hello, world wide web!' }
-            }
-        }
-    };
-
-    package main;
-    use Template::Declare;
-    Template::Declare->init( roots => ['MyApp::Templates'] );
-    print Template::Declare->show( 'simple' );
-
-And here's the output:
-
- <html>
-  <head></head>
-  <body>
-   <p>Hello, world wide web!
-   </p>
-  </body>
- </html>
-
-Let's do XUL!
+A simple HTML example is in the L<SYNOPSIS/SYNOPSIS>. So let's do XUL!
 
     package MyApp::Templates;
     use base 'Template::Declare';
@@ -169,48 +171,48 @@ In this example, we'll show off how to set attributes on HTML tags, how to
 call other templates and how to declare a I<private> template that can't be
 called directly. We'll also show passing arguments to templates.
 
- package MyApp::Templates;
- use Template::Declare::Tags;
- use base 'Template::Declare';
+    package MyApp::Templates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
 
- private template 'header' => sub {
-     head {
-         title { 'This is a webpage' };
-         meta  { attr { generator => "This is not your father's frontpage" } }
-     }
- };
+    private template 'header' => sub {
+        head {
+            title { 'This is a webpage' };
+            meta  { attr { generator => "This is not your father's frontpage" } }
+        }
+    };
 
- private template 'footer' => sub {
-     my $self = shift;
-     my $time = shift || gmtime;
+    private template 'footer' => sub {
+        my $self = shift;
+        my $time = shift || gmtime;
 
-     div {
-         attr { id => "footer"};
-         "Page last generated at $time."
-     }
- };
+        div {
+            attr { id => "footer"};
+            "Page last generated at $time."
+        }
+    };
 
- template simple => sub {
-     my $self = shift;
-     my $user = shift || 'world wide web';
+    template simple => sub {
+        my $self = shift;
+        my $user = shift || 'world wide web';
 
-     html {
-         show('header');
-         body {
-             img { src is 'hello.jpg' }
-             p {
-                 attr { class => 'greeting'};
-                 "Hello, $user!"
-             };
-         };
-         show('footer');
-     }
- };
+        html {
+            show('header');
+            body {
+                img { src is 'hello.jpg' }
+                p {
+                    attr { class => 'greeting'};
+                    "Hello, $user!"
+                };
+            };
+            show('footer');
+        }
+    };
 
- package main;
- use Template::Declare;
- Template::Declare->init( roots => ['MyApp::Templates'] );
- print Template::Declare->show( 'simple', 'TD user');
+    package main;
+    use Template::Declare;
+    Template::Declare->init( roots => ['MyApp::Templates'] );
+    print Template::Declare->show( 'simple', 'TD user');
 
 And the output:
 
@@ -234,40 +236,40 @@ for attributes, and more samples, see L<Template::Declare::Tags>.
 Sometimes you just want simple syntax for inline elements. The following shows
 how to use a postprocessor to emphasize text _like this_.
 
- package MyApp::Templates;
- use Template::Declare::Tags;
- use base 'Template::Declare';
+    package MyApp::Templates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
 
- template before => sub {
-     h1 {
-         outs "Welcome to ";
-         em { "my" };
-         outs " site. It's ";
-         em { "great" };
-         outs "!";
-     };
- };
+    template before => sub {
+        h1 {
+            outs "Welcome to ";
+            em { "my" };
+            outs " site. It's ";
+            em { "great" };
+            outs "!";
+        };
+    };
 
- template after => sub {
-     h1 { "Welcome to _my_ site. It's _great_!" };
-     h2 { outs_raw "This is _not_ emphasized." };
- };
+    template after => sub {
+        h1 { "Welcome to _my_ site. It's _great_!" };
+        h2 { outs_raw "This is _not_ emphasized." };
+    };
 
- package main;
- use Template::Declare;
- Template::Declare->init(
-     roots         => ['MyApp::Templates'],
-     postprocessor => \&emphasize,
- );
+    package main;
+    use Template::Declare;
+    Template::Declare->init(
+        roots         => ['MyApp::Templates'],
+        postprocessor => \&emphasize,
+    );
 
- print Template::Declare->show( 'before');
- print Template::Declare->show( 'after');
+    print Template::Declare->show( 'before');
+    print Template::Declare->show( 'after');
 
- sub emphasize {
-     my $text = shift;
-     $text =~ s{_(.+?)_}{<em>$1</em>}g;
-     return $text;
- }
+    sub emphasize {
+        my $text = shift;
+        $text =~ s{_(.+?)_}{<em>$1</em>}g;
+        return $text;
+    }
 
 And the output:
 
@@ -282,40 +284,40 @@ And the output:
 Templates are really just methods. You can subclass your template packages to
 override some of those methods. See also L<Jifty::View::Declare::CRUD>.
 
- package MyApp::Templates::GenericItem;
- use Template::Declare::Tags;
- use base 'Template::Declare';
+    package MyApp::Templates::GenericItem;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
 
- template 'list' => sub {
-     my ($self, @items) = @_;
-     div {
-         show('item', $_) for @items;
-     }
- };
- template 'item' => sub {
-     my ($self, $item) = @_;
-     span { $item }
- };
+    template 'list' => sub {
+        my ($self, @items) = @_;
+        div {
+            show('item', $_) for @items;
+        }
+    };
+    template 'item' => sub {
+        my ($self, $item) = @_;
+        span { $item }
+    };
 
- package MyApp::Templates::BlogPost;
- use Template::Declare::Tags;
- use base 'MyApp::Templates::GenericItem';
+    package MyApp::Templates::BlogPost;
+    use Template::Declare::Tags;
+    use base 'MyApp::Templates::GenericItem';
 
- template 'item' => sub {
-     my ($self, $post) = @_;
-     h1  { $post->title }
-     div { $post->body }
- };
+    template 'item' => sub {
+        my ($self, $post) = @_;
+        h1  { $post->title }
+        div { $post->body }
+    };
 
- package main;
- use Template::Declare;
+    package main;
+    use Template::Declare;
 
- Template::Declare->init( roots => ['MyApp::Templates::GenericItem'] );
- print Template::Declare->show( 'list', 'foo', 'bar', 'baz' );
+    Template::Declare->init( roots => ['MyApp::Templates::GenericItem'] );
+    print Template::Declare->show( 'list', 'foo', 'bar', 'baz' );
 
- Template::Declare->init( roots => ['MyApp::Templates::BlogPost'] );
- my $post = My::Post->new(title => 'Hello', body => 'first post');
- print Template::Declare->show( 'item', $post );
+    Template::Declare->init( roots => ['MyApp::Templates::BlogPost'] );
+    my $post = My::Post->new(title => 'Hello', body => 'first post');
+    print Template::Declare->show( 'item', $post );
 
 And the output:
 
@@ -395,8 +397,8 @@ sub end_buffer_frame {
 
 =head2 show TEMPLATE_NAME
 
- Template::Declare->show( 'howdy', name => 'Larry' );
- my $output = Template::Declare->show('index');
+    Template::Declare->show( 'howdy', name => 'Larry' );
+    my $output = Template::Declare->show('index');
 
 Call C<show> with a C<template_name> and C<Template::Declare> will render that
 template. Subsequent arguments will be passed to the template. Content
@@ -417,7 +419,7 @@ sub show {
 
 =head2 path_for $template
 
-  my $path = Template::Declare->path_for('index');
+    my $path = Template::Declare->path_for('index');
 
 Returns the path for the template name to be used for show, adjusted
 with paths used in C<import_templates>.
@@ -476,7 +478,7 @@ sub has_template { resolve_template(@_) }
 
 =head2 register_template( TEMPLATE_NAME, CODEREF )
 
-  MyApp::Templates->register_template( howdy => sub { ... } );
+    MyApp::Templates->register_template( howdy => sub { ... } );
 
 This method registers a template called C<TEMPLATE_NAME> in the calling class.
 As you might guess, C<CODEREF> defines the template's implementation. This
@@ -495,7 +497,7 @@ sub register_template {
 
 =head2 register_private_template( TEMPLATE_NAME, CODEREF )
 
-  MyApp::Templates->register_private_template( howdy => sub { ... } );
+    MyApp::Templates->register_private_template( howdy => sub { ... } );
 
 This method registers a private template called C<TEMPLATE_NAME> in the caling
 class. As you might guess, C<CODEREF> defines the template's implementation.
@@ -519,8 +521,8 @@ sub register_private_template {
 
 =head2 alias TEMPLATE_ROOT under PATH
 
- alias Some::Clever::Mixin under '/mixin';
- alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
+    alias Some::Clever::Mixin under '/mixin';
+    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
 
 Sometimes you want to alias templates to a subpath, or mix them into an
 existing template path. Use C<alias> to do so. In the first example, if
@@ -531,10 +533,10 @@ The second example mixes in the templates defined in Some::Other::Mixin into
 the "/mymix" path and defines a package variable for use only by the alias.
 If this template was defined in Some::Other::Mixin:
 
-  template 'howdy' => sub {
-      my $self = shift;
-      outs "Howdy, " . $self->package_variable('name') || 'Jesse';
-  };
+    template 'howdy' => sub {
+        my $self = shift;
+        outs "Howdy, " . $self->package_variable('name') || 'Jesse';
+    };
 
 Then use of the "mymixin/howdy" template will output "Howdy, Lary", while use
 of the original template, "howdy", will output "Howdy, Jesse". In other words,
@@ -792,16 +794,16 @@ Literal strings that have tag siblings won't be captured. So the following templ
 
 produces
 
-  <p>
-   <em>world</em>
-  </p>
+ <p>
+  <em>world</em>
+ </p>
 
 instead of the desired output
 
-  <p>
-   hello
-   <em>world</em>
-  </p>
+ <p>
+  hello
+  <em>world</em>
+ </p>
 
 You can use C<outs> here to solve this problem:
 
@@ -810,22 +812,22 @@ You can use C<outs> here to solve this problem:
 Note you can always get rid of C<outs> if the string literal is the only
 element of the containing block:
 
-   p { 'hello, world!' }
+    p { 'hello, world!' }
 
 =item *
 
 Look out! If the if block is the last block/statement and the condition part
 is evaluated to be 0:
 
-   p { if ( 0 ) { } }
+    p { if ( 0 ) { } }
 
 produces
 
-   <p>0</p>
+ <p>0</p>
 
 instead of the more intutive output:
 
-   <p></p>
+ <p></p>
 
 This's because C<if ( 0 )> is the last expression, so it's returned as the
 value of the whole block, which is used as the content of <p> tag.
@@ -833,7 +835,7 @@ value of the whole block, which is used as the content of <p> tag.
 To get rid of this, just put an empty string at the end so it returns empty
 string as the content instead of 0:
 
-   p { if ( 0 ) { } '' }
+    p { if ( 0 ) { } '' }
 
 =back
 
