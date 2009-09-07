@@ -65,7 +65,7 @@ useful example.
 
 =head1 METHODS
 
-=head2 new( \%PARAMS )
+=head2 new( PARAMS )
 
     my $tag_set = Template::Declare::TagSet->new({
         package   => 'Foo::Bar',
@@ -94,9 +94,9 @@ C<template> sub exported by C<Template::Declare::Tags>.
 
     $bool = $obj->can_combine_empty_tags($tag);
 
-Specifies whether C<< <tag></tag> >> can be combined into a single token, C<<
-<tag /> >>. By default, all tags can be combined into a single token; override
-in a subclass to change this value where appropriate. For example,
+Specifies whether C<< <tag></tag> >> can be combined into a single token,
+C<< <tag /> >>. By default, all tags can be combined into a single token;
+override in a subclass to change this value where appropriate. For example,
 C<< Template::Declare::TagSet::HTML->can_combine_empty_tags('img') >> returns
 true since C<< <img src="..." /> >> is always required for HTML pages.
 C<< Template::Declare::TagSet::HTML->can_combine_empty_tags('script') >>, on
@@ -118,8 +118,6 @@ Retrieves the value of the C<package> option set via the constructor.
     my $namespace = $obj->namespace();
 
 Retrieves the value of the C<namespace> option set via the constructor.
-
-=back
 
 =head1 AUTHOR
 

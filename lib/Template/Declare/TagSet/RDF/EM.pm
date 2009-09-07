@@ -24,14 +24,13 @@ __END__
 
 =head1 NAME
 
-Template::Declare::TagSet::RDF::EM - Tag set for Mozilla's em-rdf
+Template::Declare::TagSet::RDF::EM - Template::Declare TAG set for Mozilla's em-rdf
 
 =head1 SYNOPSIS
 
     # normal use on the user side:
     use base 'Template::Declare';
-    use Template::Declare::Tags
-         'RDF::EM' => { namespace => 'em' }, 'RDF';
+    use Template::Declare::Tags 'RDF::EM' => { namespace => 'em' }, 'RDF';
 
     template foo => sub {
         RDF {
@@ -49,39 +48,88 @@ Template::Declare::TagSet::RDF::EM - Tag set for Mozilla's em-rdf
         }
     };
 
-=head1 INHERITANCE
+=head1 DESCRIPTION
 
-    Template::Declare::TagSet::RDF::EM
-        isa Template::Declare::TagSet
+Template::Declare::TagSet::RDF::EM defines a full set of Mozilla EM-RDF tags
+for use in Template::Declare templates. You generally won't use this module
+directly, but will load it via:
+
+    use Template::Declare::Tags 'RDF::EM';
 
 =head1 METHODS
 
+=head2 new( PARAMS )
+
+    my $html_tag_set = Template::Declare::TagSet->new({
+        package   => 'EmRDF',
+        namespace => 'em-rdf',
+    });
+
+Constructor inherited from L<Template::Declare::TagSet|Template::Declare::TagSet>.
+
+=head2 get_tag_list
+
+    my $list = $tag_set->get_tag_list();
+
+Returns an array ref of all the RDF tags defined by
+Template::Declare::TagSet::RDF. Here is the complete list:
+
 =over
 
-=item C<< $obj = Template::Declare::TagSet::RDF::EM->new({ namespace => $XML_namespace, package => $Perl_package }) >>
+=item C<aboutURL>
 
-Constructor inherited from L<Template::Declare::TagSet>.
+=item C<contributor>
 
-=item C<< $list = $obj->get_tag_list() >>
+=item C<creator>
 
-Returns an array ref for the tag names.
+=item C<description>
 
-Currently the following tags are supported:
+=item C<developer>
 
-        aboutURL    contributor    creator
-        description    developer    file
-        hidden    homepageURL    iconURL
-        id    locale    localized
-        maxVersion    minVersion    name
-        optionsURL    package    requires
-        skin    targetApplication    targetPlatform
-        translator    type    updateURL
-        version
+=item C<file>
 
-This list may be not exhaustive; if you find some
-important missing ones, please let us know :)
+=item C<hidden>
+
+=item C<homepageURL>
+
+=item C<iconURL>
+
+=item C<id>
+
+=item C<locale>
+
+=item C<localized>
+
+=item C<maxVersion>
+
+=item C<minVersion>
+
+=item C<name>
+
+=item C<optionsURL>
+
+=item C<package>
+
+=item C<requires>
+
+=item C<skin>
+
+=item C<targetApplication>
+
+=item C<targetPlatform>
+
+=item C<translator>
+
+=item C<type>
+
+=item C<updateURL>
+
+=item C<version>
 
 =back
+
+This list may be not exhaustive; if you find some important missing ones,
+please let us know. :)
 
 =head1 AUTHOR
 
