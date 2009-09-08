@@ -700,30 +700,30 @@ sub _has_aliased_template {
     $template_name = "/$template_name" unless $template_name =~ m{^/};
 
     foreach my $alias_key ( @{ Template::Declare->aliases->{$package} } ) {
-        my $alias_info   = $package->alias_metadata()->{$alias_key};
+        my $alias_info   = $package->alias_metadata->{$alias_key};
+
         my $alias_prefix = $alias_info->{path};
-        my $alias_class  = $alias_info->{class};
-        my $package_vars = $alias_info->{package_vars};
-
         $alias_prefix = "/$alias_prefix" unless $alias_prefix =~ m{^/};
-
         # handle the case where we alias something under '/'. the regex appends
         # a '/' so we need to prevent matching against m{^//};
         $alias_prefix = '' if $alias_prefix eq '/';
 
-        if ( $template_name =~ m{^$alias_prefix/(.*)$} ) {
-            my $dispatch_to_template = $1;
-            if (my $coderef = $alias_class->resolve_template( $dispatch_to_template, $show_private)) {
+        # starts with fast check
+        next unless rindex($template_name, "$alias_prefix/", 0) == 0;
 
-                return sub {
-                    shift @_;  # Get rid of the passed-in "$self" class.
-                    local $TEMPLATE_VARS->{$alias_class} = $package_vars;
-                    &$coderef($alias_class,@_);
-                };
-            }
+        my $dispatch_to = substr $template_name, length($alias_prefix)+1;
+        my $alias_class = $alias_info->{class};
+        my $coderef = $alias_class->resolve_template(
+            $dispatch_to, $show_private,
+        );
+        next unless $coderef;
 
-        }
-
+        my $package_vars = $alias_info->{package_vars};
+        return sub {
+            shift @_;  # Get rid of the passed-in "$self" class.
+            local $TEMPLATE_VARS->{$alias_class} = $package_vars;
+            $coderef->($alias_class,@_);
+        };
     }
 }
 
