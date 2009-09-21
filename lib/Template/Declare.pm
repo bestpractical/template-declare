@@ -79,7 +79,7 @@ And here's the output:
 
 =head1 DESCRIPTION
 
-C<Template::Declare> is a pure-Perl Peclarative HTML/XUL/RDF/XML templating
+C<Template::Declare> is a pure-Perl declarative HTML/XUL/RDF/XML templating
 system.
 
 Yes. Another one. There are many others like it, but this one is ours.
