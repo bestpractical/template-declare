@@ -1,4 +1,3 @@
-
 use warnings;
 use strict;
 use utf8;# 'UTF-8';
@@ -7,8 +6,6 @@ use utf8;# 'UTF-8';
 package Wifty::UI;
 use base qw/Template::Declare/;
 use Template::Declare::Tags;
-use Carp;
-$SIG{__WARN__} = \&Carp::cluck;
 
 # 'test' in Russian
 my $str = "\x{442}\x{435}\x{441}\x{442}";

@@ -13,7 +13,7 @@ SKIP:
 
         my $lint = HTML::Lint->new;
         do {
-            local $^W; # STFU HTML::Lint!
+            local $SIG{__WARN__} = sub {}; # STFU HTML::Lint!
             $lint->parse($html);
         };
         # Collect the errors, ignore the invalid character errors when requested.
