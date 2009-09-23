@@ -330,7 +330,7 @@ And the output:
  <h1>Hello</h1>
  <div>first post</div>
 
-=head2 Aliasing
+=head2 Aliasing and Mixins
 
 =head2 Multiple template roots (search paths)
 
@@ -389,8 +389,42 @@ sub init {
 
 =head2 buffer
 
-Gets or sets the L<String::BufferStack> object; this is a class
-method.
+Gets or sets the L<String::BufferStack> object; this is a class method. You
+can use it to manipulate the output from tags as they are output. It's used
+internally to make the tags nest correctly, and be output to the right place.
+We're not sure if there's ever a need for you to frob it by hand, but it does
+enable things like the following:
+
+    template simple => sub {
+       html {
+           head {}
+           body {
+               Template::Declare->buffer->set_filter( sub {uc shift} );
+               p { 'Whee!' }
+               p { 'Hello, world wide web!' }
+               Template::Declare->buffer->clear_top if rand() < 0.5;
+           }
+       }
+    };
+
+...which outputs, with equal regularity, either:
+
+ <html>
+  <head></head>
+  <body>
+   <P>WHEE!</P>
+   <P>HELLO, WORLD WIDE WEB!</P>
+  </body>
+ </html>
+
+...or:
+
+ <html>
+  <head></head>
+  <body></body>
+ </html>
+
+We'll leave it to you to judge whether or not that's actually useful.
 
 =head2 new_buffer_frame
 
