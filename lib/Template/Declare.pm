@@ -387,6 +387,11 @@ sub init {
 
 }
 
+=head2 buffer
+
+Gets or sets the L<String::BufferStack> object; this is a class
+method.
+
 =head2 new_buffer_frame
 
   $td->new_buffer_frame();
