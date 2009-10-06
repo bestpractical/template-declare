@@ -65,7 +65,7 @@ our $self;
 local $self = {};
 bless $self, 'TestApp::UI';
 
-Template::Declare->init( roots => ['TestApp::UI']);
+Template::Declare->init( dispatch_to => ['TestApp::UI']);
 
 {
 Template::Declare->buffer->clear;

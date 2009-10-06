@@ -19,7 +19,7 @@ package main;
 #use Test::More tests => 19;
 use Test::More 'no_plan';
 use Template::Declare::Tags;
-Template::Declare->init( roots => ['Wifty::UI'] );
+Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
 ok +Wifty::UI->has_template('here/test'),
     'Template should be under new path';

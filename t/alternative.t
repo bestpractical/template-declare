@@ -27,7 +27,7 @@ template main => sub {
     xul_tempalte {}
 };
 
-Template::Declare->init( roots => ['MyApp::Templates2']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates2']);
 my $out = Template::Declare->show('main') . "\n";
 ::is $out, <<_EOC_;
 

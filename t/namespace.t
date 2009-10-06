@@ -19,7 +19,7 @@ template main => sub {
 };
 
 package main;
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 my $out = Template::Declare->show('main') . "\n";
 is $out, <<_EOC_;
 
@@ -58,8 +58,8 @@ eval "htm::div {};";
 ::like $@, qr/Can't locate object method "div" via package "htm"/, 'package htm is intact';
 
 package main;
-Template::Declare->init( roots => ['MyApp::Templates']);
-Template::Declare->init( roots => ['MyApp::Templates2']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates2']);
 $out = Template::Declare->show('main') . "\n";
 is $out, <<_EOC_;
 
@@ -90,7 +90,7 @@ template main => sub {
 };
 
 package main;
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 $out = Template::Declare->show('main') . "\n";
 is $out, <<_EOC_;
 

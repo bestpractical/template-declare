@@ -42,7 +42,7 @@ alias Wifty::UI::aliased_subclass_pkg under '/aliased_subclass_pkg';
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init( roots => ['Wifty::UI'] );
+Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
 use Test::More tests => 19;
 require "t/utils.pl";

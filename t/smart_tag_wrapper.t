@@ -31,7 +31,7 @@ template leak_check => sub {
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init( roots => ['Wifty::UI'] );
+Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
 use Test::More tests => 2;
 require "t/utils.pl";

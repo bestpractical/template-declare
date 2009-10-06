@@ -29,7 +29,7 @@ our $self;
 local $self = {};
 bless $self, 'Wifty::UI';
 
-Template::Declare->init( roots => ['Wifty::UI']);
+Template::Declare->init( dispatch_to => ['Wifty::UI']);
 
 {
 Template::Declare->buffer->clear;

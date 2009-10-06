@@ -44,7 +44,7 @@ package main;
 use Test::More tests => 8;
 use Test::Warn;
 
-Template::Declare->init(roots => ['Template::FarAway']);
+Template::Declare->init(dispatch_to => ['Template::FarAway']);
 
 
 

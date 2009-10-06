@@ -50,7 +50,7 @@ import_templates Wifty::UI::imported_subclass_pkg under '/other_subclass';
 ##############################################################################
 package main;
 use Template::Declare::Tags;
-Template::Declare->init( roots => ['Wifty::UI'] );
+Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
 use Test::More tests => 18;
 #use Test::More 'no_plan';

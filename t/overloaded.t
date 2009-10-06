@@ -43,7 +43,7 @@ template tag_element => sub {
     em {'xxx'} outs(Wifty::UI::Element->new( qw(<ul> </ul>)) )
 };
 
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 # XXX: our obj puts directly into buffer and returns a string,
 # it's higly questionable if we want escape or not

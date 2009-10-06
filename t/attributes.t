@@ -40,7 +40,7 @@ template with_with_two_blocks => sub {
     div { p { 'another paragraph' } }
 };
 
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 1;
 

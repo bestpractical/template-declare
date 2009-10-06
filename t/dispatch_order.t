@@ -29,14 +29,14 @@ template hello => sub { outs 'hello from Bip' };
 package main;
 use Test::More tests => 16;
 
-# Check template resolution with the old `roots` attribute.
+# Check template resolution with the deprecated `roots` parameterx.
 ok !Template::Declare->init( roots => ['Wifty::Foo', 'Wifty::Bar'] ),
     'init with Foo and Bar as roots';
 
 is +Template::Declare->show('hello'), 'hello from Bar',
     'Bar should have precedence';
 
-# Check template resolution with the new `dispatch_to` attribute.
+# Check template resolution with the new `dispatch_to` parameter.
 ok !Template::Declare->init( dispatch_to => ['Wifty::Foo', 'Wifty::Bar'] ),
     'init to dispatch to Foo and Bar';
 

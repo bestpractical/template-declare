@@ -30,7 +30,7 @@ use strict;
 use warnings;
 use Test::More tests => 2;
 use Template::Declare;
-Template::Declare->init(roots => ['MyApp::Templates']);
+Template::Declare->init(dispatch_to => ['MyApp::Templates']);
 
 ok my $out = Template::Declare->show('inner'), 'Get inner output';
 is $out, '

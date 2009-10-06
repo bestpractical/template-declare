@@ -28,7 +28,7 @@ ok $tagset->can_combine_empty_tags('img'), '<img />';
 ok !$tagset->can_combine_empty_tags('label'), '<label></label>';
 ok !$tagset->can_combine_empty_tags('caption'), '<caption></caption>';
 
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 my $out = Template::Declare->show('main') . "\n";
 is $out, <<_EOC_;
 

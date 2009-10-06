@@ -34,7 +34,7 @@ template 'test' => sub {
 package main;
 use Test::More tests => 2;
 
-Template::Declare->init(roots => ['MyTemplates']);
+Template::Declare->init(dispatch_to => ['MyTemplates']);
 my $output = Template::Declare->show('test');
 
 unlike($output, qr{<html.*title="Test">});

@@ -43,7 +43,7 @@ eval q{
 ::like $@, qr/syntax error at.*near "\) \{"/, 'error expected';
 
 package main;
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 my $out = Template::Declare->show('main') . "\n";
 isnt $out, <<_EOC_;
 <?xml version="1.0"?>

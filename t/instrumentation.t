@@ -37,7 +37,7 @@ use Template::Declare;
 my @args;
 
 Template::Declare->init(
-    roots => ['MyApp::Templates'],
+    dispatch_to => ['MyApp::Templates'],
     around_template => sub { push @args, [@_]; shift->() },
 );
 

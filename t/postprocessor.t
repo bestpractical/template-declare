@@ -23,14 +23,14 @@ package main;
 use Template::Declare;
 use Test::More tests => 8;
 
-Template::Declare->init(roots => ['Marked::Down']);
+Template::Declare->init(dispatch_to => ['Marked::Down']);
 my $simple = Template::Declare->show('simple');
 like($simple, qr/\*content\* negative \*zero\*/, "no postprocessing yet");
 like($simple, qr/should \*also\* uppercase/, "no postprocessing yet");
 like($simple, qr/should \*never\* uppercase/, "no postprocessing yet");
 like($simple, qr/foo\*bar\*baz/, "no postprocessing yet");
 
-Template::Declare->init(roots => ['Marked::Down'], postprocessor => \&postprocessor);
+Template::Declare->init(dispatch_to => ['Marked::Down'], postprocessor => \&postprocessor);
 $simple = Template::Declare->show('simple');
 like($simple, qr/(?<!\*)CONTENT negative ZERO(?!\*)/, "postprocessor transformed h1 { ... }");
 like($simple, qr/should ALSO uppercase/, "postprocessor transformed outs");

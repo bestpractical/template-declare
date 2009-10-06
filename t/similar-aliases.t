@@ -36,7 +36,7 @@ alias Admin::Foo under '/admin/foo';
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init( roots => [ 'App' ] );
+Template::Declare->init( dispatch_to => [ 'App' ] );
 
 use Test::More tests => 6;
 

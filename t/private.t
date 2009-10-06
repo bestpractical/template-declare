@@ -38,7 +38,7 @@ template 'private_not_found' => sub {
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 use Test::More tests => 14;
 use Test::Warn;

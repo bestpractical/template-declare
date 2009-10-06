@@ -37,7 +37,7 @@ template 'up_level_inside/local' => sub { div { "This is up_level_inside/local" 
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init( roots => ['Wifty::UI'] );
+Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
 use Test::More tests => 25;
 

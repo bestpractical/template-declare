@@ -49,7 +49,7 @@ private template 'private-content' => sub {
 
 package main;
 use Template::Declare::Tags;
-Template::Declare->init(roots => ['Baseclass::UI', 'Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI', 'Baseclass::UI']);
 
 use Test::More tests => 11;
 use Test::Warn;
@@ -65,7 +65,7 @@ require "t/utils.pl";
 
 
 Template::Declare->init(
-    roots => [ 'Baseclass::UI', 'Wifty::UI', 'Childclass::UI' ] );
+    dispatch_to => [ 'Childclass::UI', 'Wifty::UI', 'Baseclass::UI' ] );
 {
     my $simple = ( show('simple') );
     like( $simple, qr'This is child class content' );

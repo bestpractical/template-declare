@@ -33,7 +33,7 @@ template 'toplevel' => sub {h1{'Toplevel'}};
 alias ListPlugin::View under '/plugin';
 
 package main;
-Template::Declare->init( roots => ['MyApp::View'] );
+Template::Declare->init( dispatch_to => ['MyApp::View'] );
 
 use Test::More tests => 12;
 use Test::Warn;

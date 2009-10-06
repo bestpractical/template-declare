@@ -41,7 +41,7 @@ template  'content' => sub {
 };
 
 
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 
 {

@@ -52,7 +52,7 @@ template without_ns => sub {
 package main;
 use Test::More tests => 2;
 
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 my $out = Template::Declare->show('with_ns') . "\n";
 is $out, <<_EOC_;
 

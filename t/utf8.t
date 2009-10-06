@@ -20,7 +20,7 @@ template attr => sub { p {{ title is "$str" }} };
 template attr_with_escape => sub { p {{ title is "<$str>" }} };
 
 
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 1;
 

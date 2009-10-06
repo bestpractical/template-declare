@@ -21,7 +21,7 @@ template main => sub {
 
 package main;
 use Test::More tests => 1;
-Template::Declare->init( roots => ['MyApp::Templates']);
+Template::Declare->init( dispatch_to => ['MyApp::Templates']);
 my $out = Template::Declare->show('main') . "\n";
 is $out, <<_EOC_;
 <?xml version="1.0"?>

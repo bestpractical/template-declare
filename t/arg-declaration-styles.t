@@ -66,7 +66,7 @@ template content_attrs => sub {
 use Test::More tests => 39;
 require "t/utils.pl";
 
-Template::Declare->init(roots => ['TestApp::UI']);
+Template::Declare->init(dispatch_to => ['TestApp::UI']);
 
 for (qw(content content_curly content_explicit)) {
 Template::Declare->buffer->clear;

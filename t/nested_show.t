@@ -13,7 +13,7 @@ template show => sub { show 'a_tag' };
 
 template show_in_tag => sub { div { show 'a_tag' } };
 
-Template::Declare->init(roots => ['Wifty::UI']);
+Template::Declare->init(dispatch_to => ['Wifty::UI']);
 
 {
     Template::Declare->buffer->clear;
