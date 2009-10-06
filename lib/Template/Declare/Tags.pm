@@ -426,21 +426,6 @@ sub attr (&;@) {
     return @_;
 }
 
-=begin comment
-
-=head2 append_attr
-
-How does this work?
-
-=end comment
-
-=cut
-
-sub append_attr {
-    die "Subroutine attr failed: $_[0] => '$_[1]'\n\t".
-        "(Perhaps you're using an unknown tag in the outer container?)";
-}
-
 =head2 xml_decl HASH
 
     xml_decl { 'xml', version => '1.0' };
@@ -774,13 +759,13 @@ sub show {
 
 }
 
-=begin comment
-
 =head2 show_page
 
-A private function?
+    show_page( main => { user => 'Bob' } );
 
-=end comment
+Like C<show()>, but does not dispatch to private templates. It's used
+internally by C<show()> when when that method is called from outside a
+template class.
 
 =cut
 
@@ -907,6 +892,23 @@ L<Template::Declare|Template::Declare>.
 =cut
 
 sub under ($) { return shift }
+
+=begin comment
+
+=head2 append_attr
+
+C<append_attr> is a helper function providing an interface for setting
+attributes from within tags. But it's better to use C<attr> or C<is> to set
+your attributes. Nohting to see here, really. Move along.
+
+=end comment
+
+=cut
+
+sub append_attr {
+    die "Subroutine attr failed: $_[0] => '$_[1]'\n\t".
+        "(Perhaps you're using an unknown tag in the outer container?)";
+}
 
 =head1 VARIABLES
 

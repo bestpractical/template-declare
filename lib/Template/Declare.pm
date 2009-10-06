@@ -430,9 +430,8 @@ We'll leave it to you to judge whether or not that's actually useful.
 
   $td->new_buffer_frame();
 
-Creates a new buffer frame, using L<String::BufferStack/push> with
-C<private>.  This use is deprecated in favor of dealing with
-L</buffer>.directly.
+Creates a new buffer frame, using L<String::BufferStack/push> with C<private>.
+This use is deprecated in favor of dealing with L</buffer> directly.
 
 =cut
 
@@ -444,9 +443,8 @@ sub new_buffer_frame {
 
   my $buf = $td->end_buffer_frame();
 
-Deletes and returns the topmost buffer, using
-L<String::BufferStack/pop>.  This use is deprecated in favor of
-dealing with L</buffer>.directly..
+Deletes and returns the topmost buffer, using L<String::BufferStack/pop>. This
+use is deprecated in favor of dealing with L</buffer> directly..
 
 =cut
 
