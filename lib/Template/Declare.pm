@@ -72,7 +72,7 @@ Here's an example of basic HTML usage:
 
     package main;
     use Template::Declare;
-    Template::Declare->init( roots => ['MyApp::Templates'] );
+    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
     print Template::Declare->show( 'simple' );
 
 And here's the output:
@@ -156,7 +156,7 @@ A simple HTML example is in the L<SYNOPSIS/SYNOPSIS>. So let's do XUL!
     };
 
     package main;
-    Template::Declare->init( roots => ['MyApp::Templates'] );
+    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
     print Template::Declare->show( 'main' );
 
 The output:
@@ -219,7 +219,7 @@ called directly. We'll also show passing arguments to templates.
 
     package main;
     use Template::Declare;
-    Template::Declare->init( roots => ['MyApp::Templates'] );
+    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
     print Template::Declare->show( 'simple', 'TD user');
 
 And the output:
@@ -320,10 +320,12 @@ override some of those methods. See also L<Jifty::View::Declare::CRUD>.
     package main;
     use Template::Declare;
 
-    Template::Declare->init( roots => ['MyApp::Templates::GenericItem'] );
+    Template::Declare->init(
+        dispatch_to => ['MyApp::Templates::GenericItem']
+    );
     print Template::Declare->show( 'list', 'foo', 'bar', 'baz' );
 
-    Template::Declare->init( roots => ['MyApp::Templates::BlogPost'] );
+    Template::Declare->init( dispatch_to => ['MyApp::Templates::BlogPost'] );
     my $post = My::Post->new(title => 'Hello', body => 'first post');
     print Template::Declare->show( 'item', $post );
 
@@ -340,7 +342,7 @@ And the output:
 
 =head2 Aliasing and Mixins
 
-=head2 Multiple template roots (search paths)
+=head2 Class Search Dispatching
 
 =head1 METHODS
 
@@ -350,9 +352,17 @@ This I<class method> initializes the C<Template::Declare> system.
 
 =over
 
+=item dispatch_to
+
+An array reference of classes to search for templates. Template::Declare will
+search this list of classes in order to find a template path.
+
 =item roots
 
-An array reference of packages to begin looking for templates.
+B<Deprecated.> Just like C<dispatch_to>, only the classes are searched in
+reverse order. Maintained for backward compatibility and for the pleasure of
+those who want to continue using Template::Declare the way that Jesse's
+"crack-addled brain" intended.
 
 =item postprocessor
 
@@ -381,12 +391,10 @@ sub init {
     my $class = shift;
     my %args  = (@_);
 
-    if ( $args{'roots'} ) {
-        $class->roots( $args{'roots'} );
-    }
-
     if ( $args{'dispatch_to'} ) {
         $class->dispatch_to( $args{'dispatch_to'} );
+    } elsif ( $args{'roots'} ) {
+        $class->roots( $args{'roots'} );
     }
 
     if ( $args{'postprocessor'} ) {
@@ -510,11 +518,11 @@ Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
 boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
 in addition to public ones. C<has_template()> is an alias for this method.
 
-First it looks through all the valid Template::Declare roots. For each
-root, it looks to see if the root has a template called $template_name
-directly (or via an C<import> statement). Then it looks to see if there
-are any L</alias>ed paths for the root with prefixes that match the
-template we're looking for.
+First it looks through all the valid Template::Declare classes defined via
+C<dispatch_to>. For each class, it looks to see if it has a template called
+$template_name directly (or via an C<import_templates>. Then it looks to see
+if there are any L<C<alias>/"alias"> paths for the class with prefixes that
+match the template we're looking for.
 
 =head2 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
 
@@ -592,7 +600,7 @@ sub register_private_template {
 
 }
 
-=head2 alias TEMPLATE_ROOT under PATH
+=head2 alias TEMPLATE_CLASS under PATH
 
     alias Some::Clever::Mixin under '/mixin';
     alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
