@@ -11,7 +11,7 @@ use String::BufferStack;
 our $VERSION = "0.40_01";
 
 use base 'Class::Data::Inheritable';
-__PACKAGE__->mk_classdata('roots');
+__PACKAGE__->mk_classdata('dispatch_to');
 __PACKAGE__->mk_classdata('postprocessor');
 __PACKAGE__->mk_classdata('aliases');
 __PACKAGE__->mk_classdata('alias_metadata');
@@ -21,7 +21,7 @@ __PACKAGE__->mk_classdata('buffer');
 __PACKAGE__->mk_classdata('imported_into');
 __PACKAGE__->mk_classdata('around_template');
 
-__PACKAGE__->roots( [] );
+__PACKAGE__->dispatch_to( [] );
 __PACKAGE__->postprocessor( sub { return wantarray ? @_ : $_[0] } );
 __PACKAGE__->aliases(           {} );
 __PACKAGE__->alias_metadata(    {} );
@@ -40,6 +40,14 @@ __PACKAGE__->around_template( undef );
 };
 
 use vars qw/$TEMPLATE_VARS/;
+
+# Backwards-compatibility support.
+sub roots {
+    # warn "roots() has been deprecated; use dispatch_to() instead\n";
+    my $class = shift;
+    $class->dispatch_to( [ reverse @{ +shift } ] ) if @_;
+    return [ reverse @{ $class->dispatch_to } ];
+}
 
 =head1 NAME
 
@@ -258,7 +266,7 @@ how to use a postprocessor to emphasize text _like this_.
     package main;
     use Template::Declare;
     Template::Declare->init(
-        roots         => ['MyApp::Templates'],
+        dispatch_to   => ['MyApp::Templates'],
         postprocessor => \&emphasize,
     );
 
@@ -375,6 +383,10 @@ sub init {
 
     if ( $args{'roots'} ) {
         $class->roots( $args{'roots'} );
+    }
+
+    if ( $args{'dispatch_to'} ) {
+        $class->dispatch_to( $args{'dispatch_to'} );
     }
 
     if ( $args{'postprocessor'} ) {
@@ -520,7 +532,7 @@ sub resolve_template {
     # If we're being called as a class method on T::D it means "search in any package"
     # Otherwise, it means search only in this specific package"
     if ( $self eq __PACKAGE__ ) {
-        @search_packages = reverse @{ Template::Declare->roots };
+        @search_packages = @{ Template::Declare->dispatch_to };
     } else {
         @search_packages = ($self);
     }
