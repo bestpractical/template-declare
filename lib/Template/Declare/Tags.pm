@@ -16,7 +16,7 @@ use Symbol 'qualify_to_ref';
 
 our @EXPORT
     = qw( with template private show show_page attr outs
-          outs_raw in_isolation $self under
+          outs_raw in_isolation $self under set
           get_current_attr xml_decl
           smart_tag_wrapper current_template create_wrapper );
 our @TAG_SUB_LIST;
@@ -885,13 +885,21 @@ sub _postprocess {
 
 =head2 under
 
-C<under> is a helper function providing semantic sugar for the
-C<import_templates> and C<alias> methods of
-L<Template::Declare|Template::Declare>.
+C<under> is a helper function providing semantic sugar for the C<mix> method
+of L<Template::Declare|Template::Declare/"mix">.
 
 =cut
 
 sub under ($) { return shift }
+
+=head2 set
+
+C<set> is a helper function providing semantic sugar for the C<mix> method of
+L<Template::Declare|Template::Declare/"mix">.
+
+=cut
+
+sub set ($) { return shift }
 
 =begin comment
 

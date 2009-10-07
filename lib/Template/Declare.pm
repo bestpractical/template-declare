@@ -592,89 +592,91 @@ sub register_private_template {
 
 }
 
-=head2 alias TEMPLATE_CLASS under PATH
+=head2 mix
 
-    alias Some::Clever::Mixin under '/mixin';
-    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
+    mix Some::Clever::Mixin      under '/mixin';
+    mix Some::Other::Mixin       under '/otmix', set { name => 'Larry' };
+    mix My::Mixin into My::View, under '/mymix';
 
-Sometimes you want to alias templates to a subpath, or mix them into an
-existing template path. Use C<alias> to do so. In the first example, if
-Some::Clever::Mixin creates templates named "foo" and "bar", they will be
-aliased to "mixin/foo" and "mixin/bar".
+Sometimes you want to mix templates from one class into another class; C<mix>
+is your key to doing so. In the first example, if Some::Clever::Mixin creates
+templates named C<foo> and C<bar>, they will be mixed into the calling
+template class as C<mixin/foo> and C<mixin/bar>.
 
 The second example mixes in the templates defined in Some::Other::Mixin into
-the "/mymix" path and defines a package variable for use only by the alias.
-If this template was defined in Some::Other::Mixin:
+into the calling class under the "/mymix" path. Furthermore, those mixed-in
+templates have package variables set for them that are accessible only from
+their mixed-in paths. For example, if this template was defined in
+Some::Other::Mixin:
 
-    template 'howdy' => sub {
+    template howdy => sub {
         my $self = shift;
         outs "Howdy, " . $self->package_variable('name') || 'Jesse';
     };
 
-Then use of the "mymixin/howdy" template will output "Howdy, Larry", while the
-output from original template, "howdy", will output "Howdy, Jesse". In other
-words, package variables defined for the alias are available only to the
-alias, and not to the original.
+Then C<show('mymixin/howdy')> will output "Howdy, Larry", while the output
+from C<show('howdy')> will output "Howdy, Jesse". In other words, package
+variables defined for the mixed-in templates are available only to the mixins
+and not to the original.
 
 In either case, ineritance continues to work. A template package that inherits
 from Some::Other::Mixin, for example, will be able to access both
-"mymixin/howdy" and "howdy".
+C<mymixin/howdy> and C<howdy>.
+
+By default, C<mix> will mix templates into the class from which it's called.
+But sometimes you might want to mix templates into some other template class.
+Such might be useful for end users to compose template structures from
+collections of template classes. In such a case, use the C<into> keyword to
+specify into what class the templates should be mixed in. The third example
+demonstrates this, where My::Mixin templates are mixed into My::View. Of
+course, you can still specify variables to set for those mixins.
+
+For those who prefer a direct OO syntax for mixins, just call C<mix> as a
+method on the class to be mixed in. To replicate the above three exmaples
+without the use of the sugar:
+
+  Some::Clver::Mixin->mix( '/mixin' );
+  Some::Other::Mixin->mix( '/otmix', { name => 'Larry' } );
+  My::Mixin->mix('My::View', '/mymix');
+
+=cut
+
+sub mix {
+    my $mixin = shift;
+    my $into  = eval { $_[0]->isa(__PACKAGE__) } ? shift : caller(0);
+    $mixin->_import($into, @_);
+}
+
+=head2 into
+
+  $class = into $class;
+
+C<into> is a helper method providing semantic sugar for the C<mix> method. All
+it does is return the name of the class on which it was called.
+
+=cut
+
+sub into { shift }
+
+=head2 alias
+
+    alias Some::Clever::Mixin under '/mixin';
+    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
+
+Like C<mix>, but without support for the C<into> keyword. That is, it mixes
+templates into the calling template class. Deprecated in favor of C<mix>.
 
 =cut
 
 sub alias { shift->_import(scalar caller(0), @_) }
 
-sub _import {
-    return undef if $_[0] eq __PACKAGE__;
-    my ($mixin, $into, $prefix, $vars) = @_;
-
-    $prefix =~ s|/+/|/|g;
-    $prefix =~ s|/$||;
-    $mixin->imported_into($prefix);
-
-    my @packages = reverse grep { $_->isa(__PACKAGE__) }
-        Class::ISA::self_and_super_path( $mixin );
-
-    foreach my $from (@packages) {
-        for my $tname (  __PACKAGE__->_templates_for($from) ) {
-            $into->register_template(
-                "$prefix/$tname",
-                _import_code( $tname, $from, $vars )
-            );
-        }
-        for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
-            $into->register_private_template(
-                "$prefix/$tname",
-                _import_code( $tname, $from, $vars )
-            );
-        }
-    }
-}
-
-sub _import_code {
-    my ($tname, $class, $vars) = @_;
-    my $code = $class->_find_template_sub( _template_name_to_sub($tname) );
-    return $code unless $vars;
-    return sub {
-        # XXX This does not seem to be needed.
-        # shift @_;  # Get rid of the passed-in "$self" class.
-        local $TEMPLATE_VARS->{$class} = $vars;
-        $code->($class, @_);
-    };
-}
-
 =head2 import_templates
 
     import_templates MyApp::Templates under '/something';
 
-Import the templates defined in a template class into a subpath via the
-C<import_templates> function. In this example, the templates defined in
-MyApp::Templates will be imported into the "/something" path. Thus, a template
-deined in MyApp::Templates named "foo" will also be accessible via
-"something/foo". This is not unlike mixing in templates with C<alias>, but is
-lighter-weight and package variables cannot be assigned. This is because it is
-really like a hard link to the template, whereas an alias is a copy with the
-variable information attached to it.
+Like C<mix>, but without support for the C<into> or C<set> keywords. That is,
+it mixes templates into the calling template class and does not support
+package variables for those mixins. Deprecated in favor of C<mix>.
 
 =cut
 
@@ -779,6 +781,45 @@ sub _register_template {
     no strict 'refs';
     no warnings 'redefine';
     *{ $class . '::' . $subname } = $coderef;
+}
+
+sub _import {
+    return undef if $_[0] eq __PACKAGE__;
+    my ($mixin, $into, $prefix, $vars) = @_;
+
+    $prefix =~ s|/+/|/|g;
+    $prefix =~ s|/$||;
+    $mixin->imported_into($prefix);
+
+    my @packages = reverse grep { $_->isa(__PACKAGE__) }
+        Class::ISA::self_and_super_path( $mixin );
+
+    foreach my $from (@packages) {
+        for my $tname (  __PACKAGE__->_templates_for($from) ) {
+            $into->register_template(
+                "$prefix/$tname",
+                _import_code( $tname, $from, $vars )
+            );
+        }
+        for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
+            $into->register_private_template(
+                "$prefix/$tname",
+                _import_code( $tname, $from, $vars )
+            );
+        }
+    }
+}
+
+sub _import_code {
+    my ($tname, $class, $vars) = @_;
+    my $code = $class->_find_template_sub( _template_name_to_sub($tname) );
+    return $code unless $vars;
+    return sub {
+        # XXX This does not seem to be needed.
+        # shift @_;  # Get rid of the passed-in "$self" class.
+        local $TEMPLATE_VARS->{$class} = $vars;
+        $code->($class, @_);
+    };
 }
 
 =head1 PITFALLS

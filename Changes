@@ -7,6 +7,10 @@
   This won't be an issue if you only use a single temlate class.
 * Converted the implementation of "alias" to be the same as that used for
   "import_templates".
+* Changed aliases imported from subclasses such that their invocants are the
+  classes in which they are defined, rather than the subclass. This makes
+  "alias" consistent with "import_templates".
+* Added "mix" and deprecated "alias" and "import_templates".
 
 0.40_01 2009-08-12
 * Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué
