@@ -1,6 +1,7 @@
 use warnings;
 use strict;
 
+##############################################################################
 package Wifty::UI::aliased_pkg;
 use base qw/Template::Declare/;
 use Template::Declare::Tags;
@@ -11,10 +12,12 @@ template 'aliased' => sub {
     div { 'Variable ', $self->package_variable('VARIABLE') };
 };
 
+##############################################################################
 package Wifty::UI::aliased_subclass_pkg;
 use base qw/Wifty::UI::aliased_pkg/;
 use Template::Declare::Tags;
 
+##############################################################################
 package Wifty::UI;
 use base qw/Template::Declare/;
 use Template::Declare::Tags;
@@ -40,6 +43,7 @@ alias Wifty::UI::aliased_pkg under '/aliased_pkg', { VARIABLE => 'SET' } ;
 alias Wifty::UI::aliased_pkg under '/aliased_pkg2';
 alias Wifty::UI::aliased_subclass_pkg under '/aliased_subclass_pkg';
 
+##############################################################################
 package main;
 use Template::Declare::Tags;
 Template::Declare->init( dispatch_to => ['Wifty::UI'] );
