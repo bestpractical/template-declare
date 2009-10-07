@@ -638,9 +638,9 @@ For those who prefer a direct OO syntax for mixins, just call C<mix()> as a
 method on the class to be mixed in. To replicate the above three exmaples
 without the use of the sugar:
 
-  Some::Clver::Mixin->mix( '/mixin' );
-  Some::Other::Mixin->mix( '/otmix', { name => 'Larry' } );
-  My::Mixin->mix('My::View', '/mymix');
+    Some::Clver::Mixin->mix( '/mixin' );
+    Some::Other::Mixin->mix( '/otmix', { name => 'Larry' } );
+    My::Mixin->mix('My::View', '/mymix');
 
 =cut
 
