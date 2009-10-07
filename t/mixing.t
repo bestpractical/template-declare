@@ -48,11 +48,13 @@ use Template::Declare::Tags;
 
 # Mix from outside the class.
 mix Wifty::UI::mixed_pkg into Wifty::UI, under '/mixed_pkg3';
+# And reverse.
+mix Wifty::UI::mixed_pkg under '/mixed_pkg4', into Wifty::UI
 
 # Fire it up.
 Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
-use Test::More tests => 24;
+use Test::More tests => 29;
 require "t/utils.pl";
 
 ok( Wifty::UI::mixed_pkg->has_template('mixed'), 'Mixed package should have template' );
@@ -87,6 +89,16 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
 {
     # Try the third mix using `into`.
     ok my $simple = ( show('mixed_pkg3/mixed') ), 'Should get output from third mix';
+    like( $simple, qr'Invocant:', 'Its output should be right' );
+    unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
+    like( $simple, qr{'Wifty::UI::mixed_pkg'},
+        '$self is correct in template block' );
+    ok_lint($simple);
+}
+
+{
+    # Try the fourth with `into` and `under` reversed.
+    ok my $simple = ( show('mixed_pkg4/mixed') ), 'Should get output from fourth mix';
     like( $simple, qr'Invocant:', 'Its output should be right' );
     unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
     like( $simple, qr{'Wifty::UI::mixed_pkg'},

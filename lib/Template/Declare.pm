@@ -598,9 +598,9 @@ sub register_private_template {
     mix Some::Other::Mixin       under '/otmix', set { name => 'Larry' };
     mix My::Mixin into My::View, under '/mymix';
 
-Sometimes you want to mix templates from one class into another class; C<mix>
-is your key to doing so. In the first example, if Some::Clever::Mixin creates
-templates named C<foo> and C<bar>, they will be mixed into the calling
+Sometimes you want to mix templates from one class into another class;
+C<mix()> is your key to doing so. In the first example, if Some::Clever::Mixin
+creates templates named C<foo> and C<bar>, they will be mixed into the calling
 template class as C<mixin/foo> and C<mixin/bar>.
 
 The second example mixes in the templates defined in Some::Other::Mixin into
@@ -623,7 +623,7 @@ In either case, ineritance continues to work. A template package that inherits
 from Some::Other::Mixin, for example, will be able to access both
 C<mymixin/howdy> and C<howdy>.
 
-By default, C<mix> will mix templates into the class from which it's called.
+By default, C<mix()> will mix templates into the class from which it's called.
 But sometimes you might want to mix templates into some other template class.
 Such might be useful for end users to compose template structures from
 collections of template classes. In such a case, use the C<into> keyword to
@@ -631,7 +631,10 @@ specify into what class the templates should be mixed in. The third example
 demonstrates this, where My::Mixin templates are mixed into My::View. Of
 course, you can still specify variables to set for those mixins.
 
-For those who prefer a direct OO syntax for mixins, just call C<mix> as a
+If you should happen to forget to pass the C<into> argument before C<under>,
+worry not, C<mix()> will figure it out and do the right thing.
+
+For those who prefer a direct OO syntax for mixins, just call C<mix()> as a
 method on the class to be mixed in. To replicate the above three exmaples
 without the use of the sugar:
 
@@ -643,16 +646,24 @@ without the use of the sugar:
 
 sub mix {
     my $mixin = shift;
-    my $into  = eval { $_[0]->isa(__PACKAGE__) } ? shift : caller(0);
-    $mixin->_import($into, @_);
+    my ($into, $under);
+    if ( eval { $_[0]->isa(__PACKAGE__) } ) {
+        ($into, $under) = (shift, shift);
+    } elsif ( eval { $_[1]->isa(__PACKAGE__) } ) {
+        ($under, $into) = (shift, shift);
+    } else {
+        $into  = caller(0);
+        $under = shift;
+    }
+    $mixin->_import($into, $under, @_);
 }
 
 =head2 into
 
   $class = into $class;
 
-C<into> is a helper method providing semantic sugar for the C<mix> method. All
-it does is return the name of the class on which it was called.
+C<into> is a helper method providing semantic sugar for the C<mix()> method.
+All it does is return the name of the class on which it was called.
 
 =cut
 
@@ -663,8 +674,8 @@ sub into { shift }
     alias Some::Clever::Mixin under '/mixin';
     alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
 
-Like C<mix>, but without support for the C<into> keyword. That is, it mixes
-templates into the calling template class. Deprecated in favor of C<mix>.
+Like C<mix()>, but without support for the C<into> keyword. That is, it mixes
+templates into the calling template class. Deprecated in favor of C<mix()>.
 
 =cut
 
@@ -674,9 +685,9 @@ sub alias { shift->_import(scalar caller(0), @_) }
 
     import_templates MyApp::Templates under '/something';
 
-Like C<mix>, but without support for the C<into> or C<set> keywords. That is,
-it mixes templates into the calling template class and does not support
-package variables for those mixins. Deprecated in favor of C<mix>.
+Like C<mix()>, but without support for the C<into> or C<set> keywords. That
+is, it mixes templates into the calling template class and does not support
+package variables for those mixins. Deprecated in favor of C<mix()>.
 
 =cut
 
