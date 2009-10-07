@@ -13,8 +13,6 @@ our $VERSION = "0.40_01";
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('dispatch_to');
 __PACKAGE__->mk_classdata('postprocessor');
-__PACKAGE__->mk_classdata('aliases');
-__PACKAGE__->mk_classdata('alias_metadata');
 __PACKAGE__->mk_classdata('templates');
 __PACKAGE__->mk_classdata('private_templates');
 __PACKAGE__->mk_classdata('buffer');
@@ -23,8 +21,6 @@ __PACKAGE__->mk_classdata('around_template');
 
 __PACKAGE__->dispatch_to( [] );
 __PACKAGE__->postprocessor( sub { return wantarray ? @_ : $_[0] } );
-__PACKAGE__->aliases(           {} );
-__PACKAGE__->alias_metadata(    {} );
 __PACKAGE__->templates(         {} );
 __PACKAGE__->private_templates( {} );
 __PACKAGE__->buffer( String::BufferStack->new );
@@ -520,9 +516,7 @@ in addition to public ones. C<has_template()> is an alias for this method.
 
 First it looks through all the valid Template::Declare classes defined via
 C<dispatch_to>. For each class, it looks to see if it has a template called
-$template_name directly (or via an C<import_templates>. Then it looks to see
-if there are any L<C<alias>/"alias"> paths for the class with prefixes that
-match the template we're looking for.
+$template_name directly (or via a C<import_templates> or C<alias>).
 
 =head2 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
 
@@ -548,8 +542,6 @@ sub resolve_template {
     foreach my $package (@search_packages) {
         next unless ( $package and $package->isa(__PACKAGE__) );
         if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
-            return $coderef;
-        } elsif (  $coderef = $package->_has_aliased_template($template_name, $show_private) ) {
             return $coderef;
         }
     }
@@ -619,10 +611,10 @@ If this template was defined in Some::Other::Mixin:
         outs "Howdy, " . $self->package_variable('name') || 'Jesse';
     };
 
-Then use of the "mymixin/howdy" template will output "Howdy, Lary", while use
-of the original template, "howdy", will output "Howdy, Jesse". In other words,
-package variables defined for the alias are available only to the alias, and
-not to the original.
+Then use of the "mymixin/howdy" template will output "Howdy, Larry", while the
+output from original template, "howdy", will output "Howdy, Jesse". In other
+words, package variables defined for the alias are available only to the
+alias, and not to the original.
 
 In either case, ineritance continues to work. A template package that inherits
 from Some::Other::Mixin, for example, will be able to access both
@@ -630,23 +622,46 @@ from Some::Other::Mixin, for example, will be able to access both
 
 =cut
 
-sub alias {
-    my $alias_into   = caller(0);
-    my $mixin        = shift;
-    my $prepend_path = shift;
-    my $package_vars = shift;
+sub alias { shift->_import(1, scalar caller(0), @_) }
+
+sub _import {
+    return undef if $_[0] eq __PACKAGE__;
+    my $import_from_base = shift;
+    my $is_alias         = shift;
+    my $import_into      = shift;
+    my $prepend_path     = shift;
+    my $package_vars     = shift;
 
     $prepend_path =~ s|/+/|/|g;
     $prepend_path =~ s|/$||;
+    $import_from_base->imported_into($prepend_path);
 
-    my $alias_key = $mixin . " " . $prepend_path;
-    push @{ Template::Declare->aliases->{$alias_into} }, $alias_key;
-    $alias_into->alias_metadata()->{$alias_key} = {
-        class        => $mixin,
-        path         => $prepend_path,
-        package_vars => $package_vars
+    my @packages = reverse grep { $_->isa(__PACKAGE__) }
+        Class::ISA::self_and_super_path( $import_from_base );
+
+    foreach my $import_from (@packages) {
+        foreach my $template_name (  __PACKAGE__->_templates_for($import_from) ) {
+            my $code = $import_from->_find_template_sub( _template_name_to_sub($template_name));
+            $code = _code( $code, $import_from_base, $package_vars) if $is_alias;
+            $import_into->register_template( $prepend_path . "/" . $template_name, $code);
+        }
+        foreach my $template_name (  __PACKAGE__->_private_templates_for($import_from) ) {
+            my $code = $import_from->_find_template_sub( _template_name_to_private_sub($template_name) );
+            $code = _code( $code, $import_from_base, $package_vars) if $is_alias;
+            $import_into->register_private_template( $prepend_path . "/" . $template_name, $code);
+        }
+    }
+}
+
+sub _code {
+    my ($code, $class, $vars) = @_;
+#    return $code unless $vars;
+    return sub {
+        # XXX This does not seem to be needed.
+        # shift @_;  # Get rid of the passed-in "$self" class.
+        local $TEMPLATE_VARS->{$class} = $vars;
+        $code->($class, @_);
     };
-
 }
 
 =head2 import_templates
@@ -664,30 +679,7 @@ variable information attached to it.
 
 =cut
 
-sub import_templates {
-    return undef if $_[0] eq __PACKAGE__;
-    my $import_into      = caller(0);
-    my $import_from_base = shift;
-    my $prepend_path     = shift;
-
-    $prepend_path =~ s|/+/|/|g;
-    $prepend_path =~ s|/$||;
-    $import_from_base->imported_into($prepend_path);
-
-    my @packages = reverse grep { $_->isa(__PACKAGE__) }
-        Class::ISA::self_and_super_path( $import_from_base );
-
-    foreach my $import_from (@packages) {
-        foreach my $template_name (  __PACKAGE__->_templates_for($import_from) ) {
-            my $code = $import_from->_find_template_sub( _template_name_to_sub($template_name));
-            $import_into->register_template( $prepend_path . "/" . $template_name, $code );
-        }
-        foreach my $template_name (  __PACKAGE__->_private_templates_for($import_from) ) {
-            my $code = $import_from->_find_template_sub( _template_name_to_private_sub($template_name) );
-            $import_into->register_private_template( $prepend_path . "/" . $template_name, $code );
-        }
-    }
-}
+sub import_templates { shift->_import(0, scalar caller(0), @_) }
 
 =head2 package_variable( VARIABLE )
 
@@ -749,42 +741,6 @@ sub _has_template {
     }
 
     return undef;
-}
-
-sub _has_aliased_template {
-    my $package       = shift;
-    my $template_name = shift;
-    my $show_private  = shift;
-
-    # XXX Should we consider normalizing the path in a more standard way?
-    $template_name = "/$template_name" unless $template_name =~ m{^/};
-
-    foreach my $alias_key ( @{ Template::Declare->aliases->{$package} } ) {
-        my $alias_info   = $package->alias_metadata->{$alias_key};
-
-        my $alias_prefix = $alias_info->{path};
-        $alias_prefix = "/$alias_prefix" unless $alias_prefix =~ m{^/};
-        # handle the case where we alias something under '/'. the regex appends
-        # a '/' so we need to prevent matching against m{^//};
-        $alias_prefix = '' if $alias_prefix eq '/';
-
-        # starts with fast check
-        next unless rindex($template_name, "$alias_prefix/", 0) == 0;
-
-        my $dispatch_to = substr $template_name, length($alias_prefix)+1;
-        my $alias_class = $alias_info->{class};
-        my $coderef = $alias_class->resolve_template(
-            $dispatch_to, $show_private,
-        );
-        next unless $coderef;
-
-        my $package_vars = $alias_info->{package_vars};
-        return sub {
-            shift @_;  # Get rid of the passed-in "$self" class.
-            local $TEMPLATE_VARS->{$alias_class} = $package_vars;
-            $coderef->($alias_class,@_);
-        };
-    }
 }
 
 sub _dispatch_template {
