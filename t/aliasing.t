@@ -8,7 +8,7 @@ use Template::Declare::Tags;
 
 template 'aliased' => sub {
     my $self = shift;
-    div { outs( 'This is aliased from ' . $self ) };
+    div { outs_raw "Invocant: '$self'" };
     div { 'Variable ', $self->package_variable('VARIABLE') };
 };
 
@@ -64,9 +64,9 @@ ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
 {
     # Try the first alias with a variable set.
     ok my $simple = ( show('aliased_pkg/aliased') ), 'Should get output from alias template';
-    like( $simple, qr'This is aliased', 'Its output should be right' );
+    like( $simple, qr'Invocant:', 'Its output should be right' );
     like( $simple, qr'Variable SET' , "The variable was set");
-    like( $simple, qr'Wifty::UI::aliased_pkg',
+    like( $simple, qr{'Wifty::UI::aliased_pkg'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -74,9 +74,9 @@ ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
 {
     # Try the second alias with no variable.
     ok my $simple = ( show('aliased_pkg2/aliased') ), 'Should get output from second alias';
-    like( $simple, qr'This is aliased', 'Its output should be right' );
+    like( $simple, qr'Invocant', 'Its output should be right' );
     unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
-    like( $simple, qr'Wifty::UI::aliased_pkg',
+    like( $simple, qr{'Wifty::UI::aliased_pkg'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -86,12 +86,12 @@ ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
         'Should get output from superclass template';
     like(
         $simple,
-        qr'This is aliased',
+        qr'Invocant:',
         "We should get the aliased version in the subclass"
     );
     like(
         $simple,
-        qr'Wifty::UI::aliased_subclass_pkg',
+        qr{'Wifty::UI::aliased_subclass_pkg'},
         '$self is correct in template block'
     );
     ok_lint($simple);

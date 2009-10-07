@@ -8,7 +8,7 @@ use Template::Declare::Tags;
 
 template 'imported' => sub {
     my $self = shift;
-    div { outs( 'This is imported from ' . $self ) };
+    div { outs_raw "Invocant: '$self'" };
 };
 
 ##############################################################################
@@ -22,7 +22,7 @@ use base qw/Template::Declare/;
 use Template::Declare::Tags;
 
 template simple => sub {
-
+    print '# ', ref +shift, $/;
     html {
         head {};
         body { show 'private-content'; };
@@ -92,22 +92,21 @@ is( Wifty::UI->path_for('simple'), '/simple', 'Simple template should be in the 
 
 {
     ok my $simple = ( show('imported_pkg/imported') ), 'Should get output for imported template';
-    like( $simple, qr'This is imported', 'Its output should be correct' );
-    like( $simple, qr'Wifty::UI', '$self is correct in template block' );
+    like( $simple, qr'Invocant:', 'Its output should be correct' );
+    like( $simple, qr{'Wifty::UI::imported_pkg'}, '$self is correct in template block' );
     ok_lint($simple);
 }
-
 {
     ok my $simple = ( show('imported_subclass_pkg/imported') ),
         'Should get output from imported template from subclass';
     like(
         $simple,
-        qr'This is imported',
+        qr'Invocant:',
         "We got the imported version in the subclass"
     );
     like(
         $simple,
-        qr'Wifty::UI',
+        qr{'Wifty::UI::imported_pkg'},
         '$self is correct in template block'
     );
     ok_lint($simple);
