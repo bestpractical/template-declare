@@ -622,39 +622,38 @@ from Some::Other::Mixin, for example, will be able to access both
 
 =cut
 
-sub alias { shift->_import(1, scalar caller(0), @_) }
+sub alias { shift->_import(scalar caller(0), @_) }
 
 sub _import {
     return undef if $_[0] eq __PACKAGE__;
-    my $import_from_base = shift;
-    my $is_alias         = shift;
-    my $import_into      = shift;
-    my $prepend_path     = shift;
-    my $package_vars     = shift;
+    my ($mixin, $into, $prefix, $vars) = @_;
 
-    $prepend_path =~ s|/+/|/|g;
-    $prepend_path =~ s|/$||;
-    $import_from_base->imported_into($prepend_path);
+    $prefix =~ s|/+/|/|g;
+    $prefix =~ s|/$||;
+    $mixin->imported_into($prefix);
 
     my @packages = reverse grep { $_->isa(__PACKAGE__) }
-        Class::ISA::self_and_super_path( $import_from_base );
+        Class::ISA::self_and_super_path( $mixin );
 
-    foreach my $import_from (@packages) {
-        foreach my $template_name (  __PACKAGE__->_templates_for($import_from) ) {
-            my $code = $import_from->_find_template_sub( _template_name_to_sub($template_name));
-            $code = _code( $code, $import_from, $package_vars) if $is_alias;
-            $import_into->register_template( $prepend_path . "/" . $template_name, $code);
+    foreach my $from (@packages) {
+        for my $tname (  __PACKAGE__->_templates_for($from) ) {
+            $into->register_template(
+                "$prefix/$tname",
+                _import_code( $tname, $from, $vars )
+            );
         }
-        foreach my $template_name (  __PACKAGE__->_private_templates_for($import_from) ) {
-            my $code = $import_from->_find_template_sub( _template_name_to_private_sub($template_name) );
-            $code = _code( $code, $import_from, $package_vars) if $is_alias;
-            $import_into->register_private_template( $prepend_path . "/" . $template_name, $code);
+        for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
+            $into->register_private_template(
+                "$prefix/$tname",
+                _import_code( $tname, $from, $vars )
+            );
         }
     }
 }
 
-sub _code {
-    my ($code, $class, $vars) = @_;
+sub _import_code {
+    my ($tname, $class, $vars) = @_;
+    my $code = $class->_find_template_sub( _template_name_to_sub($tname) );
     return $code unless $vars;
     return sub {
         # XXX This does not seem to be needed.
@@ -679,7 +678,7 @@ variable information attached to it.
 
 =cut
 
-sub import_templates { shift->_import(0, scalar caller(0), @_) }
+sub import_templates { shift->_import(scalar caller(0), @_) }
 
 =head2 package_variable( VARIABLE )
 
