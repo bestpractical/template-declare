@@ -91,7 +91,7 @@ ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
     );
     like(
         $simple,
-        qr{'Wifty::UI::aliased_subclass_pkg'},
+        qr{'Wifty::UI::aliased_pkg'},
         '$self is correct in template block'
     );
     ok_lint($simple);

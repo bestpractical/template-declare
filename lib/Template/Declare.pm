@@ -642,12 +642,12 @@ sub _import {
     foreach my $import_from (@packages) {
         foreach my $template_name (  __PACKAGE__->_templates_for($import_from) ) {
             my $code = $import_from->_find_template_sub( _template_name_to_sub($template_name));
-            $code = _code( $code, $import_from_base, $package_vars) if $is_alias;
+            $code = _code( $code, $import_from, $package_vars) if $is_alias;
             $import_into->register_template( $prepend_path . "/" . $template_name, $code);
         }
         foreach my $template_name (  __PACKAGE__->_private_templates_for($import_from) ) {
             my $code = $import_from->_find_template_sub( _template_name_to_private_sub($template_name) );
-            $code = _code( $code, $import_from_base, $package_vars) if $is_alias;
+            $code = _code( $code, $import_from, $package_vars) if $is_alias;
             $import_into->register_private_template( $prepend_path . "/" . $template_name, $code);
         }
     }
@@ -655,7 +655,7 @@ sub _import {
 
 sub _code {
     my ($code, $class, $vars) = @_;
-#    return $code unless $vars;
+    return $code unless $vars;
     return sub {
         # XXX This does not seem to be needed.
         # shift @_;  # Get rid of the passed-in "$self" class.
