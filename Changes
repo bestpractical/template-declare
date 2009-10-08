@@ -5,6 +5,8 @@
 * Added "dispatch_to" to replace "roots", which is now deprecated. Note that
   "dispatch_to" resolves to template classes in the opposite order to "roots".
   This won't be an issue if you only use a single temlate class.
+* Deprecated "path_for()", since it only works for the last class into which a
+  template is imported.
 
 0.40_01 2009-08-12
 * Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué
