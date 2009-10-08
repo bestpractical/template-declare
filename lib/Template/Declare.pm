@@ -616,7 +616,7 @@ sub register_private_template {
 =head2 mix
 
     mix Some::Clever::Mixin      under '/mixin';
-    mix Some::Other::Mixin       under '/otmix', set { name => 'Larry' };
+    mix Some::Other::Mixin       under '/otmix', setting { name => 'Larry' };
     mix My::Mixin into My::View, under '/mymix';
 
 Sometimes you want to mix templates from one class into another class;
@@ -625,7 +625,7 @@ creates templates named C<foo> and C<bar>, they will be mixed into the calling
 template class as C<mixin/foo> and C<mixin/bar>.
 
 The second example mixes in the templates defined in Some::Other::Mixin into
-into the calling class under the "/mymix" path. Furthermore, those mixed-in
+into the calling class under the C</mymix> path. Furthermore, those mixed-in
 templates have package variables set for them that are accessible only from
 their mixed-in paths. For example, if this template was defined in
 Some::Other::Mixin:
@@ -706,9 +706,9 @@ sub alias { shift->_import(scalar caller(0), @_) }
 
     import_templates MyApp::Templates under '/something';
 
-Like C<mix()>, but without support for the C<into> or C<set> keywords. That
-is, it mixes templates into the calling template class and does not support
-package variables for those mixins. Deprecated in favor of C<mix()>.
+Like C<mix()>, but without support for the C<into> or C<setting> keywords.
+That is, it mixes templates into the calling template class and does not
+support package variables for those mixins. Deprecated in favor of C<mix()>.
 
 =cut
 

@@ -38,7 +38,7 @@ private template 'private-content' => sub {
     };
 };
 
-mix Wifty::UI::mixed_pkg under '/mixed_pkg', set { VARIABLE => 'SET' } ;
+mix Wifty::UI::mixed_pkg under '/mixed_pkg', setting { VARIABLE => 'SET' } ;
 mix Wifty::UI::mixed_pkg under '/mixed_pkg2';
 mix Wifty::UI::mixed_subclass_pkg under '/mixed_subclass_pkg';
 
