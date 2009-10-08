@@ -498,8 +498,10 @@ sub show {
 
     my $path = Template::Declare->path_for('index');
 
-Returns the path for the template name to be used for show, adjusted
-with paths used in C<import_templates>.
+Returns the path for the template name to be used for show, adjusted with
+paths used in C<import_templates>. Note that this will only work for the last
+class into which you imported the template. This method is, therefore,
+deprecated.
 
 =cut
 
