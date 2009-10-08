@@ -38,7 +38,6 @@ private template 'private-content' => sub {
     };
 };
 
-
 alias Wifty::UI::aliased_pkg under '/aliased_pkg', { VARIABLE => 'SET' } ;
 alias Wifty::UI::aliased_pkg under '/aliased_pkg2';
 alias Wifty::UI::aliased_subclass_pkg under '/aliased_subclass_pkg';

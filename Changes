@@ -11,6 +11,9 @@
   classes in which they are defined, rather than the subclass. This makes
   "alias" consistent with "import_templates".
 * Added "mix" and deprecated "alias" and "import_templates".
+* Deprecated the undocumented "aliases()" and "alias_metadata()" methods, as
+  they are no longer needed. They're now no-ops that issue warnings. To be
+  removed altogether in a future version.
 
 0.40_01 2009-08-12
 * Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué

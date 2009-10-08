@@ -45,6 +45,27 @@ sub roots {
     return [ reverse @{ $class->dispatch_to } ];
 }
 
+# Removed methods that no longer work (and were never documented anyway).
+# Remove these no-ops after a few releases (added for 0.41).
+
+=begin comment
+
+=head3 aliases
+
+=head3 alias_metadata
+
+=cut
+
+sub aliases {
+    require Carp;
+    Carp::cluck( 'aliases() is a deprecated no-op' );
+}
+
+sub alias_metadata {
+    require Carp;
+    Carp::cluck( 'alias_metadata() is a deprecated no-op' );
+}
+
 =head1 NAME
 
 Template::Declare - Perlish declarative templates
