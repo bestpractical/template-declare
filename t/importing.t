@@ -106,7 +106,7 @@ is( Wifty::UI->path_for('simple'), '/simple', 'Simple template should be in the 
     );
     like(
         $simple,
-        qr{'Wifty::UI::imported_pkg'},
+        qr{'Wifty::UI::imported_subclass_pkg'},
         '$self is correct in template block'
     );
     ok_lint($simple);

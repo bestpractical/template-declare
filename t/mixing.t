@@ -116,7 +116,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     );
     like(
         $simple,
-        qr{'Wifty::UI::mixed_pkg'},
+        qr{'Wifty::UI::mixed_subclass_pkg'},
         '$self is correct in template block'
     );
     ok_lint($simple);

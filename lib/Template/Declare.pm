@@ -830,27 +830,27 @@ sub _import {
         for my $tname (  __PACKAGE__->_templates_for($from) ) {
             $into->register_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $vars )
+                _import_code( $tname, $from, $mixin, $vars )
             );
         }
         for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
             $into->register_private_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $vars )
+                _import_code( $tname, $from, $mixin, $vars )
             );
         }
     }
 }
 
 sub _import_code {
-    my ($tname, $class, $vars) = @_;
-    my $code = $class->_find_template_sub( _template_name_to_sub($tname) );
-    return $code unless $vars;
+    my ($tname, $from, $to, $vars) = @_;
+    my $code = $from->_find_template_sub( _template_name_to_sub($tname) );
+    return $to eq $from ? $code : sub { $code->($to, @_) } unless $vars;
     return sub {
         # XXX This does not seem to be needed.
         # shift @_;  # Get rid of the passed-in "$self" class.
-        local $TEMPLATE_VARS->{$class} = $vars;
-        $code->($class, @_);
+        local $TEMPLATE_VARS->{$from} = $vars;
+        $code->($to, @_);
     };
 }
 
