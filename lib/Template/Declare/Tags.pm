@@ -116,14 +116,14 @@ Template::Declare::Tags - Build and install XML Tag subroutines for Template::De
 
 Produces:
 
- <link />
- <table>
-  <tr>
-   <td>Hello, world!</td>
-  </tr>
- </table>
- <img src="cat.gif" />
- <img src="dog.gif" />
+    <link />
+    <table>
+     <tr>
+      <td>Hello, world!</td>
+     </tr>
+    </table>
+    <img src="cat.gif" />
+    <img src="dog.gif" />
 
 Using XUL templates with a namespace:
 
@@ -143,13 +143,13 @@ Using XUL templates with a namespace:
 
 Produces:
 
- <groupbox>
-  <caption label="Colors" />
-  <html:div>
-   <html:p>howdy!</html:p>
-  </html:div>
-  <html:br></html:br>
- </groupbox>
+    <groupbox>
+     <caption label="Colors" />
+     <html:div>
+      <html:p>howdy!</html:p>
+     </html:div>
+     <html:br></html:br>
+    </groupbox>
 
 =head1 DESCRIPTION
 
@@ -209,13 +209,13 @@ within XUL using the C<html> namespace:
 
 This will output:
 
- <groupbox>
-  <caption label="Colors" />
-  <html:div>
-   <html:p>howdy!</html:p>
-  </html:div>
-  <html:br></html:br>
- </groupbox>
+    <groupbox>
+     <caption label="Colors" />
+     <html:div>
+      <html:p>howdy!</html:p>
+     </html:div>
+     <html:br></html:br>
+    </groupbox>
 
 Behind the scenes, C<Template::Declare::Tags> generates a Perl package named
 C<html> and installs the HTML tag subroutines into that package. On the other
@@ -245,17 +245,19 @@ them elsewhere:
 
 This code will generate something like the following:
 
- <groupbox>
-  <caption label="Colors" />
-  <htm:div>
-   <htm:p>howdy!</htm:p>
-  </htm:div>
-  <htm:br></htm:br>
- </groupbox>
+    <groupbox>
+     <caption label="Colors" />
+     <htm:div>
+      <htm:p>howdy!</htm:p>
+     </htm:div>
+     <htm:br></htm:br>
+    </groupbox>
 
 =head1 METHODS AND SUBROUTINES
 
-=head2 template TEMPLATENAME => sub { 'Implementation' };
+=head2 Declaring templates
+
+=head3 template TEMPLATENAME => sub { 'Implementation' };
 
     template select_list => sub {
         my $self = shift;
@@ -306,77 +308,9 @@ sub template ($$) {
             $codesub,
         );
     }
-
 }
 
-=head2 create_wrapper WRAPPERNAME => sub { 'Implementation' };
-
-    create_wrapper basics => sub {
-        my $code = shift;
-        html {
-            head { title { 'Welcome' } };
-            body { $code->() }
-        }
-    };
-
-C<create_wrapper> declares a wrapper subroutine that can be called like a tag
-sub, but can optionally take arguments to be passed to the wrapper sub. For
-example, if you wanted to wrap all of the output of a template in the usual
-HTML headers and footers, you can do something like this:
-
-    package MyApp::Templates;
-    use Template::Declare::Tags;
-    use base 'Template::Declare';
-
-    BEGIN {
-        create_wrapper wrap => sub {
-            my $code = shift;
-            my %params = @_;
-            html {
-                head { title { outs "Hello, $params{user}!"} };
-                body {
-                    $code->();
-                    div { outs 'This is the end, my friend' };
-                };
-            }
-        };
-    }
-
-    template inner => sub {
-        wrap {
-            h1 { outs "Hello, Jesse, s'up?" };
-        } user => 'Jesse';
-    };
-
-Note how the C<wrap> wrapper function is available for calling after it has
-been declared in a C<BEGIN> block. Also note how you can pass arguments to the
-function after the closing brace (you don't need a comma there!).
-
-The output from the "inner" template will look something like this:
-
- <html>
-  <head>
-   <title>Hello, Jesse!</title>
-  </head>
-  <body>
-   <h1>Hello, Jesse, s&#39;up?</h1>
-   <div>This is the end, my friend</div>
-  </body>
- </html>
-
-=cut
-
-sub create_wrapper ($$) {
-    my $wrapper_name   = shift;
-    my $coderef        = shift;
-    my $template_class = caller;
-
-    # Shove the code ref into the calling class.
-    no strict 'refs';
-    *{"$template_class\::$wrapper_name"} = sub (&;@) { goto $coderef };
-}
-
-=head2 private template TEMPLATENAME => sub { 'Implementation' };
+=head3 private template TEMPLATENAME => sub { 'Implementation' };
 
     private template select_list => sub {
         my $self = shift;
@@ -398,7 +332,70 @@ sub private (@) {
     Template::Declare::register_private_template( $class, $subname, $code );
 }
 
-=head2 attr HASH
+=head2 Showing templates
+
+=head3 show [$template_name or $template_coderef], args
+
+    show( main => { user => 'Bob' } );
+
+Displays templates. The first agument is the name of the template to be
+displayed. Any additional arguments will be passed directly to the template.
+
+C<show> can either be called with a template name or a package/object and a
+template. (It's both functional and OO.)
+
+If called from within a Template::Declare subclass, then private templates are
+accessible and visible. If called from something that isn't a
+Template::Declare, only public templates wil be visible.
+
+From the outside world, users can either call C<< Template::Declare->show() >>,
+C<< show() >> exported from Template::Declare::Tags or
+C<Template::Declare::Tags::show()> directly to render a publicly visible template.
+
+Private templates may only be called from within the C<Template::Declare>
+package.
+
+=cut
+
+sub show {
+    my $template = shift;
+
+    # if we're inside a template, we should show private templates
+    if ( caller->isa('Template::Declare') ) {
+        _show_template( $template, 1, \@_ );
+        return Template::Declare->buffer->data;
+    } else {
+        show_page( $template, @_);
+    }
+
+}
+
+=head3 show_page
+
+    show_page( main => { user => 'Bob' } );
+
+Like C<show()>, but does not dispatch to private templates. It's used
+internally by C<show()> when when that method is called from outside a
+template class.
+
+=cut
+
+sub show_page {
+    my $template = shift;
+    my $args = \@_;
+
+    Template::Declare->buffer->push(
+        private => defined wantarray,
+        from => "T::D path $template",
+    );
+    _show_template( $template, 0, $args );
+    %ELEMENT_ID_CACHE = ();
+    return Template::Declare->buffer->pop;
+}
+
+=head2 Attributes
+
+=head3 attr HASH
 
     attr { src => 'logo.png' };
 
@@ -410,14 +407,6 @@ add a class and ID to an HTML paragraph:
            class => 'greeting text',
            id    => 'welcome',
        };
-       'This is a welcoming paragraph';
-    }
-
-Attributes can also be specified by using C<is>, as in
-
-    p {
-       class is 'greeting text';
-       id    is 'welcome';
        'This is a welcoming paragraph';
     }
 
@@ -434,36 +423,60 @@ sub attr (&;@) {
     return @_;
 }
 
-=head2 xml_decl HASH
+=head3 ATTR is VALUE
 
-    xml_decl { 'xml', version => '1.0' };
+Attributes can also be specified by using C<is>, as in
 
-Emits an XML declaration. For example:
+    p {
+       class is 'greeting text';
+       id    is 'welcome';
+       'This is a welcoming paragraph';
+    }
 
-    xml_decl { 'xml', version => '1.0' };
-    xml_decl { 'xml-stylesheet',  href => "chrome://global/skin/", type => "text/css" };
+A few tricks work for 'is':
 
-Produces:
+    http_equiv is 'foo'; # => http-equiv="foo"
+    xml__lang is 'foo';  # => xml:lang="foo"
 
- <?xml version="1.0"?>
- <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+So double underscore replaced with colon and single underscore with dash.
 
 =cut
 
-sub xml_decl (&;$) {
-    my $code = shift;
-    my @rv   = $code->();
-    my $name = shift @rv;
-    outs_raw("<?$name");
-    while ( my ( $field, $val ) = splice( @rv, 0, 2 ) ) {
-        # only defined whle in a tag context
-        outs_raw(qq/ $field="$val"/);
+# 'is' is declared later, when needed, using 'local *is::AUTOLOAD = sub {};'
+
+=head3 with
+
+    with ( id => 'greeting', class => 'foo' ),
+        p { 'Hello, World wide web' };
+
+An alternative way to specify attributes for a tag, just for variation. The
+standard way to do the same as this example using C<attr> is:
+
+    p { attr { id => 'greeting', class => 'foo' }
+        'Hello, World wide web' };
+
+=cut
+
+sub with (@) {
+    %ATTRIBUTES = ();
+    while ( my ( $key, $val ) = splice( @_, 0, 2 ) ) {
+        no warnings 'uninitialized';
+        $ATTRIBUTES{$key} = $val;
+
+        if ( lc($key) eq 'id' ) {
+            if ( $ELEMENT_ID_CACHE{$val}++ ) {
+                warn
+                    "HTML appears to contain illegal duplicate element id: $val";
+            }
+        }
+
     }
-    outs_raw("?>\n");
-    return @_;
+    wantarray ? () : '';
 }
 
-=head2 outs STUFF
+=head2 Displaying text and raw data
+
+=head3 outs STUFF
 
     p { outs 'Grettings & welcome pyoonie hyoomon.' }
 
@@ -473,7 +486,7 @@ but is occaisionally useful when you need to output a mix of things, as in:
 
     p { outs 'hello'; em { 'world' } }
 
-=head2 outs_raw STUFF
+=head3 outs_raw STUFF
 
    p { outs_raw "That's what <em>I'm</em> talking about!' }
 
@@ -485,40 +498,9 @@ escaping.
 sub outs     { _outs( 0, @_ ); }
 sub outs_raw { _outs( 1, @_ ); }
 
-sub _outs {
-    my $raw     = shift;
-    my @phrases = (@_);
+=head2 Installing tags and wrapping stuff
 
-    Template::Declare->buffer->push(
-        private => (defined wantarray and not wantarray), from => "T::D outs"
-    );
-
-    foreach my $item ( grep {defined} @phrases ) {
-        my $returned = ref($item) eq 'CODE'
-            ? $item->()
-            : $raw
-                ? $item
-                : _postprocess($item);
-        Template::Declare->buffer->append( $returned );
-    }
-    return Template::Declare->buffer->pop;
-}
-
-=begin comment
-
-=head2 get_current_attr
-
-Deprecated.
-
-=end comment
-
-=cut
-
-sub get_current_attr ($) {
-    $ATTRIBUTES{ $_[0] };
-}
-
-=head2 install_tag TAGNAME, TAGSET
+=head3 install_tag TAGNAME, TAGSET
 
     install_tag video => 'Template::Declare::TagSet::HTML';
 
@@ -583,39 +565,9 @@ sub install_tag {
     );
 }
 
-=head2 with
+=head3 smart_tag_wrapper
 
-    with ( id => 'greeting', class => 'foo' ),
-        p { 'Hello, World wide web' };
-
-An alternative way to specify attributes for a tag, just for variation. The
-standard way to do the same as this example using C<attr> is:
-
-    p { attr { id => 'greeting', class => 'foo' }
-        'Hello, World wide web' };
-
-=cut
-
-sub with (@) {
-    %ATTRIBUTES = ();
-    while ( my ( $key, $val ) = splice( @_, 0, 2 ) ) {
-        no warnings 'uninitialized';
-        $ATTRIBUTES{$key} = $val;
-
-        if ( lc($key) eq 'id' ) {
-            if ( $ELEMENT_ID_CACHE{$val}++ ) {
-                warn
-                    "HTML appears to contain illegal duplicate element id: $val";
-            }
-        }
-
-    }
-    wantarray ? () : '';
-}
-
-=head2 smart_tag_wrapper
-
-    # create a tag that has access to the arguments set with with.
+    # create a tag that has access to the arguments set with L</with>.
     sub sample_smart_tag (&) {
         my $code = shift;
 
@@ -633,8 +585,8 @@ sub with (@) {
 
 The output would be
 
- keys: baz, foo
- Hello, World!
+    keys: baz, foo
+    Hello, World!
 
 The smart tag wrapper allows you to create code that has access to the
 attribute arguments specified via C<with>. It passes those arguments in to the
@@ -662,6 +614,147 @@ sub smart_tag_wrapper (&) {
     Template::Declare->buffer->append( $content );
 
     return '';
+}
+
+=head3 create_wrapper WRAPPERNAME => sub { 'Implementation' };
+
+    create_wrapper basics => sub {
+        my $code = shift;
+        html {
+            head { title { 'Welcome' } };
+            body { $code->() }
+        }
+    };
+
+C<create_wrapper> declares a wrapper subroutine that can be called like a tag
+sub, but can optionally take arguments to be passed to the wrapper sub. For
+example, if you wanted to wrap all of the output of a template in the usual
+HTML headers and footers, you can do something like this:
+
+    package MyApp::Templates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    BEGIN {
+        create_wrapper wrap => sub {
+            my $code = shift;
+            my %params = @_;
+            html {
+                head { title { outs "Hello, $params{user}!"} };
+                body {
+                    $code->();
+                    div { outs 'This is the end, my friend' };
+                };
+            }
+        };
+    }
+
+    template inner => sub {
+        wrap {
+            h1 { outs "Hello, Jesse, s'up?" };
+        } user => 'Jesse';
+    };
+
+Note how the C<wrap> wrapper function is available for calling after it has
+been declared in a C<BEGIN> block. Also note how you can pass arguments to the
+function after the closing brace (you don't need a comma there!).
+
+The output from the "inner" template will look something like this:
+
+    <html>
+     <head>
+      <title>Hello, Jesse!</title>
+     </head>
+     <body>
+      <h1>Hello, Jesse, s&#39;up?</h1>
+      <div>This is the end, my friend</div>
+     </body>
+    </html>
+
+=cut
+
+sub create_wrapper ($$) {
+    my $wrapper_name   = shift;
+    my $coderef        = shift;
+    my $template_class = caller;
+
+    # Shove the code ref into the calling class.
+    no strict 'refs';
+    *{"$template_class\::$wrapper_name"} = sub (&;@) { goto $coderef };
+}
+
+=head2 Helpers
+
+=head3 xml_decl HASH
+
+    xml_decl { 'xml', version => '1.0' };
+
+Emits an XML declaration. For example:
+
+    xml_decl { 'xml', version => '1.0' };
+    xml_decl { 'xml-stylesheet',  href => "chrome://global/skin/", type => "text/css" };
+
+Produces:
+
+    <?xml version="1.0"?>
+    <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+=cut
+
+sub xml_decl (&;$) {
+    my $code = shift;
+    my @rv   = $code->();
+    my $name = shift @rv;
+    outs_raw("<?$name");
+    while ( my ( $field, $val ) = splice( @rv, 0, 2 ) ) {
+        outs_raw(qq/ $field="$val"/);
+    }
+    outs_raw("?>\n");
+    return @_;
+}
+
+=head3 current_template
+
+    my $path = current_template();
+
+Returns the absolute path of the current template
+
+=cut
+
+sub current_template {
+    return $TEMPLATE_STACK[-1] || '';
+}
+
+=head3 under
+
+C<under> is a helper function providing semantic sugar for the C<mix> method
+of L<Template::Declare|Template::Declare/"mix">.
+
+=cut
+
+sub under ($) { return shift }
+
+=head3 setting
+
+C<setting> is a helper function providing semantic sugar for the C<mix> method
+of L<Template::Declare|Template::Declare/"mix">.
+
+=cut
+
+sub setting ($) { return shift }
+
+=begin comment
+
+=head2 get_current_attr
+
+Deprecated.
+
+=end comment
+
+=cut
+
+sub get_current_attr ($) {
+    $ATTRIBUTES{ $_[0] };
 }
 
 sub _tag {
@@ -733,65 +826,6 @@ sub _tag {
         : '';
 }
 
-=head2 show [$template_name or $template_coderef], args
-
-    show( main => { user => 'Bob' } );
-
-Displays templates. The first agument is the name of the template to be
-displayed. Any additional arguments will be passed directly to the template.
-
-C<show> can either be called with a template name or a package/object and a
-template. (It's both functional and OO.)
-
-If called from within a Template::Declare subclass, then private templates are
-accessible and visible. If called from something that isn't a
-Template::Declare, only public templates wil be visible.
-
-From the outside world, users can either call C<< Template::Declare->show() >>,
-C<< show() >> exported from Template::Declare::Tags or
-C<Template::Declare::Tags::show()> directly to render a publicly visible template.
-
-Private templates may only be called from within the C<Template::Declare>
-package.
-
-=cut
-
-sub show {
-    my $template = shift;
-
-    # if we're inside a template, we should show private templates
-    if ( caller->isa('Template::Declare') ) {
-        _show_template( $template, 1, \@_ );
-        return Template::Declare->buffer->data;
-    } else {
-        show_page( $template, @_);
-    }
-
-}
-
-=head2 show_page
-
-    show_page( main => { user => 'Bob' } );
-
-Like C<show()>, but does not dispatch to private templates. It's used
-internally by C<show()> when when that method is called from outside a
-template class.
-
-=cut
-
-sub show_page {
-    my $template = shift;
-    my $args = \@_;
-
-    Template::Declare->buffer->push(
-        private => defined wantarray,
-        from => "T::D path $template",
-    );
-    _show_template( $template, 0, $args );
-    %ELEMENT_ID_CACHE = ();
-    return Template::Declare->buffer->pop;
-}
-
 sub _resolve_template_path {
     my $template = shift;
 
@@ -815,19 +849,6 @@ sub _resolve_template_path {
 
     return join '/', @parts;
 }
-
-=head2 current_template
-
-  my $path = current_template();
-
-Returns the absolute path of the current template
-
-=cut
-
-sub current_template {
-    return $TEMPLATE_STACK[-1] || '';
-}
-
 
 sub _show_template {
     my $template        = shift;
@@ -864,6 +885,25 @@ sub _show_template {
     return;
 }
 
+sub _outs {
+    my $raw     = shift;
+    my @phrases = (@_);
+
+    Template::Declare->buffer->push(
+        private => (defined wantarray and not wantarray), from => "T::D outs"
+    );
+
+    foreach my $item ( grep {defined} @phrases ) {
+        my $returned = ref($item) eq 'CODE'
+            ? $item->()
+            : $raw
+                ? $item
+                : _postprocess($item);
+        Template::Declare->buffer->append( $returned );
+    }
+    return Template::Declare->buffer->pop;
+}
+
 sub _postprocess {
     my $val = shift;
     my $skip_postprocess = shift;
@@ -887,24 +927,6 @@ sub _postprocess {
 
     return $val;
 }
-
-=head2 under
-
-C<under> is a helper function providing semantic sugar for the C<mix> method
-of L<Template::Declare|Template::Declare/"mix">.
-
-=cut
-
-sub under ($) { return shift }
-
-=head2 setting
-
-C<setting> is a helper function providing semantic sugar for the C<mix> method
-of L<Template::Declare|Template::Declare/"mix">.
-
-=cut
-
-sub setting ($) { return shift }
 
 =begin comment
 
@@ -957,11 +979,11 @@ code:
 
 It generates
 
- <body>
-  <pre>
- <script src="foo.js"></script>
-  </pre>
- </body>
+    <body>
+     <pre>
+    <script src="foo.js"></script>
+     </pre>
+    </body>
 
 Note that now the C<script> tag has I<no> indentation and we've got what we
 want. ;)
