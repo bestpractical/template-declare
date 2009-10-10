@@ -515,8 +515,8 @@ sub show {
 
     my $path = Template::Declare->path_for('index');
 
-Returns the path for the template name to be used for show, adjusted
-with paths used in C<import_templates>.
+Returns the path for the template name to be used for show, adjusted with
+paths used in C<mix>.
 
 =cut
 
@@ -537,7 +537,7 @@ in addition to public ones. C<has_template()> is an alias for this method.
 
 First it looks through all the valid Template::Declare classes defined via
 C<dispatch_to>. For each class, it looks to see if it has a template called
-$template_name directly (or via a C<import_templates> or C<alias>).
+$template_name directly (or via a mixin).
 
 =head2 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
 
@@ -561,6 +561,8 @@ sub resolve_template {
     }
 
     foreach my $package (@search_packages) {
+        # print STDERR "#PACK: $package\n";
+        # print STDERR '# ', join("\n# ", @TestApp::TD::HTML::ISA), $/;
         next unless ( $package and $package->isa(__PACKAGE__) );
         if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
             return $coderef;
@@ -719,8 +721,8 @@ sub import_templates { shift->_import(scalar caller(0), @_) }
   $td->package_variable( $varname => $value );
   $value = $td->package_variable( $varname );
 
-Returns the value set for a template alias's variable. See L<alias/alias> for
-details.
+Returns a value set for a mixed-in template's variable, if any were specified
+when the template was mixed-in. See L<mix/mix> for details.
 
 =cut
 
@@ -738,8 +740,8 @@ sub package_variable {
   $td->package_variables( $variables );
   $variables = $td->package_variables( );
 
-Get or set a hash reference of variables for a template alias. See
-L<alias/alias> for details.
+Get or set a hash reference of variables for a mixed-in template. See
+L<mix/mix> for details.
 
 =cut
 
