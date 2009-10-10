@@ -561,8 +561,6 @@ sub resolve_template {
     }
 
     foreach my $package (@search_packages) {
-        # print STDERR "#PACK: $package\n";
-        # print STDERR '# ', join("\n# ", @TestApp::TD::HTML::ISA), $/;
         next unless ( $package and $package->isa(__PACKAGE__) );
         if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
             return $coderef;
