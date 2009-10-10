@@ -715,7 +715,7 @@ sub _tag {
     }
     my $content = Template::Declare->buffer->pop;
     $content .= "$last" if not length $content and length $last;
-    Template::Declare->buffer->append($attrs);
+    Template::Declare->buffer->append($attrs) if length $attrs;
 
     if (length $content) {
         Template::Declare->buffer->append(">$content");
