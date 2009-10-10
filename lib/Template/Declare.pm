@@ -45,27 +45,6 @@ sub roots {
     return [ reverse @{ $class->dispatch_to } ];
 }
 
-# Removed methods that no longer work (and were never documented anyway).
-# Remove these no-ops after a few releases (added for 0.41).
-
-=begin comment
-
-=head3 aliases
-
-=head3 alias_metadata
-
-=cut
-
-sub aliases {
-    require Carp;
-    Carp::cluck( 'aliases() is a deprecated no-op' );
-}
-
-sub alias_metadata {
-    require Carp;
-    Carp::cluck( 'alias_metadata() is a deprecated no-op' );
-}
-
 =head1 NAME
 
 Template::Declare - Perlish declarative templates
@@ -147,7 +126,7 @@ Public and private templates
 
 =head2 Basic usage
 
-A simple HTML example is in the L<SYNOPSIS/SYNOPSIS>. So let's do XUL!
+A simple HTML example is in the L</SYNOPSIS>. So let's do XUL!
 
     package MyApp::Templates;
     use base 'Template::Declare';
@@ -357,10 +336,6 @@ And the output:
  <h1>Hello</h1>
  <div>first post</div>
 
-=head2 Aliasing and Mixins
-
-=head2 Class Search Dispatching
-
 =head1 METHODS
 
 =head2 init
@@ -424,71 +399,6 @@ sub init {
 
 }
 
-=head2 buffer
-
-Gets or sets the L<String::BufferStack> object; this is a class method. You
-can use it to manipulate the output from tags as they are output. It's used
-internally to make the tags nest correctly, and be output to the right place.
-We're not sure if there's ever a need for you to frob it by hand, but it does
-enable things like the following:
-
-    template simple => sub {
-       html {
-           head {}
-           body {
-               Template::Declare->buffer->set_filter( sub {uc shift} );
-               p { 'Whee!' }
-               p { 'Hello, world wide web!' }
-               Template::Declare->buffer->clear_top if rand() < 0.5;
-           }
-       }
-    };
-
-...which outputs, with equal regularity, either:
-
- <html>
-  <head></head>
-  <body>
-   <P>WHEE!</P>
-   <P>HELLO, WORLD WIDE WEB!</P>
-  </body>
- </html>
-
-...or:
-
- <html>
-  <head></head>
-  <body></body>
- </html>
-
-We'll leave it to you to judge whether or not that's actually useful.
-
-=head2 new_buffer_frame
-
-  $td->new_buffer_frame();
-
-Creates a new buffer frame, using L<String::BufferStack/push> with C<private>.
-This use is deprecated in favor of dealing with L</buffer> directly.
-
-=cut
-
-sub new_buffer_frame {
-    __PACKAGE__->buffer->push( private => 1 );
-}
-
-=head2 end_buffer_frame
-
-  my $buf = $td->end_buffer_frame();
-
-Deletes and returns the topmost buffer, using L<String::BufferStack/pop>. This
-use is deprecated in favor of dealing with L</buffer> directly..
-
-=cut
-
-sub end_buffer_frame {
-    __PACKAGE__->buffer->pop;
-}
-
 =head2 show TEMPLATE_NAME
 
     Template::Declare->show( 'howdy', name => 'Larry' );
@@ -511,116 +421,18 @@ sub show {
     return Template::Declare::Tags::show_page($template => @_);
 }
 
-=head2 path_for $template
+=head2 Mixing templates
 
-    my $path = Template::Declare->path_for('index');
+Sometimes you want to mix templates from one class into another class;
+C<mix()> is your key to doing so.
 
-Returns the path for the template name to be used for show, adjusted with
-paths used in C<mix>.
-
-=cut
-
-sub path_for {
-    my $class = shift;
-    my $template = shift;
-    return ($class->imported_into ||'') . '/' . $template;
-}
-
-=head2 resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
-
-    my $code = Template::Declare->resolve_template($template);
-    my $code = Template::Declare->has_template($template, 1);
-
-Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
-boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
-in addition to public ones. C<has_template()> is an alias for this method.
-
-First it looks through all the valid Template::Declare classes defined via
-C<dispatch_to>. For each class, it looks to see if it has a template called
-$template_name directly (or via a mixin).
-
-=head2 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
-
-An alias for C<resolve_template>.
-
-=cut
-
-sub resolve_template {
-    my $self          = shift;
-    my $template_name = shift;
-    my $show_private  = shift || 0;
-
-    my @search_packages;
-
-    # If we're being called as a class method on T::D it means "search in any package"
-    # Otherwise, it means search only in this specific package"
-    if ( $self eq __PACKAGE__ ) {
-        @search_packages = @{ Template::Declare->dispatch_to };
-    } else {
-        @search_packages = ($self);
-    }
-
-    foreach my $package (@search_packages) {
-        next unless ( $package and $package->isa(__PACKAGE__) );
-        if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
-            return $coderef;
-        }
-    }
-}
-
-sub has_template { resolve_template(@_) }
-
-=head2 register_template( TEMPLATE_NAME, CODEREF )
-
-    MyApp::Templates->register_template( howdy => sub { ... } );
-
-This method registers a template called C<TEMPLATE_NAME> in the calling class.
-As you might guess, C<CODEREF> defines the template's implementation. This
-method is mainly intended to be used internally, as you use the C<template>
-keyword to create templates, right?
-
-=cut
-
-sub register_template {
-    my $class         = shift;
-    my $template_name = shift;
-    my $code          = shift;
-    push @{ __PACKAGE__->templates()->{$class} }, $template_name;
-    _register_template( $class, _template_name_to_sub($template_name), $code )
-}
-
-=head2 register_private_template( TEMPLATE_NAME, CODEREF )
-
-    MyApp::Templates->register_private_template( howdy => sub { ... } );
-
-This method registers a private template called C<TEMPLATE_NAME> in the caling
-class. As you might guess, C<CODEREF> defines the template's implementation.
-
-Private templates can't be called directly from user code but only from other
-templates.
-
-This method is mainly intended to be used internally, as you use the
-C<private template> expression to create templates, right?
-
-=cut
-
-sub register_private_template {
-    my $class         = shift;
-    my $template_name = shift;
-    my $code          = shift;
-    push @{ __PACKAGE__->private_templates()->{$class} }, $template_name;
-    _register_template( $class, _template_name_to_private_sub($template_name), $code );
-
-}
-
-=head2 mix
+=head3 mix
 
     mix Some::Clever::Mixin      under '/mixin';
     mix Some::Other::Mixin       under '/otmix', setting { name => 'Larry' };
     mix My::Mixin into My::View, under '/mymix';
 
-Sometimes you want to mix templates from one class into another class;
-C<mix()> is your key to doing so. In the first example, if Some::Clever::Mixin
+In the first example, if Some::Clever::Mixin
 creates templates named C<foo> and C<bar>, they will be mixed into the calling
 template class as C<mixin/foo> and C<mixin/bar>.
 
@@ -679,48 +491,13 @@ sub mix {
     $mixin->_import($into, $under, @_);
 }
 
-=head2 into
-
-  $class = into $class;
-
-C<into> is a helper method providing semantic sugar for the C<mix()> method.
-All it does is return the name of the class on which it was called.
-
-=cut
-
-sub into { shift }
-
-=head2 alias
-
-    alias Some::Clever::Mixin under '/mixin';
-    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
-
-Like C<mix()>, but without support for the C<into> keyword. That is, it mixes
-templates into the calling template class. Deprecated in favor of C<mix()>.
-
-=cut
-
-sub alias { shift->_import(scalar caller(0), @_) }
-
-=head2 import_templates
-
-    import_templates MyApp::Templates under '/something';
-
-Like C<mix()>, but without support for the C<into> or C<setting> keywords.
-That is, it mixes templates into the calling template class and does not
-support package variables for those mixins. Deprecated in favor of C<mix()>.
-
-=cut
-
-sub import_templates { shift->_import(scalar caller(0), @_) }
-
-=head2 package_variable( VARIABLE )
+=head3 package_variable( VARIABLE )
 
   $td->package_variable( $varname => $value );
   $value = $td->package_variable( $varname );
 
 Returns a value set for a mixed-in template's variable, if any were specified
-when the template was mixed-in. See L<mix/mix> for details.
+when the template was mixed-in. See L</mix> for details.
 
 =cut
 
@@ -733,13 +510,13 @@ sub package_variable {
     return $TEMPLATE_VARS->{$self}->{$var};
 }
 
-=head2 package_variables( VARIABLE )
+=head3 package_variables( VARIABLE )
 
-  $td->package_variables( $variables );
-  $variables = $td->package_variables( );
+    $td->package_variables( $variables );
+    $variables = $td->package_variables;
 
 Get or set a hash reference of variables for a mixed-in template. See
-L<mix/mix> for details.
+L</mix> for details.
 
 =cut
 
@@ -749,6 +526,255 @@ sub package_variables {
         %{ $TEMPLATE_VARS->{$self} } = shift;
     }
     return $TEMPLATE_VARS->{$self};
+}
+
+
+=head2 Templates registration and lookup
+
+=head3 resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
+
+    my $code = Template::Declare->resolve_template($template);
+    my $code = Template::Declare->has_template($template, 1);
+
+Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
+boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
+in addition to public ones. C<has_template()> is an alias for this method.
+
+First it looks through all the valid Template::Declare classes defined via
+C<dispatch_to>. For each class, it looks to see if it has a template called
+$template_name directly (or via a mixin).
+
+=cut
+
+sub resolve_template {
+    my $self          = shift;
+    my $template_name = shift;
+    my $show_private  = shift || 0;
+
+    my @search_packages;
+
+    # If we're being called as a class method on T::D it means "search in any package"
+    # Otherwise, it means search only in this specific package"
+    if ( $self eq __PACKAGE__ ) {
+        @search_packages = @{ Template::Declare->dispatch_to };
+    } else {
+        @search_packages = ($self);
+    }
+
+    foreach my $package (@search_packages) {
+        next unless ( $package and $package->isa(__PACKAGE__) );
+        if ( my $coderef = $package->_has_template( $template_name, $show_private ) ) {
+            return $coderef;
+        }
+    }
+}
+
+=head3 has_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
+
+An alias for C<resolve_template>.
+
+=cut
+
+sub has_template { resolve_template(@_) }
+
+=head3 register_template( TEMPLATE_NAME, CODEREF )
+
+    MyApp::Templates->register_template( howdy => sub { ... } );
+
+This method registers a template called C<TEMPLATE_NAME> in the calling class.
+As you might guess, C<CODEREF> defines the template's implementation. This
+method is mainly intended to be used internally, as you use the C<template>
+keyword to create templates, right?
+
+=cut
+
+sub register_template {
+    my $class         = shift;
+    my $template_name = shift;
+    my $code          = shift;
+    push @{ __PACKAGE__->templates()->{$class} }, $template_name;
+    _register_template( $class, _template_name_to_sub($template_name), $code )
+}
+
+=head3 register_private_template( TEMPLATE_NAME, CODEREF )
+
+    MyApp::Templates->register_private_template( howdy => sub { ... } );
+
+This method registers a private template called C<TEMPLATE_NAME> in the caling
+class. As you might guess, C<CODEREF> defines the template's implementation.
+
+Private templates can't be called directly from user code but only from other
+templates.
+
+This method is mainly intended to be used internally, as you use the
+C<private template> expression to create templates, right?
+
+=cut
+
+sub register_private_template {
+    my $class         = shift;
+    my $template_name = shift;
+    my $code          = shift;
+    push @{ __PACKAGE__->private_templates()->{$class} }, $template_name;
+    _register_template( $class, _template_name_to_private_sub($template_name), $code );
+
+}
+
+=head3 buffer
+
+Gets or sets the L<String::BufferStack> object; this is a class method.
+
+You can use it to manipulate the output from tags as they are output. It's used
+internally to make the tags nest correctly, and be output to the right place.
+We're not sure if there's ever a need for you to frob it by hand, but it does
+enable things like the following:
+
+    template simple => sub {
+       html {
+           head {}
+           body {
+               Template::Declare->buffer->set_filter( sub {uc shift} );
+               p { 'Whee!' }
+               p { 'Hello, world wide web!' }
+               Template::Declare->buffer->clear_top if rand() < 0.5;
+           }
+       }
+    };
+
+...which outputs, with equal regularity, either:
+
+ <html>
+  <head></head>
+  <body>
+   <P>WHEE!</P>
+   <P>HELLO, WORLD WIDE WEB!</P>
+  </body>
+ </html>
+
+...or:
+
+ <html>
+  <head></head>
+  <body></body>
+ </html>
+
+We'll leave it to you to judge whether or not that's actually useful.
+
+=head2 Helpers
+
+You don't need to call any of this directly.
+
+=head3 into
+
+    $class = into $class;
+
+C<into> is a helper method providing semantic sugar for the L</mix> method.
+All it does is return the name of the class on which it was called.
+
+=cut
+
+sub into { shift }
+
+=head2 Old, deprecated or just better to avoid
+
+=head3 alias
+
+    alias Some::Clever::Mixin under '/mixin';
+    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
+
+Like C<mix()>, but without support for the C<into> keyword. That is, it mixes
+templates into the calling template class.
+
+B<Deprecated> in favor of L</mix>. Will be supported for a long time, but
+new code should use C<mix()>.
+
+=cut
+
+sub alias { shift->_import(scalar caller(0), @_) }
+
+=head3 import_templates
+
+    import_templates MyApp::Templates under '/something';
+
+Like C<mix()>, but without support for the C<into> or C<setting> keywords.
+That is, it mixes templates into the calling template class and does not
+support package variables for those mixins.
+
+B<Deprecated> in favor of L</mix>. Will be supported for a long time, but
+new code should use C<mix()>.
+
+=cut
+
+sub import_templates { shift->_import(scalar caller(0), @_) }
+
+=head3 new_buffer_frame
+
+    $td->new_buffer_frame;
+    # same as 
+    $td->buffer->push( private => 1 );
+
+Creates a new buffer frame, using L<String::BufferStack/push> with C<private>.
+
+B<Deprecated> in favor of dealing with L</buffer> directly.
+
+=cut
+
+sub new_buffer_frame {
+    __PACKAGE__->buffer->push( private => 1 );
+}
+
+=head3 end_buffer_frame
+
+    my $buf = $td->end_buffer_frame;
+    # same as
+    my $buf = $td->buffer->pop;
+
+Deletes and returns the topmost buffer, using L<String::BufferStack/pop>.
+
+B<Deprecated> in favor of dealing with L</buffer> directly.
+
+=cut
+
+sub end_buffer_frame {
+    __PACKAGE__->buffer->pop;
+}
+
+=head3 path_for $template
+
+    my $path = Template::Declare->path_for('index');
+
+Returns the path for the template name to be used for show, adjusted with
+paths used in C<mix>.
+
+=cut
+
+# Removed methods that no longer work (and were never documented anyway).
+# Remove these no-ops after a few releases (added for 0.41).
+
+=begin comment
+
+=head3 aliases
+
+=head3 alias_metadata
+
+=end comment
+
+=cut
+
+sub aliases {
+    require Carp;
+    Carp::cluck( 'aliases() is a deprecated no-op' );
+}
+
+sub alias_metadata {
+    require Carp;
+    Carp::cluck( 'alias_metadata() is a deprecated no-op' );
+}
+
+sub path_for {
+    my $class = shift;
+    my $template = shift;
+    return ($class->imported_into ||'') . '/' . $template;
 }
 
 sub _templates_for {
@@ -845,7 +871,8 @@ sub _import {
 sub _import_code {
     my ($tname, $from, $to, $vars) = @_;
     my $code = $from->_find_template_sub( _template_name_to_sub($tname) );
-    return $to eq $from ? $code : sub { $code->($to, @_) } unless $vars;
+    return $to eq $from ? $code : sub { $code->($to, @_) }
+        unless $vars;
     return sub {
         # XXX This does not seem to be needed.
         # shift @_;  # Get rid of the passed-in "$self" class.
@@ -971,7 +998,7 @@ string as the content instead of 0:
 
 Crawling all over, baby. Be very, very careful. This code is so cutting edge,
 it can only be fashioned from carbon nanotubes. But we're already using this
-thing in production :) Make sure you have read the L<PITFALLS/PITFALLS>
+thing in production :) Make sure you have read the L</PITFALLS>
 section above :)
 
 Some specific bugs and design flaws that we'd love to see fixed.
