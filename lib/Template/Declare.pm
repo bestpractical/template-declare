@@ -1,7 +1,6 @@
 use 5.006;
 use warnings;
 use strict;
-use Carp;
 
 package Template::Declare;
 use Template::Declare::Buffer;
@@ -35,7 +34,7 @@ __PACKAGE__->around_template( undef );
     return $ref->buffer;
 };
 
-use vars qw/$TEMPLATE_VARS/;
+our $TEMPLATE_VARS;
 
 # Backwards-compatibility support.
 sub roots {
