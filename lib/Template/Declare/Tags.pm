@@ -78,7 +78,7 @@ sub import {
         Template::Declare::Tags::install_tag($_, $tagset)
             for @$tag_list;
     }
-   __PACKAGE__->export_to_level(1, $self);
+    __PACKAGE__->export_to_level(1, $self);
 }
 
 sub _install {
@@ -182,14 +182,14 @@ If you implement a custom tag set module named
 C<Template::Declare::TagSet::Foo>, you can load it into a template module like
 so:
 
- use Template::Declare::Tags 'Foo';
+    use Template::Declare::Tags 'Foo';
 
 If your tag set module is not under the
 L<Template::Declare::TagSet|Template::Declare::TagSet> namespace, use the
 C<from> option to load it. Fore example, if you created a tag set named
 C<MyTag::Foo>, then you could load it like so:
 
- use Template::Declare::Tags Foo => { from => 'MyTag::Foo' };
+    use Template::Declare::Tags Foo => { from => 'MyTag::Foo' };
 
 XML namespaces are emulated by Perl packages. For example, to embed HTML tags
 within XUL using the C<html> namespace:
@@ -653,27 +653,28 @@ sub smart_tag_wrapper (&) {
     my %attr = %ATTRIBUTES;
     %ATTRIBUTES = ();                              # prevent leakage
 
-    my $last = join '',    #
-        map { ref($_) ? $_ : _postprocess($_) }    #
+    my $last = join '',
+        map { ref($_) ? $_ : _postprocess($_) }
         $coderef->(%attr);
 
     my $content = Template::Declare->buffer->pop;
     $content .= "$last" if not length $content and length $last;
-    Template::Declare->buffer->append( $content ) ;
+    Template::Declare->buffer->append( $content );
 
     return '';
 }
 
 sub _tag {
     my $tagset    = shift;
-    my $tag = shift;
+    my $tag       = shift;
     my $code      = shift;
     my $more_code = shift;
     $tag = $tagset->namespace . ":$tag" if defined $tagset->namespace;
 
     Template::Declare->buffer->append(
               "\n" 
-            . ( " " x $TAG_NEST_DEPTH ) . "<$tag"
+            . ( " " x $TAG_NEST_DEPTH )
+            . "<$tag"
             . join( '',
             map { qq{ $_="} . ( $ATTRIBUTES{$_} || '' ) . qq{"} }
                 sort keys %ATTRIBUTES )
@@ -694,7 +695,7 @@ sub _tag {
             $field =~ s/_/-/g;    # http_equiv is 'bar' ====> http-equiv="bar"
 
             # Squash empty values, but not '0' values
-            my $val = join( ' ', grep { defined $_ && $_ ne '' } @_ );
+            my $val = join ' ', grep { defined $_ && $_ ne '' } @_;
 
             append_attr( $field, $val );
         };
@@ -736,7 +737,7 @@ sub _tag {
 
     show( main => { user => 'Bob' } );
 
-Displays templates. The first agument is the name of the emplate to be
+Displays templates. The first agument is the name of the template to be
 displayed. Any additional arguments will be passed directly to the template.
 
 C<show> can either be called with a template name or a package/object and a
@@ -746,8 +747,9 @@ If called from within a Template::Declare subclass, then private templates are
 accessible and visible. If called from something that isn't a
 Template::Declare, only public templates wil be visible.
 
-From the outside world, users can either call C<< Template::Declare->show() >>
-or C<Template::Declare::Tags::show()> to render a publicly visible template.
+From the outside world, users can either call C<< Template::Declare->show() >>,
+C<< show() >> exported from Template::Declare::Tags or
+C<Template::Declare::Tags::show()> directly to render a publicly visible template.
 
 Private templates may only be called from within the C<Template::Declare>
 package.
@@ -928,7 +930,7 @@ sub append_attr {
 
 =head1 VARIABLES
 
-=over
+=over 4
 
 =item C<@Template::Declare::Tags::EXPORT>
 
