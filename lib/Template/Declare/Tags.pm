@@ -9,23 +9,31 @@ package Template::Declare::Tags;
 our $VERSION = '0.40';
 
 use Template::Declare;
-use vars qw( @EXPORT_OK $PRIVATE $self @TagSubs );
 use base 'Exporter';
 use Carp qw(carp croak);
 use Symbol 'qualify_to_ref';
 
-our @EXPORT
-    = qw( with template private show show_page attr outs
-          outs_raw in_isolation $self under setting
-          get_current_attr xml_decl
-          smart_tag_wrapper current_template create_wrapper );
+our $self;
+
+our @EXPORT = qw(
+    template private current_template
+    show show_page
+    attr with get_current_attr 
+    outs outs_raw
+    xml_decl
+    under setting
+    smart_tag_wrapper create_wrapper
+    $self
+);
+
 our @TAG_SUB_LIST;
+our @TagSubs;
 *TagSubs = \@TAG_SUB_LIST;  # For backward compatibility only
 
 our %ATTRIBUTES       = ();
 our %ELEMENT_ID_CACHE = ();
 our $TAG_NEST_DEPTH   = 0;
-our @TEMPLATE_STACK;
+our @TEMPLATE_STACK   = ();
 
 our $SKIP_XML_ESCAPING = 0;
 
