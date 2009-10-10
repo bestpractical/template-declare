@@ -783,18 +783,13 @@ sub show_page {
     my $template = shift;
     my $args = \@_;
 
-    if (defined wantarray) {
-        Template::Declare->buffer->push( private => 1, from => "T::D path $template" );
-        _show_template( $template, 0, $args );
-        %ELEMENT_ID_CACHE = ();
-        return Template::Declare->buffer->pop;
-    } else {
-        Template::Declare->buffer->push( from => "T::D path $template" );
-        _show_template( $template, 0, $args );
-        %ELEMENT_ID_CACHE = ();
-        Template::Declare->buffer->pop;
-        return undef;
-    }
+    Template::Declare->buffer->push(
+        private => defined wantarray,
+        from => "T::D path $template",
+    );
+    _show_template( $template, 0, $args );
+    %ELEMENT_ID_CACHE = ();
+    return Template::Declare->buffer->pop;
 }
 
 sub _resolve_template_path {
