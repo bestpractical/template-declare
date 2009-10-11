@@ -869,15 +869,14 @@ sub _import {
 }
 
 sub _import_code {
-    my ($tname, $from, $to, $vars) = @_;
+    my ($tname, $from, $mixin, $vars) = @_;
     my $code = $from->_find_template_sub( _template_name_to_sub($tname) );
-    return $to eq $from ? $code : sub { $code->($to, @_) }
+    return $mixin eq $from ? $code : sub { shift; $code->($mixin, @_) }
         unless $vars;
     return sub {
-        # XXX This does not seem to be needed.
-        # shift @_;  # Get rid of the passed-in "$self" class.
-        local $TEMPLATE_VARS->{$from} = $vars;
-        $code->($to, @_);
+        shift @_;  # Get rid of the passed-in "$self" class.
+        local $TEMPLATE_VARS->{$mixin} = $vars;
+        $code->($mixin, @_);
     };
 }
 
