@@ -743,7 +743,8 @@ sub end_buffer_frame {
     my $path = Template::Declare->path_for('index');
 
 Returns the path for the template name to be used for show, adjusted with
-paths used in C<mix>.
+paths used in C<mix>. Note that this will only work for the last class into
+which you imported the template. This method is, therefore, deprecated.
 
 =cut
 
