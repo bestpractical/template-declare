@@ -116,14 +116,14 @@ Template::Declare::Tags - Build and install XML Tag subroutines for Template::De
 
 Produces:
 
-    <link />
-    <table>
-     <tr>
-      <td>Hello, world!</td>
-     </tr>
-    </table>
-    <img src="cat.gif" />
-    <img src="dog.gif" />
+ <link />
+ <table>
+  <tr>
+   <td>Hello, world!</td>
+  </tr>
+ </table>
+ <img src="cat.gif" />
+ <img src="dog.gif" />
 
 Using XUL templates with a namespace:
 
@@ -143,13 +143,13 @@ Using XUL templates with a namespace:
 
 Produces:
 
-    <groupbox>
-     <caption label="Colors" />
-     <html:div>
-      <html:p>howdy!</html:p>
-     </html:div>
-     <html:br></html:br>
-    </groupbox>
+ <groupbox>
+  <caption label="Colors" />
+  <html:div>
+   <html:p>howdy!</html:p>
+  </html:div>
+  <html:br></html:br>
+ </groupbox>
 
 =head1 DESCRIPTION
 
@@ -209,13 +209,13 @@ within XUL using the C<html> namespace:
 
 This will output:
 
-    <groupbox>
-     <caption label="Colors" />
-     <html:div>
-      <html:p>howdy!</html:p>
-     </html:div>
-     <html:br></html:br>
-    </groupbox>
+ <groupbox>
+  <caption label="Colors" />
+  <html:div>
+   <html:p>howdy!</html:p>
+  </html:div>
+  <html:br></html:br>
+ </groupbox>
 
 Behind the scenes, C<Template::Declare::Tags> generates a Perl package named
 C<html> and installs the HTML tag subroutines into that package. On the other
@@ -245,13 +245,13 @@ them elsewhere:
 
 This code will generate something like the following:
 
-    <groupbox>
-     <caption label="Colors" />
-     <htm:div>
-      <htm:p>howdy!</htm:p>
-     </htm:div>
-     <htm:br></htm:br>
-    </groupbox>
+ <groupbox>
+  <caption label="Colors" />
+  <htm:div>
+   <htm:p>howdy!</htm:p>
+  </htm:div>
+  <htm:br></htm:br>
+ </groupbox>
 
 =head1 METHODS AND SUBROUTINES
 
@@ -661,15 +661,15 @@ function after the closing brace (you don't need a comma there!).
 
 The output from the "inner" template will look something like this:
 
-    <html>
-     <head>
-      <title>Hello, Jesse!</title>
-     </head>
-     <body>
-      <h1>Hello, Jesse, s&#39;up?</h1>
-      <div>This is the end, my friend</div>
-     </body>
-    </html>
+ <html>
+  <head>
+   <title>Hello, Jesse!</title>
+  </head>
+  <body>
+   <h1>Hello, Jesse, s&#39;up?</h1>
+   <div>This is the end, my friend</div>
+  </body>
+ </html>
 
 =cut
 
@@ -696,8 +696,8 @@ Emits an XML declaration. For example:
 
 Produces:
 
-    <?xml version="1.0"?>
-    <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+ <?xml version="1.0"?>
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 =cut
 
@@ -979,11 +979,11 @@ code:
 
 It generates
 
-    <body>
-     <pre>
-    <script src="foo.js"></script>
-     </pre>
-    </body>
+ <body>
+  <pre>
+ <script src="foo.js"></script>
+  </pre>
+ </body>
 
 Note that now the C<script> tag has I<no> indentation and we've got what we
 want. ;)
