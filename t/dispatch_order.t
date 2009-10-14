@@ -27,7 +27,8 @@ template hello => sub { outs 'hello from Bip' };
 
 ##############################################################################
 package main;
-use Test::More tests => 22;
+use Test::More tests => 24;
+#use Test::More 'no_plan';
 
 # Check template resolution with the deprecated `roots` parameterx.
 ok !Template::Declare->init( roots => ['Wifty::Foo', 'Wifty::Bar'] ),
@@ -193,3 +194,78 @@ ok !Template::Declare->init( dispatch_to => ['Sifty::Bip', 'Sifty::Foo'] ),
 
 is +Template::Declare->show('hello'), 'hello from Bip',
     'Sifty::Bip should now have precedence';
+
+##############################################################################
+# Doc example.
+    package MyApp::UI::Standard;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template image => sub {
+        my ($self, $src, $title) = @_;
+        img {
+            src is $src;
+            title is $title;
+        };
+    };
+
+    package MyApp::UI::Standard;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template image => sub {
+        my ($self, $src, $title, $caption) = @_;
+        div {
+            class is 'std';
+            img {
+                src is $src;
+                title is $title;
+            };
+            p {
+                class is 'caption';
+                outs $caption;
+            };
+        };
+    };
+
+##############################################################################
+    package MyApp::UI::Formal;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template image => sub {
+        my ($self, $src, $title, $credit, $caption) = @_;
+        div {
+            class is 'formal';
+            img {
+                src is $src;
+                title is $title;
+            };
+            p {
+                class is 'credit';
+                outs "Photo by $credit";
+            };
+            p {
+                class is 'caption';
+                outs $caption;
+            };
+        };
+    };
+
+##############################################################################
+package main;
+    my @template_classes = 'MyApp::UI::Standard';
+    Template::Declare->init( dispatch_to => \@template_classes );
+    is +Template::Declare->show('image', 'foo.png', 'Foo'), q{
+<div class="std">
+ <img src="foo.png" title="Foo" />
+ <p class="caption"></p>
+</div>}, 'Should get standard image output';
+
+    unshift @template_classes, 'MyApp::UI::Formal';
+    is +Template::Declare->show('image', 'ap.png', 'AP Photo', 'Clark Kent', 'Big news'), q{
+<div class="formal">
+ <img src="ap.png" title="AP Photo" />
+ <p class="credit">Photo by Clark Kent</p>
+ <p class="caption">Big news</p>
+</div>}, 'Should get formal image output';

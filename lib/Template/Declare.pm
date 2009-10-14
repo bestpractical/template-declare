@@ -123,9 +123,83 @@ Public and private templates
 
 =head1 USAGE
 
-=head2 Basic usage
+First, some terminology:
 
-A simple HTML example is in the L</SYNOPSIS>. So let's do XUL!
+=over
+
+=item template class
+
+A subclass of Template::Declare in which one or more templates are defined
+using the C<template> keyword, or that inherits templates from a super class.
+
+=item template
+
+Created with the C<template> keyword, a template is a subroutine that uses
+C<tags> to generate output.
+
+=item attribute
+
+An XML element attribute. For example, in C<< <img src="foo.png" /> >>, C<src>
+is an attribute of the C<img> element.
+
+=item tag
+
+A subroutine that generates XML element-style output. Tag subroutines execute
+blocks that generate the output, and can call other tags to generate a
+properly hierarchical structure.
+
+=item tag set
+
+A set of tags defined in a subclass of L<Template::Declare::Tagset> for a
+particular purpose, and which can be imported into a template class. For
+example, L<Template::Declare::Tagset::HTML> defines tags for emitting HTML
+elements.
+
+=item wrapper
+
+A subroutine that wraps the output from a template. Useful for wrapping
+template output in common headers and footers, for example.
+
+=item dispatch class
+
+A template class that has been passed to L<C<init()>|/init> via the
+C<dispatch_to> parameter. When <show|/"show TEMPLATE"> is called, only
+templates defined in or mixed into the dispatch classes will be executed.
+
+=item path
+
+The name specified for a template it is created by the C<template> keyword, or
+when a a template is mixed into a template class.
+
+=item mixin
+
+A template mixed into a template class via C</mix>. Mixed-in templates may be
+mixed in under prefix paths to distinguish them from the templates defined in
+the dispatch classes.
+
+=item package variable
+
+Variables defined when mixing templates into a template class. These variables
+are available only to the mixed-in templates; they are not even accessible
+from the template class in which the templates were defined.
+
+=item helper
+
+A subroutine used in templates to assist in the generation of output, or in
+template classes to assit in the mixing-in of templates. Output helpers
+include C<outs()> for rending text output and C<xml_decl()> for rendering XML
+declarations. Mixin helpers include C<into> for specifying a template class to
+mix into, and C<under> for specifying a path prefix under which to mix
+templates.
+
+=back
+
+=head2 Basics
+
+Like other Perl templating systems, there are two parts to Template::Declare:
+the templates and the code that loads and executes the templates. Unlike other
+template systems, the templates are written in Perl classes. A simple HTML
+example is in the L</SYNOPSIS>. So let's do XUL!
 
     package MyApp::Templates;
     use base 'Template::Declare';
@@ -133,7 +207,11 @@ A simple HTML example is in the L</SYNOPSIS>. So let's do XUL!
 
     template main => sub {
         xml_decl { 'xml', version => '1.0' };
-        xml_decl { 'xml-stylesheet', href => "chrome://global/skin/", type => "text/css" };
+        xml_decl {
+            'xml-stylesheet',
+            href => "chrome://global/skin/",
+            type => "text/css"
+        };
         groupbox {
             caption { attr { label => 'Colors' } }
             radiogroup {
@@ -150,11 +228,62 @@ A simple HTML example is in the L</SYNOPSIS>. So let's do XUL!
         }
     };
 
+The first thing to do in a template class is to subclass Template::Declare
+itself. This is required so that Template::Declare always knows that it's
+dealing with templates. The second thing is to C<use Template::Declare::Tags>
+to import the set of tag subroutines you need to generate the output you want.
+In this case, we've imported tags to support the creation of XUL. Other tag
+sets incdlude HTML (the default), and RDF.
+
+Templates are created using the C<template> keyword:
+
+    template main => sub { ... };
+
+The first argument is the name of the template, also known as its I<path>. In
+this case, the template's path is C<main> (or C</main>, both are allowed to
+keep both PHP and Mason fans happy). The second argument is an anonymous
+subroutine that uses the tag subs (and any other necessary code) to generate
+the output for the template.
+
+The the tag subs imported into your class take blocks as arguments, while a
+number of helper subs take other arguments. For exmaple, the C<xml_decl>
+helper takes as its first argument the name of the XML declaration to be
+output, and then a hash reference of the attributes of that declaration:
+
+    xml_decl { 'xml', version => '1.0' };
+
+Tag subs are used by simply passing a block to them that generates the output.
+Said block may of course execute other tag subs in order to represent the
+hierarchy required in your output. Here, the C<radiogroup> tag calls the
+C<radio> tag for each of three different colors:
+
+    radiogroup {
+        for my $id ( qw< orange violet yellow > ) {
+            radio {
+                attr {
+                    id    => $id,
+                    label => ucfirst($id),
+                    $id eq 'violet' ? (selected => 'true') : ()
+                }
+            }
+        } # for
+    }
+
+Note the C<attr> sub. This helper function is used to add attributes to the
+element created by the tag in which they appear. In the previous example, the
+the C<id>, C<label>, and C<selected> attributes are added to each C<radio>
+output.
+
+Once you've written your templates, you'll want to execute them. You do so by
+telling Template::Declare what template classes to dispatch to and then asking
+it to show you the output from a template:
+
     package main;
     Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
     print Template::Declare->show( 'main' );
 
-The output:
+The path passed to C<show> can be either C<main> or </main>, as you prefer. In
+either event, the output woud look like this:
 
  <?xml version="1.0"?>
  <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
@@ -171,21 +300,24 @@ The output:
 =head2 A slightly more advanced example
 
 In this example, we'll show off how to set attributes on HTML tags, how to
-call other templates and how to declare a I<private> template that can't be
-called directly. We'll also show passing arguments to templates.
+call other templates, and how to declare a I<private> template that can't be
+called directly. We'll also show passing arguments to templates. First, the
+template class:
 
     package MyApp::Templates;
-    use Template::Declare::Tags;
     use base 'Template::Declare';
+    use Template::Declare::Tags;
 
-    private template 'header' => sub {
+    private template 'util/header' => sub {
         head {
             title { 'This is a webpage' };
-            meta  { attr { generator => "This is not your father's frontpage" } }
+            meta  {
+                attr { generator => "This is not your father's frontpage" }
+            }
         }
     };
 
-    private template 'footer' => sub {
+    private template 'util/footer' => sub {
         my $self = shift;
         my $time = shift || gmtime;
 
@@ -200,7 +332,7 @@ called directly. We'll also show passing arguments to templates.
         my $user = shift || 'world wide web';
 
         html {
-            show('header');
+            show('util/header');
             body {
                 img { src is 'hello.jpg' }
                 p {
@@ -208,16 +340,78 @@ called directly. We'll also show passing arguments to templates.
                     "Hello, $user!"
                 };
             };
-            show('footer');
+            show('util/footer', 'noon');
         }
     };
+
+A few notes on this example:
+
+=over
+
+=item *
+
+Since no parameter was passed to C<use Template::Declare::Tags>, the HTML tags
+are imported by default.
+
+=item *
+
+The C<private> keyword indicates that a template is private. That means that
+it can only be executed by other templates within the template class in which
+it's declared.
+
+=item *
+
+The two private templates have longer paths than we've seen before:
+C<util/header> and C<util/footer>. They must of course be called by their full
+path names. You can put any characters you like into template names, but the
+use of Unix filesystem-style paths is the most common (following on the
+example of L<HTML::Mason|HTML::Mason>).
+
+=item *
+
+The first argument to a template is a class name. This can be useful for
+calling methods defined in the class.
+
+=item *
+
+The C<show> sub executes another template. In this example, the C<simple>
+template calls C<show('util/header')> and C<show('util/footer')> in order to
+execute those private templates in the appropriate places.
+
+=item *
+
+Additional arguments to C<show> are passed on to the template being executed.
+here, C<show('util/footer', 'noon')> is passing "noon" to the C<util/footer>
+template, with the result that the "last generated at" string will display
+"noon" instead of the default C<gmtime>.
+
+=item *
+
+In the same way, note that the C<simple> template expects an additional
+argument, a username.
+
+=item *
+
+In addition to using C<attr> to declare attributes for an element, you can
+use C<is>, as in
+
+    img { src is 'hello.jpg' }
+
+=back
+
+Now for executing the template:
 
     package main;
     use Template::Declare;
     Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
-    print Template::Declare->show( 'simple', 'TD user');
+    print Template::Declare->show( '/simple', 'TD user');
 
-And the output:
+We've told Template::Declare to dispatch to templates defined in our template
+class. And note how an additional argument is passed to C<show()>; that
+argument, "TD user", will be passed to the C<simple> template, where it will
+be used in the C<$user> variable.
+
+The output looks like this:
 
  <html>
   <head>
@@ -230,9 +424,6 @@ And the output:
   </body>
   <div id="footer">Page last generated at Thu Sep  3 20:56:14 2009.</div>
  </html>
-
-For more options, especially the "native" XML namespace support, C<is> syntax
-for attributes, and more samples, see L<Template::Declare::Tags>.
 
 =head2 Postprocessing
 
@@ -254,9 +445,20 @@ how to use a postprocessor to emphasize text _like this_.
     };
 
     template after => sub {
-        h1 { "Welcome to _my_ site. It's _great_!" };
-        h2 { outs_raw "This is _not_ emphasized." };
+        h1  { "Welcome to _my_ site. It's _great_!" };
+        h2  { outs_raw "This is _not_ emphasized." };
+        img { src is '/foo/_bar_baz.png' };
     };
+
+Here we've defined two templates in our template class, with the paths
+C<before> and C<after>. The one new thing to note is the use of the C<outs>
+and C<outs_raw> subs. C<outs> XML-encodes its argument and outputs it. You can
+also just specify a string to be output within a tag call, but if you need to
+mix tags and plain text within a tag call, as in the C<before> template here,
+you'll need to use C<outs> to get things to output as you would expect.
+C<outs_raw> is the same, except that it does no XML encoding.
+
+Now let's have a look at how we use these templates with a post-processor:
 
     package main;
     use Template::Declare;
@@ -265,8 +467,8 @@ how to use a postprocessor to emphasize text _like this_.
         postprocessor => \&emphasize,
     );
 
-    print Template::Declare->show( 'before');
-    print Template::Declare->show( 'after');
+    print Template::Declare->show( 'before' );
+    print Template::Declare->show( 'after'  );
 
     sub emphasize {
         my $text = shift;
@@ -274,18 +476,30 @@ how to use a postprocessor to emphasize text _like this_.
         return $text;
     }
 
-And the output:
+As usual, we've told Template::Declare to dispatch to our template class. A
+new parameter to C<init()> is C<postprocessor>, which is a code reference that
+should expect the template output as an argument. It can then transform that
+text however it sees fit before returning it for final output. In this
+example, the C<emphasize> subroutine looks for text that's emphasized using
+_underscores_ and turns them into C<< <em>emphasis</em> >> HTML elements.
+
+We then execute both the C<before> and the C<after> templates with the output
+ening up as:
 
  <h1>Welcome to
   <em>my</em> site. It&#39;s
   <em>great</em>!</h1>
  <h1>Welcome to <em>my</em> site. It&#39;s <em>great</em>!</h1>
  <h2>This is _not_ emphasized.</h2>
+ <img src="/foo/_bar_baz.png" />
+
+The thing to note here is that text passed to C<outs_raw> is not passed
+through the postprocessor, and neither are attribute values.
 
 =head2 Inheritance
 
 Templates are really just methods. You can subclass your template packages to
-override some of those methods. See also L<Jifty::View::Declare::CRUD>.
+override some of those methods:
 
     package MyApp::Templates::GenericItem;
     use Template::Declare::Tags;
@@ -312,6 +526,11 @@ override some of those methods. See also L<Jifty::View::Declare::CRUD>.
         div { $post->body }
     };
 
+Here we have two template classes; the second, C<MyApp::Templates::BlogPost>,
+inherits from the firt, C<MyApp::Templates::GeniricItem>. Note also that
+C<MyApp::Templates::BlogPost> overrides the C<item> template. So execute these
+templates:
+
     package main;
     use Template::Declare;
 
@@ -324,7 +543,9 @@ override some of those methods. See also L<Jifty::View::Declare::CRUD>.
     my $post = My::Post->new(title => 'Hello', body => 'first post');
     print Template::Declare->show( 'item', $post );
 
-And the output:
+First we execute the C<list> template in the base class, passing in some
+items, and then we re-C<init()> Template::Declare and execute I<its> C<list>
+template with an appropriate argument. Here's the output:
 
  <div>
   <span>foo</span>
@@ -334,6 +555,222 @@ And the output:
 
  <h1>Hello</h1>
  <div>first post</div>
+
+So the override of the C<list> template in the subclass works as expected. For
+another example, see L<Jifty::View::Declare::CRUD>.
+
+=head2 Wrappers
+
+There are two levels of wrappers in Template::Declare: template wrappers and
+smart tag wrappers.
+
+=head3 Template Wrappers
+
+C<create_wrapper> declares a wrapper subroutine that can be called like a tag
+sub, but can optionally take arguments to be passed to the wrapper sub. For
+example, if you wanted to wrap all of the output of a template in the usual
+HTML headers and footers, you can do something like this:
+
+    package MyApp::Templates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    BEGIN {
+        create_wrapper wrap => sub {
+            my $code = shift;
+            my %params = @_;
+            html {
+                head { title { outs "Hello, $params{user}!"} };
+                body {
+                    $code->();
+                    div { outs 'This is the end, my friend' };
+                };
+            }
+        };
+    }
+
+    template inner => sub {
+        wrap {
+            h1 { outs "Hello, Jesse, s'up?" };
+        } user => 'Jesse';
+    };
+
+Note how the C<wrap> wrapper function is available for calling after it has
+been declared in a C<BEGIN> block. Also note how you can pass arguments to the
+function after the closing brace (you don't need a comma there!).
+
+The output from the "inner" template will look something like this:
+
+ <html>
+  <head>
+   <title>Hello, Jesse!</title>
+  </head>
+  <body>
+   <h1>Hello, Jesse, s&#39;up?</h1>
+   <div>This is the end, my friend</div>
+  </body>
+ </html>
+
+=head3 Tag Wrappers
+
+Tag wrappers are similar to template wrappers, but mainly function as syntax
+sugar for creating subroutines that behave just like tags but are allowed to
+contain arbitrary Perl code and to dispatch to other tag. To create one,
+simply create a named subroutine with the prototype C<(&)> so that its
+interface is the same as tags. Within it, use
+L<C<smart_tag_wrapper>|Template::Declare::Tags/"smart_tag_wrapper"> to do the
+actual execution, like so:
+
+    package My::Template;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    sub myform (&) {
+        my $code = shift;
+
+        smart_tag_wrapper {
+            my %params = @_; # set using 'with'
+            form {
+                attr { %{ $params{attr} } };
+                $code->();
+                input { attr { type => 'submit', value => $params{value} } };
+            };
+        };
+    }
+
+    template edit_prefs => sub {
+        with(
+            attr  => { id => 'edit_prefs', action => 'edit.html' },
+            value => 'Save'
+        ), myform {
+            label { 'Time Zone' };
+            input { type is 'text'; name is 'tz' };
+        };
+    };
+
+Note in the C<edit_prefs> template that we've used
+L<C<with>|Template::Declare::Tags/"with"> to set up parameters to be passed to
+the smart wrapper. C<smart_tag_wrapper()> is the device that allows you to
+receive those parameters, and also handles the magic of making sure that the
+tags you execute within it are properly output. Here we've used C<myform>
+similarly to C<form>, only C<myform> does something different with the
+C<with()> arguments and outputs a submit element.
+
+Executing this template:
+
+    Template::Declare->init( dispatch_to => ['My::Template'] );
+    print Template::Declare->show('edit_prefs');
+
+Yields this output:
+
+ <form action="edit.html" id="edit_prefs">
+  <label>Time Zone</label>
+  <input type="text" name="tz" />
+  <input type="submit" value="Save" />
+ </form>
+
+=head2 Class Search Dispatching
+
+The classes passed via the C<dispatch_to> parameter to C<init()> specify all
+of the templates that can be executed by subsequent calls to C<show()>.
+Template searches through these classes in order to find those templates. Thus
+it can be useful, when you're creating your template classes and determining
+which to use for particular class to C<show()>, to have templates that
+override other templates. This is similar to how an operating system will
+search all the paths in the C<$PATH> environment variable for a program to
+run, and to Mason component roots or Template::Toolkit's C<INCLUDE_PATH>
+parameter.
+
+For example, say you have this template class that defines a template that
+you'll use for displaying images on your Web site.
+
+    package MyApp::UI::Standard;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template image => sub {
+        my ($self, $src, $title) = @_;
+        img {
+            src is $src;
+            title is $title;
+        };
+    };
+
+As usual, you can use it like so:
+
+    my @template_classes = 'MyApp::UI::Standard';
+    Template::Declare->init( dispatch_to => \@template_classes );
+    print Template::Declare->show('image', 'foo.png', 'Foo');
+
+And the output will be:
+
+ <div class="std">
+  <img src="foo.png" title="Foo" />
+  <p class="caption"></p>
+ </div>
+
+But say that in some sections of your site you need to have a more formal
+treatment of your photos. Maybe you publish photos from a wire service and
+need to provide an appropriate credit. You might write the template class like
+so:
+
+    package MyApp::UI::Formal;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template image => sub {
+        my ($self, $src, $title, $credit, $caption) = @_;
+        div {
+            class is 'formal';
+            img {
+                src is $src;
+                title is $title;
+            };
+            p {
+                class is 'credit';
+                outs "Photo by $credit";
+            };
+            p {
+                class is 'caption';
+                outs $caption;
+            };
+        };
+    };
+
+
+This, too, will work as expected, but the useful bit that comes in when you're
+mixing and matching template classes to pass to C<dispatch_to> before
+rendering a page. Maybe you always pass have MyApp::UI::Standard to
+C<dispatch_to> because it has all of your standard formatting templates.
+But when the code realizes that a particular page needs the more formal
+treatment, you can prepend the formal class to the list:
+
+    unshift @template_classes, 'MyApp::UI::Formal';
+    print Template::Declare->show(
+        'image',
+        'ap.png',
+        'AP Photo',
+        'Clark Kent',
+        'Big news'
+    );
+    shift @template_classes;
+
+In this way, made the formal C<image> template will be found first, yielding
+this output:
+
+ <div class="formal">
+  <img src="ap.png" title="AP Photo" />
+  <p class="credit">Photo by Clark Kent</p>
+  <p class="caption">Big news</p>
+ </div>
+
+At the end, we've shifted the formal template class off the C<dispatch_to>
+list in order to restore the template classes the default configuration, ready
+for the next request.
+
+=head2 Mixins
+
+
 
 =head1 METHODS
 
