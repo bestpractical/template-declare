@@ -36,14 +36,6 @@ __PACKAGE__->around_template( undef );
 
 our $TEMPLATE_VARS;
 
-# Backwards-compatibility support.
-sub roots {
-    # warn "roots() has been deprecated; use dispatch_to() instead\n";
-    my $class = shift;
-    $class->dispatch_to( [ reverse @{ +shift } ] ) if @_;
-    return [ reverse @{ $class->dispatch_to } ];
-}
-
 =head1 NAME
 
 Template::Declare - Perlish declarative templates
@@ -768,13 +760,244 @@ At the end, we've shifted the formal template class off the C<dispatch_to>
 list in order to restore the template classes the default configuration, ready
 for the next request.
 
-=head2 Aliasing and Mixins
+=head2 Template Composition
 
+There are two methods of template composition: mixins and delegation. Their
+interfaces are very similar, the only difference being the template invocant.
 
+=head2 Mixins
+
+Let's start with a mixin.
+
+    package MyApp::UtilTemplates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    template content => sub {
+        my $self  = shift;
+        my @paras = @_;
+        h1 { $self->get_title };
+        div {
+            id is 'content';
+            p { $_ } for @paras;
+        };
+    };
+
+    package MyApp::Templates;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+    mix MyApp::UtilTemplates under '/util';
+
+    sub get_title { 'Kashmir' }
+
+    template story => sub {
+        my $self = shift;
+        html {
+          head {
+              title { "My Site: " . $self->get_title };
+          };
+          body {
+              show( 'util/content' => 'fist paragraph', 'second paragraph' );
+          };
+        };
+    };
+
+The first template class, C<MyApp::UtilTemplates>, defines a utility template,
+called C<content>, for outputting the contents of page. Note it's call to C<<
+$self->get_title >> even though it doesn't have a C<get_title> method. This is
+part of the mixin's "contract": it requires that the class it's mixed into
+have a C<get_title()> method.
+
+The second template class, C<MyApp::Templates>, mixes C<MyApp::UtilTemplates>
+into itself under the path C</util> and defines a C<get_title()> method as
+required by the mixin. Then, its C<story> template calls the mixed-in template
+as C<util/content>, becaus the C<content> template was mixed into the current
+template under C</util>. Get it?
+
+Now we can use the usual template invocation:
+
+    package main;
+    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
+    print Template::Declare->show('story');
+
+To appreciate our output:
+
+ <html>
+  <head>
+   <title>My Site: Kashmir</title>
+  </head>
+  <body>
+   <h1>Kashmir</h1>
+   <div id="content">
+    <p>fist paragraph</p>
+    <p>second paragraph</p>
+   </div>
+  </body>
+ </html>
+
+Mixins are a very useful tool for template authors to add functionality to
+their template classes. But it's important to pay attention to the mixin
+contracts so that you're sure to implement the required API in your temlate
+class (here, the C<get_title()> method).
+
+=head3 Aliases
+
+Aliases are very similar to mixins, but implement delegation as a composition
+pattern, rather than mixins. The upshot is that there is no contract provided
+by an aliased class: it just works. This is because the invocant is the class
+from which the aliases are imported, and therefore it will dispatch to methods
+defined in the aliased class.
+
+For example, say that you wanted to output a sidebar on pages that need one
+(perhaps your CMS has sidebar things). We can define a template class that
+has a template for that:
+
+    package MyApp::UI::Stuff;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+
+    sub img_path { '/ui/css' }
+
+    template sidebar => sub {
+        my ($self, $thing) = @_;
+        div {
+            class is 'sidebar';
+            img { src is $self->img_path . '/sidbar.png' };
+            p { $_->content } for $thing->get_things;
+        };
+    };
+
+Note the use of teh C<img_path()> method defined in the template class and
+used by the C<sidebar> template. Now let's use it:
+
+    package MyApp::Render;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+    alias MyApp::UI::Stuff under '/stuff';
+
+    template page => sub {
+        my ($self, $page) = @_;
+        h1 { $page->title };
+        for my $thing ($page->get_things) {
+            if ($thing->is('paragraph')) {
+                p { $thing->content };
+            } elsif ($thing->is('sidebar')) {
+                show( '/stuff/sidebar' => $thing );
+            }
+        }
+    };
+
+Here our rendering template class has aliased C<MyApp::UI::Stuff> under
+C</stuff>. So the C<page> template calls C<show('/stuff/sidebar')> to invoke
+the sidebar template. If we run this:
+
+    Template::Declare->init( dispatch_to => ['MyApp::Render'] );
+    print Template::Declare->show( page => $page );
+
+We get output as you might expect:
+
+ <h1>My page title</h1>
+ <p>Page paragraph</p>
+ <div class="sidebar">
+  <img src="/ui/css/sidbar.png" />
+  <p>Sidebar paragraph</p>
+  <p>Another paragraph</p>
+ </div>
+
+Now, let's say that you have political stuff that you want to use a different
+image for in the sidebar. If that's the only difference, we can subclass
+C<MyApp::UI::Stuff> an just override the C<img_path()> method:
+
+    package MyApp::UI::Stuff::Politics;
+    use Template::Declare::Tags;
+    use base 'MyApp::UI::Stuff';
+
+    sub img_path { '/politics/ui/css' }
+
+Now let's mix that into a politics template class:
+
+    package MyApp::Render::Politics;
+    use Template::Declare::Tags;
+    use base 'Template::Declare';
+    alias MyApp::UI::Stuff::Politics under '/politics';
+
+    template page => sub {
+        my ($self, $page) = @_;
+        h1 { $page->title };
+        for my $thing ($page->get_things) {
+            if ($thing->is('paragraph')) {
+                p { $thing->content };
+            } elsif ($thing->is('sidebar')) {
+                show( '/politics/sidebar' => $thing );
+            }
+        }
+    };
+
+The only difference between this template class and C<MyApp::Render> is that
+it aliases C<MyApp::UI::Stuff::Politics> under </politics>, and then calls
+C<show('/politics/sidebar')> in the C<page> template. Running this template:
+
+    Template::Declare->init( dispatch_to => ['MyApp::Render::Politics'] );
+    print Template::Declare->show( page => $page );
+
+Yields output using the value of the subclass's C<img_path()> method -- that
+is, the sidebar image is now F</politics/ui/css/sidbar.png> instead of
+F</ui/css/sidbar.png>:
+
+ <h1>My page title</h1>
+ <p>Page paragraph</p>
+ <div class="sidebar">
+  <img src="/politics/ui/css/sidbar.png" />
+  <p>Sidebar paragraph</p>
+  <p>Another paragraph</p>
+ </div>
+
+=head3 Other Tricks
+
+The delegation behavior of C<alias> actually makes it a decent choice for
+template authors to mix and match libraries of template classes as
+appropriate, without worrying about side effects. You can even alias templates
+in one template class into another template class if you're not the author of
+that class by using the C<into> keyword:
+
+    alias My::UI::Widgets into Your::UI::View under '/widgets';
+
+Now the templates defined in C<Your::UI::View> are availabie in
+C<My::UI::Widgets> under C</widgets>. The C<mix> method supports this syntax
+as well, though it's not necessarily recommended, given that you would not be
+able to fulfill any contracts unless you re-opened the class into which you
+mixed the templates. But in any case, authors of framework view classes might
+find this functionality useful for automatically aliasing template classes
+into a single dispatch template class.
+
+Another trick is to alias or mix your templats with package variables specific
+to the composition. Do so via the C<setting> keyword:
+
+    package My::Templates;
+    mix Some::Mixin under '/mymix', setting { name => 'Larry' };
+
+The templates mixed from C<Some::Mixin> into C<My::Templates> have package
+variables set for them that are accessible I<only> from their mixed-in paths.
+For example, if this template was defined in C<Some::Mixin>:
+
+    template howdy => sub {
+        my $self = shift;
+        outs "Howdy, " . $self->package_variable('name') || 'Jesse';
+    };
+
+Then C<show('mymix/howdy')> called on C<My::Templates> will output "Howdy,
+Larry", while the output from C<show('howdy')> will output "Howdy, Jesse". In
+other words, package variables defined for the mixed-in templates are
+available only to the mixins and not to the original. The same functionality
+exists for C<alias> as well.
+
+=begin comment
 
 =head2 Tag Sets
 
+Wherein we will eventually provide a brief tutorial on creating custom tag sets.
 
+=ent comment
 
 =head1 METHODS
 
@@ -861,10 +1084,11 @@ sub show {
     return Template::Declare::Tags::show_page($template => @_);
 }
 
-=head2 Mixing templates
+=head2 Template Composition
 
-Sometimes you want to mix templates from one class into another class;
-C<mix()> is your key to doing so.
+Sometimes you want to mix templates from one class into another class, or
+delegate template execution to a class of templates. C<alias()> and C<mix()>
+are your keys to doing so.
 
 =head3 mix
 
@@ -872,48 +1096,30 @@ C<mix()> is your key to doing so.
     mix Some::Other::Mixin       under '/otmix', setting { name => 'Larry' };
     mix My::Mixin into My::View, under '/mymix';
 
-In the first example, if Some::Clever::Mixin
-creates templates named C<foo> and C<bar>, they will be mixed into the calling
-template class as C<mixin/foo> and C<mixin/bar>.
+Mixes templates from one template class into another class. When the mixed-in
+template is called, its invocant will be the class into which it was mixed.
+This type of composition is known as a "mixin" in object-oriented parlance.
+See L<Template Composition|/"Template Composition"> for extended examples and
+a comparision to C<alias>.
 
-The second example mixes in the templates defined in Some::Other::Mixin into
-into the calling class under the C</mymix> path. Furthermore, those mixed-in
-templates have package variables set for them that are accessible only from
-their mixed-in paths. For example, if this template was defined in
-Some::Other::Mixin:
+The first parameter is the name of the template class to be mixed in. The
+C<under> keyword tells C<mix> where to put the templates. For example,
+a C<foo> template in C<Some::Clever::Mixin> will be mixed in as C<mymixin/foo>.
 
-    template howdy => sub {
-        my $self = shift;
-        outs "Howdy, " . $self->package_variable('name') || 'Jesse';
-    };
+The C<setting> keyword specifies package variables available only to the
+mixed-in copies of templates. These are available to the templates as
+C<< $self->package_variable($varname) >>.
 
-Then C<show('mymixin/howdy')> will output "Howdy, Larry", while the output
-from C<show('howdy')> will output "Howdy, Jesse". In other words, package
-variables defined for the mixed-in templates are available only to the mixins
-and not to the original.
-
-In either case, ineritance continues to work. A template package that inherits
-from Some::Other::Mixin, for example, will be able to access both
-C<mymixin/howdy> and C<howdy>.
-
-By default, C<mix()> will mix templates into the class from which it's called.
-But sometimes you might want to mix templates into some other template class.
-Such might be useful for end users to compose template structures from
-collections of template classes. In such a case, use the C<into> keyword to
-specify into what class the templates should be mixed in. The third example
-demonstrates this, where My::Mixin templates are mixed into My::View. Of
-course, you can still specify variables to set for those mixins.
-
-If you should happen to forget to pass the C<into> argument before C<under>,
-worry not, C<mix()> will figure it out and do the right thing.
+The C<into> keyword tells C<mix> into what class to mix the templates. Without
+theis keyword, C<mix> will mix them into the calling class.
 
 For those who prefer a direct OO syntax for mixins, just call C<mix()> as a
 method on the class to be mixed in. To replicate the above three exmaples
 without the use of the sugar:
 
-    Some::Clver::Mixin->mix( '/mixin' );
+    Some::Clever::Mixin->mix( '/mixin' );
     Some::Other::Mixin->mix( '/otmix', { name => 'Larry' } );
-    My::Mixin->mix('My::View', '/mymix');
+    My::Mixin->mix( 'My::View', '/mymix' );
 
 =cut
 
@@ -925,15 +1131,37 @@ sub mix {
 
 =head3 alias
 
-    alias Some::Clever:Templates under '/delegate';
-    alias Some::Other::Templates  under '/delegate', { name => 'Larry' };
+    alias Some::Clever:Templates   under '/delegate';
+    alias Some::Other::Templates   under '/send_to', { name => 'Larry' };
+    alias UI::Stuff into My::View, under '/mystuff';
 
-Delegates template calls to templates in another template class.
-XXX More to come.
+Aliases templates from one template class into another class. When an alias
+called, its invocant will be the class from which it was aliased. This type of
+composition is known as "delegation" in object-oriented parlance. See
+L<Template Composition|/"Template Composition"> for extended examples and a
+comparision to C<mix>.
+
+The first parameter is the name of the template class to alias. The C<under>
+keyword tells C<alias> where to put the templates. For example, a C<foo>
+template in C<Some::Clever::Templates> will be aliased as C<delegate/foo>.
+
+The C<setting> keyword specifies package variables available only to the
+aliases. These are available to the templates as
+C<< $self->package_variable($varname) >>.
+
+The C<into> keyword tells C<alias> into what class to aliase the templates.
+Without this keyword, C<alias> will alias them into the calling class.
+
+For those who prefer a direct OO syntax for mixins, just call C<alias()> as a
+method on the class to be mixed in. To replicate the above three exmaples
+without the use of the sugar:
+
+    Some::Clever:Templates->alias( '/delegate' );
+    Some::Other::Templates->alias( '/send_to', { name => 'Larry' } );
+    UI::Stuff->alias( 'My::View', '/mystuff' );
 
 =cut
 
-# XXX fix to accept `into` parameter.
 sub alias {
     my $mixin = shift;
     my ($into, @args) = _into(@_);
@@ -1185,6 +1413,14 @@ paths used in C<mix>. Note that this will only work for the last class into
 which you imported the template. This method is, therefore, deprecated.
 
 =cut
+
+# Deprecated in favor of dispatch_to().
+sub roots {
+    # warn "roots() has been deprecated; use dispatch_to() instead\n";
+    my $class = shift;
+    $class->dispatch_to( [ reverse @{ +shift } ] ) if @_;
+    return [ reverse @{ $class->dispatch_to } ];
+}
 
 # Removed methods that no longer work (and were never documented anyway).
 # Remove these no-ops after a few releases (added for 0.41).

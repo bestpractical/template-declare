@@ -43,3 +43,4 @@ benchmarks/.*
 \.svn
 \.git
 \.t_$
+pod-spelling.t$
