@@ -255,7 +255,8 @@ are imported by default.
 
 The C<private> keyword indicates that a template is private. That means that
 it can only be executed by other templates within the template class in which
-it's declared.
+it's declared. By default, C<< Template::Declare->show >> will not dispatch to
+it.
 
 =item *
 
@@ -322,6 +323,9 @@ The output looks like this:
   </body>
   <div id="footer">Page last generated at Thu Sep  3 20:56:14 2009.</div>
  </html>
+
+Note that the single quote in C<father's> was quoted for you. We sanitize
+your output for you to help prevent cross-site scripting attacks.
 
 =head2 XUL
 
@@ -492,7 +496,8 @@ ending up as:
  <img src="/foo/_bar_baz.png" />
 
 The thing to note here is that text passed to C<outs_raw> is not passed
-through the postprocessor, and neither are attribute values.
+through the postprocessor, and neither are attribute values (like the C<img>'s
+C<src>).
 
 =head2 Inheritance
 
@@ -532,9 +537,7 @@ templates:
     package main;
     use Template::Declare;
 
-    Template::Declare->init(
-        dispatch_to => ['MyApp::Templates::GenericItem']
-    );
+    Template::Declare->init( dispatch_to => ['MyApp::Templates::GenericItem'] );
     print Template::Declare->show( 'list', 'foo', 'bar', 'baz' );
 
     Template::Declare->init( dispatch_to => ['MyApp::Templates::BlogPost'] );
@@ -676,8 +679,8 @@ it can be useful, when you're creating your template classes and determining
 which to use for particular class to C<show()>, to have templates that
 override other templates. This is similar to how an operating system will
 search all the paths in the C<$PATH> environment variable for a program to
-run, and to Mason component roots or Template::Toolkit's C<INCLUDE_PATH>
-parameter.
+run, and to L<HTML::Mason> component roots or L<Template::Toolkit>'s
+C<INCLUDE_PATH> parameter.
 
 For example, say you have this template class that defines a template that
 you'll use for displaying images on your Web site.
@@ -700,7 +703,10 @@ As usual, you can use it like so:
     Template::Declare->init( dispatch_to => \@template_classes );
     print Template::Declare->show('image', 'foo.png', 'Foo');
 
-And the output will be:
+We're explicitly using a reference to C<@template_classes> so that we can
+manage this list ourselves.
+
+The output of this will be:
 
  <div class="std">
   <img src="foo.png" title="Foo" />
