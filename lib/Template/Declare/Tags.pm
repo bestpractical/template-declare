@@ -223,7 +223,7 @@ hand, XUL tag subroutines are installed into the current package, namely,
 C<MyApp::Templates> in the previous example.
 
 There may be cases when you want to specify a different Perl package for a
-perticular XML namespace. For instance, if the C<html> Perl package has
+particular XML namespace. For instance, if the C<html> Perl package has
 already been used for other purposes in your application and you don't want to
 install subs there and mess things up, use the C<package> option to install
 them elsewhere:
@@ -266,7 +266,7 @@ This code will generate something like the following:
         }
     };
 
-Declares a template in the current package. The first agument to the template
+Declares a template in the current package. The first argument to the template
 subroutine will always be a C<Template::Declare> object. Subsequent arguments
 will be all those passed to C<show()>. For example, to use the above example
 to output a select list of colors, you'd call it like so:
@@ -338,7 +338,7 @@ sub private (@) {
 
     show( main => { user => 'Bob' } );
 
-Displays templates. The first agument is the name of the template to be
+Displays templates. The first argument is the name of the template to be
 displayed. Any additional arguments will be passed directly to the template.
 
 C<show> can either be called with a template name or a package/object and a
@@ -346,7 +346,7 @@ template. (It's both functional and OO.)
 
 If called from within a Template::Declare subclass, then private templates are
 accessible and visible. If called from something that isn't a
-Template::Declare, only public templates wil be visible.
+Template::Declare, only public templates will be visible.
 
 From the outside world, users can either call C<< Template::Declare->show() >>,
 C<< show() >> exported from Template::Declare::Tags or
@@ -482,7 +482,7 @@ sub with (@) {
 
 HTML-encodes its arguments and appends them to C<Template::Declare>'s output
 buffer. This is similar to simply returning a string from a tag function call,
-but is occaisionally useful when you need to output a mix of things, as in:
+but is occasionally useful when you need to output a mix of things, as in:
 
     p { outs 'hello'; em { 'world' } }
 
@@ -592,7 +592,7 @@ The smart tag wrapper allows you to create code that has access to the
 attribute arguments specified via C<with>. It passes those arguments in to the
 wrapped code in C<@_>. It also takes care of putting the output in the right
 place and tidying up after itself. This might be useful to change the behavior
-of a template based on attributs passed to C<with>.
+of a template based on attributes passed to C<with>.
 
 =cut
 
@@ -1007,7 +1007,7 @@ Agent Zhang <agentzh@yahoo.cn>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2009 Best Practical Solutions, LLC
+Copyright 2006-2009 Best Practical Solutions, LLC.
 
 =cut
 

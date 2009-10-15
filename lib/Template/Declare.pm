@@ -97,7 +97,7 @@ No angle brackets
 
 =item *
 
-"Native" XML namespace and declarator support
+"Native" XML namespace and declaration support
 
 =item *
 
@@ -178,7 +178,7 @@ from the template class in which the templates were defined.
 =item helper
 
 A subroutine used in templates to assist in the generation of output, or in
-template classes to assit in the mixing-in of templates. Output helpers
+template classes to assist in the mixing-in of templates. Output helpers
 include C<outs()> for rending text output and C<xml_decl()> for rendering XML
 declarations. Mixin helpers include C<into> for specifying a template class to
 mix into, and C<under> for specifying a path prefix under which to mix
@@ -225,7 +225,7 @@ itself. This is required so that Template::Declare always knows that it's
 dealing with templates. The second thing is to C<use Template::Declare::Tags>
 to import the set of tag subroutines you need to generate the output you want.
 In this case, we've imported tags to support the creation of XUL. Other tag
-sets incdlude HTML (the default), and RDF.
+sets include HTML (the default), and RDF.
 
 Templates are created using the C<template> keyword:
 
@@ -238,7 +238,7 @@ subroutine that uses the tag subs (and any other necessary code) to generate
 the output for the template.
 
 The the tag subs imported into your class take blocks as arguments, while a
-number of helper subs take other arguments. For exmaple, the C<xml_decl>
+number of helper subs take other arguments. For example, the C<xml_decl>
 helper takes as its first argument the name of the XML declaration to be
 output, and then a hash reference of the attributes of that declaration:
 
@@ -275,7 +275,7 @@ it to show you the output from a template:
     print Template::Declare->show( 'main' );
 
 The path passed to C<show> can be either C<main> or </main>, as you prefer. In
-either event, the output woud look like this:
+either event, the output would look like this:
 
  <?xml version="1.0"?>
  <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
@@ -380,7 +380,7 @@ template, with the result that the "last generated at" string will display
 =item *
 
 In the same way, note that the C<simple> template expects an additional
-argument, a username.
+argument, a user name.
 
 =item *
 
@@ -476,7 +476,7 @@ example, the C<emphasize> subroutine looks for text that's emphasized using
 _underscores_ and turns them into C<< <em>emphasis</em> >> HTML elements.
 
 We then execute both the C<before> and the C<after> templates with the output
-ening up as:
+ending up as:
 
  <h1>Welcome to
   <em>my</em> site. It&#39;s
@@ -519,7 +519,7 @@ override some of those methods:
     };
 
 Here we have two template classes; the second, C<MyApp::Templates::BlogPost>,
-inherits from the firt, C<MyApp::Templates::GeniricItem>. Note also that
+inherits from the first, C<MyApp::Templates::GeniricItem>. Note also that
 C<MyApp::Templates::BlogPost> overrides the C<item> template. So execute these
 templates:
 
@@ -811,7 +811,7 @@ have a C<get_title()> method.
 The second template class, C<MyApp::Templates>, mixes C<MyApp::UtilTemplates>
 into itself under the path C</util> and defines a C<get_title()> method as
 required by the mixin. Then, its C<story> template calls the mixed-in template
-as C<util/content>, becaus the C<content> template was mixed into the current
+as C<util/content>, because the C<content> template was mixed into the current
 template under C</util>. Get it?
 
 Now we can use the usual template invocation:
@@ -837,7 +837,7 @@ To appreciate our output:
 
 Mixins are a very useful tool for template authors to add functionality to
 their template classes. But it's important to pay attention to the mixin
-contracts so that you're sure to implement the required API in your temlate
+contracts so that you're sure to implement the required API in your template
 class (here, the C<get_title()> method).
 
 =head3 Aliases
@@ -867,7 +867,7 @@ has a template for that:
         };
     };
 
-Note the use of teh C<img_path()> method defined in the template class and
+Note the use of the C<img_path()> method defined in the template class and
 used by the C<sidebar> template. Now let's use it:
 
     package MyApp::Render;
@@ -962,7 +962,7 @@ that class by using the C<into> keyword:
 
     alias My::UI::Widgets into Your::UI::View under '/widgets';
 
-Now the templates defined in C<Your::UI::View> are availabie in
+Now the templates defined in C<Your::UI::View> are available in
 C<My::UI::Widgets> under C</widgets>. The C<mix> method supports this syntax
 as well, though it's not necessarily recommended, given that you would not be
 able to fulfill any contracts unless you re-opened the class into which you
@@ -970,8 +970,8 @@ mixed the templates. But in any case, authors of framework view classes might
 find this functionality useful for automatically aliasing template classes
 into a single dispatch template class.
 
-Another trick is to alias or mix your templats with package variables specific
-to the composition. Do so via the C<setting> keyword:
+Another trick is to alias or mix your templates with package variables
+specific to the composition. Do so via the C<setting> keyword:
 
     package My::Templates;
     mix Some::Mixin under '/mymix', setting { name => 'Larry' };
@@ -1114,7 +1114,7 @@ The C<into> keyword tells C<mix> into what class to mix the templates. Without
 theis keyword, C<mix> will mix them into the calling class.
 
 For those who prefer a direct OO syntax for mixins, just call C<mix()> as a
-method on the class to be mixed in. To replicate the above three exmaples
+method on the class to be mixed in. To replicate the above three examples
 without the use of the sugar:
 
     Some::Clever::Mixin->mix( '/mixin' );
@@ -1153,7 +1153,7 @@ The C<into> keyword tells C<alias> into what class to aliase the templates.
 Without this keyword, C<alias> will alias them into the calling class.
 
 For those who prefer a direct OO syntax for mixins, just call C<alias()> as a
-method on the class to be mixed in. To replicate the above three exmaples
+method on the class to be mixed in. To replicate the above three examples
 without the use of the sugar:
 
     Some::Clever:Templates->alias( '/delegate' );

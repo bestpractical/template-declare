@@ -59,7 +59,7 @@ Template::Declare::TagSet - Base class for tag sets used by Template::Declare::T
 
 Template::Declare::TagSet is the base class for declaring packages of
 Template::Delcare tags. If you need to create new tags for use in your
-temlates, this is the base class for you! Review the source code of
+templates, this is the base class for you! Review the source code of
 L<Template::Declare::TagSet::HTML|Template::Declare::TagSet::HTML> for a
 useful example.
 
