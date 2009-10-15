@@ -93,7 +93,7 @@ is( Wifty::UI->path_for('simple'), '/simple', 'Simple template should be in the 
 {
     ok my $simple = ( show('imported_pkg/imported') ), 'Should get output for imported template';
     like( $simple, qr'Invocant:', 'Its output should be correct' );
-    like( $simple, qr{'Wifty::UI::imported_pkg'}, '$self is correct in template block' );
+    like( $simple, qr{'Wifty::UI'}, '$self is correct in template block' );
     ok_lint($simple);
 }
 {
@@ -106,7 +106,7 @@ is( Wifty::UI->path_for('simple'), '/simple', 'Simple template should be in the 
     );
     like(
         $simple,
-        qr{'Wifty::UI::imported_subclass_pkg'},
+        qr{'Wifty::UI'},
         '$self is correct in template block'
     );
     ok_lint($simple);

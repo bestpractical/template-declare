@@ -71,7 +71,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     ok my $simple = ( show('mixed_pkg/mixed') ), 'Should get output from mix template';
     like( $simple, qr'Invocant:', 'Its output should be right' );
     like( $simple, qr'Variable SET' , "The variable was set");
-    like( $simple, qr{'Wifty::UI::mixed_pkg'},
+    like( $simple, qr{'Wifty::UI'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -81,7 +81,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     ok my $simple = ( show('mixed_pkg2/mixed') ), 'Should get output from second mix';
     like( $simple, qr'Invocant:', 'Its output should be right' );
     unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
-    like( $simple, qr{'Wifty::UI::mixed_pkg'},
+    like( $simple, qr{'Wifty::UI'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -91,7 +91,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     ok my $simple = ( show('mixed_pkg3/mixed') ), 'Should get output from third mix';
     like( $simple, qr'Invocant:', 'Its output should be right' );
     unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
-    like( $simple, qr{'Wifty::UI::mixed_pkg'},
+    like( $simple, qr{'Wifty::UI'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -101,7 +101,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     ok my $simple = ( show('mixed_pkg4/mixed') ), 'Should get output from fourth mix';
     like( $simple, qr'Invocant:', 'Its output should be right' );
     unlike( $simple, qr'Varialble SET' , 'But the variable should not be set');
-    like( $simple, qr{'Wifty::UI::mixed_pkg'},
+    like( $simple, qr{'Wifty::UI'},
         '$self is correct in template block' );
     ok_lint($simple);
 }
@@ -116,7 +116,7 @@ ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     );
     like(
         $simple,
-        qr{'Wifty::UI::mixed_subclass_pkg'},
+        qr{'Wifty::UI'},
         '$self is correct in template block'
     );
     ok_lint($simple);

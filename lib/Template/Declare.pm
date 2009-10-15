@@ -768,7 +768,11 @@ At the end, we've shifted the formal template class off the C<dispatch_to>
 list in order to restore the template classes the default configuration, ready
 for the next request.
 
-=head2 Mixins
+=head2 Delegation and Mixins
+
+
+
+=head2 Tag Sets
 
 
 
@@ -924,8 +928,20 @@ sub mix {
         $into  = caller(0);
         $under = shift;
     }
-    $mixin->_import($into, $under, @_);
+    $mixin->_import($into, $into, $under, @_);
 }
+
+=head3 alias
+
+    alias Some::Clever:Templates under '/delegate';
+    alias Some::Other::Templates  under '/delegate', { name => 'Larry' };
+
+Delegates template calls to templates in another template class.
+XXX More to come.
+
+=cut
+
+sub alias { shift->_import(scalar caller(0), undef, @_) }
 
 =head3 package_variable( VARIABLE )
 
@@ -1113,21 +1129,6 @@ sub into { shift }
 
 =head2 Old, deprecated or just better to avoid
 
-=head3 alias
-
-    alias Some::Clever::Mixin under '/mixin';
-    alias Some::Other::Mixin  under '/mymix', { name => 'Larry' };
-
-Like C<mix()>, but without support for the C<into> keyword. That is, it mixes
-templates into the calling template class.
-
-B<Deprecated> in favor of L</mix>. Will be supported for a long time, but
-new code should use C<mix()>.
-
-=cut
-
-sub alias { shift->_import(scalar caller(0), @_) }
-
 =head3 import_templates
 
     import_templates MyApp::Templates under '/something';
@@ -1141,7 +1142,10 @@ new code should use C<mix()>.
 
 =cut
 
-sub import_templates { shift->_import(scalar caller(0), @_) }
+sub import_templates {
+    my $caller = scalar caller(0);
+    shift->_import($caller, $caller, @_);
+}
 
 =head3 new_buffer_frame
 
@@ -1280,7 +1284,8 @@ sub _register_template {
 
 sub _import {
     return undef if $_[0] eq __PACKAGE__;
-    my ($mixin, $into, $prefix, $vars) = @_;
+    my ($mixin, $into, $invocant, $prefix, $vars) = @_;
+
 
     $prefix =~ s|/+/|/|g;
     $prefix =~ s|/$||;
@@ -1293,13 +1298,13 @@ sub _import {
         for my $tname (  __PACKAGE__->_templates_for($from) ) {
             $into->register_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $mixin, $vars )
+                _import_code( $tname, $from, $invocant || $mixin, $vars )
             );
         }
         for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
             $into->register_private_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $mixin, $vars )
+                _import_code( $tname, $from, $invocant || $mixin, $vars )
             );
         }
     }
