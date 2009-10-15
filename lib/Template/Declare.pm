@@ -236,15 +236,15 @@ Templates are created using the C<template> keyword:
     template main => sub { ... };
 
 The first argument is the name of the template, also known as its I<path>. In
-this case, the template's path is C<main> (or C</main>, both are allowed to
-keep both PHP and Mason fans happy). The second argument is an anonymous
-subroutine that uses the tag subs (and any other necessary code) to generate
-the output for the template.
+this case, the template's path is C<main> (or C</main>, both are allowed (to
+keep both PHP and L<HTML::Mason> fans happy). The second argument is an
+anonymous subroutine that uses the tag subs (and any other necessary code) to
+generate the output for the template.
 
-The the tag subs imported into your class take blocks as arguments, while a
+The tag subs imported into your class take blocks as arguments, while a
 number of helper subs take other arguments. For example, the C<xml_decl>
 helper takes as its first argument the name of the XML declaration to be
-output, and then a hash reference of the attributes of that declaration:
+output, and then a hash of the attributes of that declaration:
 
     xml_decl { 'xml', version => '1.0' };
 
@@ -1604,7 +1604,7 @@ is equivalent to
     };
 
 But C<xml_decl> is a notable exception. Please always put a trailing semicolon
-after C<xml_decl { ... }>, or you'll mess up the outputs.
+after C<xml_decl { ... }>, or you'll mess up the order of output.
 
 =item *
 
