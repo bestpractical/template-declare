@@ -195,104 +195,6 @@ the templates and the code that loads and executes the templates. Unlike other
 template systems, the templates are written in Perl classes. A simple HTML
 example is in the L</SYNOPSIS>.
 
-=head2 XUL
-
-    package MyApp::Templates;
-    use base 'Template::Declare';
-    use Template::Declare::Tags 'XUL';
-
-    template main => sub {
-        xml_decl { 'xml', version => '1.0' };
-        xml_decl {
-            'xml-stylesheet',
-            href => "chrome://global/skin/",
-            type => "text/css"
-        };
-        groupbox {
-            caption { attr { label => 'Colors' } }
-            radiogroup {
-                for my $id ( qw< orange violet yellow > ) {
-                    radio {
-                        attr {
-                            id    => $id,
-                            label => ucfirst($id),
-                            $id eq 'violet' ? (selected => 'true') : ()
-                        }
-                    }
-                } # for
-            }
-        }
-    };
-
-The first thing to do in a template class is to subclass Template::Declare
-itself. This is required so that Template::Declare always knows that it's
-dealing with templates. The second thing is to C<use Template::Declare::Tags>
-to import the set of tag subroutines you need to generate the output you want.
-In this case, we've imported tags to support the creation of XUL. Other tag
-sets include HTML (the default), and RDF.
-
-Templates are created using the C<template> keyword:
-
-    template main => sub { ... };
-
-The first argument is the name of the template, also known as its I<path>. In
-this case, the template's path is C<main> (or C</main>, both are allowed (to
-keep both PHP and L<HTML::Mason> fans happy). The second argument is an
-anonymous subroutine that uses the tag subs (and any other necessary code) to
-generate the output for the template.
-
-The tag subs imported into your class take blocks as arguments, while a
-number of helper subs take other arguments. For example, the C<xml_decl>
-helper takes as its first argument the name of the XML declaration to be
-output, and then a hash of the attributes of that declaration:
-
-    xml_decl { 'xml', version => '1.0' };
-
-Tag subs are used by simply passing a block to them that generates the output.
-Said block may of course execute other tag subs in order to represent the
-hierarchy required in your output. Here, the C<radiogroup> tag calls the
-C<radio> tag for each of three different colors:
-
-    radiogroup {
-        for my $id ( qw< orange violet yellow > ) {
-            radio {
-                attr {
-                    id    => $id,
-                    label => ucfirst($id),
-                    $id eq 'violet' ? (selected => 'true') : ()
-                }
-            }
-        } # for
-    }
-
-Note the C<attr> sub. This helper function is used to add attributes to the
-element created by the tag in which they appear. In the previous example, the
-the C<id>, C<label>, and C<selected> attributes are added to each C<radio>
-output.
-
-Once you've written your templates, you'll want to execute them. You do so by
-telling Template::Declare what template classes to dispatch to and then asking
-it to show you the output from a template:
-
-    package main;
-    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
-    print Template::Declare->show( 'main' );
-
-The path passed to C<show> can be either C<main> or </main>, as you prefer. In
-either event, the output would look like this:
-
- <?xml version="1.0"?>
- <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
- <groupbox>
-  <caption label="Colors" />
-  <radiogroup>
-   <radio id="orange" label="Orange" />
-   <radio id="violet" label="Violet" selected="true" />
-   <radio id="yellow" label="Yellow" />
-  </radiogroup>
- </groupbox>
-
 =head2 A slightly more advanced example
 
 In this example, we'll show off how to set attributes on HTML tags, how to
@@ -420,6 +322,106 @@ The output looks like this:
   </body>
   <div id="footer">Page last generated at Thu Sep  3 20:56:14 2009.</div>
  </html>
+
+=head2 XUL
+
+Template::Declare isn't limited to just HTML. Let's do XUL!
+
+    package MyApp::Templates;
+    use base 'Template::Declare';
+    use Template::Declare::Tags 'XUL';
+
+    template main => sub {
+        xml_decl { 'xml', version => '1.0' };
+        xml_decl {
+            'xml-stylesheet',
+            href => "chrome://global/skin/",
+            type => "text/css"
+        };
+        groupbox {
+            caption { attr { label => 'Colors' } }
+            radiogroup {
+                for my $id ( qw< orange violet yellow > ) {
+                    radio {
+                        attr {
+                            id    => $id,
+                            label => ucfirst($id),
+                            $id eq 'violet' ? (selected => 'true') : ()
+                        }
+                    }
+                } # for
+            }
+        }
+    };
+
+The first thing to do in a template class is to subclass Template::Declare
+itself. This is required so that Template::Declare always knows that it's
+dealing with templates. The second thing is to C<use Template::Declare::Tags>
+to import the set of tag subroutines you need to generate the output you want.
+In this case, we've imported tags to support the creation of XUL. Other tag
+sets include HTML (the default), and RDF.
+
+Templates are created using the C<template> keyword:
+
+    template main => sub { ... };
+
+The first argument is the name of the template, also known as its I<path>. In
+this case, the template's path is C<main> (or C</main>, both are allowed (to
+keep both PHP and L<HTML::Mason> fans happy). The second argument is an
+anonymous subroutine that uses the tag subs (and any other necessary code) to
+generate the output for the template.
+
+The tag subs imported into your class take blocks as arguments, while a
+number of helper subs take other arguments. For example, the C<xml_decl>
+helper takes as its first argument the name of the XML declaration to be
+output, and then a hash of the attributes of that declaration:
+
+    xml_decl { 'xml', version => '1.0' };
+
+Tag subs are used by simply passing a block to them that generates the output.
+Said block may of course execute other tag subs in order to represent the
+hierarchy required in your output. Here, the C<radiogroup> tag calls the
+C<radio> tag for each of three different colors:
+
+    radiogroup {
+        for my $id ( qw< orange violet yellow > ) {
+            radio {
+                attr {
+                    id    => $id,
+                    label => ucfirst($id),
+                    $id eq 'violet' ? (selected => 'true') : ()
+                }
+            }
+        } # for
+    }
+
+Note the C<attr> sub. This helper function is used to add attributes to the
+element created by the tag in which they appear. In the previous example, the
+the C<id>, C<label>, and C<selected> attributes are added to each C<radio>
+output.
+
+Once you've written your templates, you'll want to execute them. You do so by
+telling Template::Declare what template classes to dispatch to and then asking
+it to show you the output from a template:
+
+    package main;
+    Template::Declare->init( dispatch_to => ['MyApp::Templates'] );
+    print Template::Declare->show( 'main' );
+
+The path passed to C<show> can be either C<main> or </main>, as you prefer. In
+either event, the output would look like this:
+
+ <?xml version="1.0"?>
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+ <groupbox>
+  <caption label="Colors" />
+  <radiogroup>
+   <radio id="orange" label="Orange" />
+   <radio id="violet" label="Violet" selected="true" />
+   <radio id="yellow" label="Yellow" />
+  </radiogroup>
+ </groupbox>
 
 =head2 Postprocessing
 
