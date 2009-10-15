@@ -146,10 +146,10 @@ properly hierarchical structure.
 
 =item tag set
 
-A set of tags defined in a subclass of L<Template::Declare::Tagset> for a
-particular purpose, and which can be imported into a template class. For
-example, L<Template::Declare::Tagset::HTML> defines tags for emitting HTML
-elements.
+A collection of related tags defined in a subclass of
+L<Template::Declare::TagSet> for a particular purpose, and which can be
+imported into a template class. For example,
+L<Template::Declare::TagSet::HTML> defines tags for emitting HTML elements.
 
 =item wrapper
 
