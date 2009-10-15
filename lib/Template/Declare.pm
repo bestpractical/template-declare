@@ -809,15 +809,15 @@ Let's start with a mixin.
               title { "My Site: " . $self->get_title };
           };
           body {
-              show( 'util/content' => 'fist paragraph', 'second paragraph' );
+              show( 'util/content' => 'first paragraph', 'second paragraph' );
           };
         };
     };
 
 The first template class, C<MyApp::UtilTemplates>, defines a utility template,
-called C<content>, for outputting the contents of page. Note it's call to C<<
-$self->get_title >> even though it doesn't have a C<get_title> method. This is
-part of the mixin's "contract": it requires that the class it's mixed into
+called C<content>, for outputting the contents of page. Note its call to
+C<< $self->get_title >> even though it doesn't have a C<get_title> method. This
+is part of the mixin's "contract": it requires that the class it's mixed into
 have a C<get_title()> method.
 
 The second template class, C<MyApp::Templates>, mixes C<MyApp::UtilTemplates>
@@ -847,10 +847,10 @@ To appreciate our output:
   </body>
  </html>
 
-Mixins are a very useful tool for template authors to add functionality to
-their template classes. But it's important to pay attention to the mixin
-contracts so that you're sure to implement the required API in your template
-class (here, the C<get_title()> method).
+Mixins are a very useful tool for template authors to add reusable
+functionality to their template classes. But it's important to pay attention to
+the mixin contracts so that you're sure to implement the required API in your
+template class (here, the C<get_title()> method).
 
 =head3 Aliases
 
@@ -874,7 +874,7 @@ has a template for that:
         my ($self, $thing) = @_;
         div {
             class is 'sidebar';
-            img { src is $self->img_path . '/sidbar.png' };
+            img { src is $self->img_path . '/sidebar.png' };
             p { $_->content } for $thing->get_things;
         };
     };
@@ -911,14 +911,14 @@ We get output as you might expect:
  <h1>My page title</h1>
  <p>Page paragraph</p>
  <div class="sidebar">
-  <img src="/ui/css/sidbar.png" />
+  <img src="/ui/css/sidebar.png" />
   <p>Sidebar paragraph</p>
   <p>Another paragraph</p>
  </div>
 
 Now, let's say that you have political stuff that you want to use a different
 image for in the sidebar. If that's the only difference, we can subclass
-C<MyApp::UI::Stuff> an just override the C<img_path()> method:
+C<MyApp::UI::Stuff> and just override the C<img_path()> method:
 
     package MyApp::UI::Stuff::Politics;
     use Template::Declare::Tags;
@@ -946,20 +946,20 @@ Now let's mix that into a politics template class:
     };
 
 The only difference between this template class and C<MyApp::Render> is that
-it aliases C<MyApp::UI::Stuff::Politics> under </politics>, and then calls
+it aliases C<MyApp::UI::Stuff::Politics> under C</politics>, and then calls
 C<show('/politics/sidebar')> in the C<page> template. Running this template:
 
     Template::Declare->init( dispatch_to => ['MyApp::Render::Politics'] );
     print Template::Declare->show( page => $page );
 
 Yields output using the value of the subclass's C<img_path()> method -- that
-is, the sidebar image is now F</politics/ui/css/sidbar.png> instead of
-F</ui/css/sidbar.png>:
+is, the sidebar image is now F</politics/ui/css/sidebar.png> instead of
+F</ui/css/sidebar.png>:
 
  <h1>My page title</h1>
  <p>Page paragraph</p>
  <div class="sidebar">
-  <img src="/politics/ui/css/sidbar.png" />
+  <img src="/politics/ui/css/sidebar.png" />
   <p>Sidebar paragraph</p>
   <p>Another paragraph</p>
  </div>
