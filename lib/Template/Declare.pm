@@ -117,9 +117,7 @@ Public and private templates
 
 =back
 
-=head1 USAGE
-
-First, some terminology:
+=head1 GLOSSARY
 
 =over
 
@@ -159,17 +157,17 @@ template output in common headers and footers, for example.
 =item dispatch class
 
 A template class that has been passed to L<C<init()>|/init> via the
-C<dispatch_to> parameter. When <show|/"show TEMPLATE"> is called, only
+C<dispatch_to> parameter. When L<show|/"show TEMPLATE"> is called, only
 templates defined in or mixed into the dispatch classes will be executed.
 
 =item path
 
-The name specified for a template it is created by the C<template> keyword, or
-when a a template is mixed into a template class.
+The name specified for a template when it is created by the C<template>
+keyword, or when a template is mixed into a template class.
 
 =item mixin
 
-A template mixed into a template class via C</mix>. Mixed-in templates may be
+A template mixed into a template class via L</mix>. Mixed-in templates may be
 mixed in under prefix paths to distinguish them from the templates defined in
 the dispatch classes.
 
@@ -190,12 +188,14 @@ templates.
 
 =back
 
-=head2 Basics
+=head1 Basics
 
 Like other Perl templating systems, there are two parts to Template::Declare:
 the templates and the code that loads and executes the templates. Unlike other
 template systems, the templates are written in Perl classes. A simple HTML
-example is in the L</SYNOPSIS>. So let's do XUL!
+example is in the L</SYNOPSIS>.
+
+=head2 XUL
 
     package MyApp::Templates;
     use base 'Template::Declare';
