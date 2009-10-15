@@ -1009,7 +1009,7 @@ exists for C<alias> as well.
 
 Wherein we will eventually provide a brief tutorial on creating custom tag sets.
 
-=ent comment
+=end comment
 
 =head1 METHODS
 
@@ -1151,7 +1151,7 @@ Aliases templates from one template class into another class. When an alias
 called, its invocant will be the class from which it was aliased. This type of
 composition is known as "delegation" in object-oriented parlance. See
 L<Template Composition|/"Template Composition"> for extended examples and a
-comparision to C<mix>.
+comparison to C<mix>.
 
 The first parameter is the name of the template class to alias. The C<under>
 keyword tells C<alias> where to put the templates. For example, a C<foo>
@@ -1683,7 +1683,7 @@ instead of the more intutive output:
 
  <p></p>
 
-This's because C<if ( 0 )> is the last expression, so it's returned as the
+This's because C<if ( 0 )> is the last expression, so C<0> is returned as the
 value of the whole block, which is used as the content of <p> tag.
 
 To get rid of this, just put an empty string at the end so it returns empty
