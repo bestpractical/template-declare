@@ -109,6 +109,10 @@ Inheritance
 
 =item *
 
+Delegation
+
+=item *
+
 Public and private templates
 
 =back
