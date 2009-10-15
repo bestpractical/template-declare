@@ -768,7 +768,7 @@ At the end, we've shifted the formal template class off the C<dispatch_to>
 list in order to restore the template classes the default configuration, ready
 for the next request.
 
-=head2 Delegation and Mixins
+=head2 Aliasing and Mixins
 
 
 
@@ -919,16 +919,8 @@ without the use of the sugar:
 
 sub mix {
     my $mixin = shift;
-    my ($into, $under);
-    if ( eval { $_[0]->isa(__PACKAGE__) } ) {
-        ($into, $under) = (shift, shift);
-    } elsif ( eval { $_[1]->isa(__PACKAGE__) } ) {
-        ($under, $into) = (shift, shift);
-    } else {
-        $into  = caller(0);
-        $under = shift;
-    }
-    $mixin->_import($into, $into, $under, @_);
+    my ($into, @args) = _into(@_);
+    $mixin->_import($into, $into, @args);
 }
 
 =head3 alias
@@ -941,7 +933,12 @@ XXX More to come.
 
 =cut
 
-sub alias { shift->_import(scalar caller(0), undef, @_) }
+# XXX fix to accept `into` parameter.
+sub alias {
+    my $mixin = shift;
+    my ($into, @args) = _into(@_);
+    $mixin->_import($into, undef, @args);
+}
 
 =head3 package_variable( VARIABLE )
 
@@ -1280,6 +1277,19 @@ sub _register_template {
     no strict 'refs';
     no warnings 'redefine';
     *{ $class . '::' . $subname } = $coderef;
+}
+
+sub _into {
+    my ($into, $under);
+    if ( eval { $_[0]->isa(__PACKAGE__) } ) {
+        ($into, $under) = (shift, shift);
+    } elsif ( eval { $_[1]->isa(__PACKAGE__) } ) {
+        ($under, $into) = (shift, shift);
+    } else {
+        $into  = caller(1);
+        $under = shift;
+    }
+    return $into, $under, @_;
 }
 
 sub _import {
