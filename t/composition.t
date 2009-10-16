@@ -69,7 +69,7 @@ use Test::More tests => 3;
         my ($self, $thing) = @_;
         div {
             class is 'sidebar';
-            img { src is $self->img_path . '/sidbar.png' };
+            img { src is $self->img_path . '/sidebar.png' };
             p { $_->content } for $thing->get_things;
         };
     };
@@ -142,7 +142,7 @@ use Test::More tests => 3;
 <h1>My page title</h1>
 <p>Page paragraph</p>
 <div class="sidebar">
- <img src="/ui/css/sidbar.png" />
+ <img src="/ui/css/sidebar.png" />
  <p>Sidebar paragraph</p>
  <p>Another paragraph</p>
 </div>}, 'Should get page with default sidebar';
@@ -153,7 +153,7 @@ use Test::More tests => 3;
 <h1>My page title</h1>
 <p>Page paragraph</p>
 <div class="sidebar">
- <img src="/politics/ui/css/sidbar.png" />
+ <img src="/politics/ui/css/sidebar.png" />
  <p>Sidebar paragraph</p>
  <p>Another paragraph</p>
 </div>}, 'Should get page with politics sidebar';
