@@ -12,6 +12,8 @@ template 'aliased' => sub {
     div { 'Variable ', $self->package_variable('VARIABLE') };
 };
 
+private template shhhh => sub { };
+
 ##############################################################################
 package Wifty::UI::aliased_subclass_pkg;
 use base qw/Wifty::UI::aliased_pkg/;
@@ -54,7 +56,7 @@ alias Wifty::UI::aliased_pkg under '/aliased_pkg4', into Wifty::UI
 # Fire it up.
 Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
-use Test::More tests => 29;
+use Test::More tests => 30;
 require "t/utils.pl";
 
 ok( Wifty::UI::aliased_pkg->has_template('aliased'), 'Aliased package should have template' );
@@ -62,6 +64,7 @@ ok( !  Wifty::UI->has_template('aliased'), 'Unrelated package should not' );
 ok( Wifty::UI::aliased_subclass_pkg->has_template('aliased'), 'Subclass should' );
 
 ok( Template::Declare->has_template('aliased_pkg/aliased'), 'TD should find alias' );
+ok( Template::Declare->has_template('aliased_pkg2/shhhh', 1), 'TD should find private mix' );
 
 ok( Template::Declare->has_template('aliased_subclass_pkg/aliased'),
     'Alias should be visible in a subclass, too' );

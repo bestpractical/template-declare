@@ -1223,7 +1223,6 @@ sub package_variables {
     return $TEMPLATE_VARS->{$self};
 }
 
-
 =head2 Templates registration and lookup
 
 =head3 resolve_template TEMPLATE_PATH INCLUDE_PRIVATE_TEMPLATES
@@ -1530,6 +1529,7 @@ sub _register_template {
     my $coderef = shift;
     no strict 'refs';
     no warnings 'redefine';
+    die 'WTF?' unless $coderef;
     *{ $class . '::' . $subname } = $coderef;
 }
 
@@ -1560,23 +1560,25 @@ sub _import {
 
     foreach my $from (@packages) {
         for my $tname (  __PACKAGE__->_templates_for($from) ) {
+            my $sname = _template_name_to_sub($tname);
             $into->register_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $invocant || $mixin, $vars )
+                _import_code( $sname, $from, $invocant || $mixin, $vars )
             );
         }
         for my $tname (  __PACKAGE__->_private_templates_for($from) ) {
+            my $sname = _template_name_to_private_sub($tname);
             $into->register_private_template(
                 "$prefix/$tname",
-                _import_code( $tname, $from, $invocant || $mixin, $vars )
+                _import_code( $sname, $from, $invocant || $mixin, $vars )
             );
         }
     }
 }
 
 sub _import_code {
-    my ($tname, $from, $mixin, $vars) = @_;
-    my $code = $from->_find_template_sub( _template_name_to_sub($tname) );
+    my ($sname, $from, $mixin, $vars) = @_;
+    my $code = $from->_find_template_sub( $sname );
     return $mixin eq $from ? $code : sub { shift; $code->($mixin, @_) }
         unless $vars;
     return sub {

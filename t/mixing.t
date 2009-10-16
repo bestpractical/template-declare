@@ -12,6 +12,8 @@ template 'mixed' => sub {
     div { 'Variable ', $self->package_variable('VARIABLE') };
 };
 
+private template shhhh => sub { };
+
 ##############################################################################
 package Wifty::UI::mixed_subclass_pkg;
 use base qw/Wifty::UI::mixed_pkg/;
@@ -54,7 +56,7 @@ mix Wifty::UI::mixed_pkg under '/mixed_pkg4', into Wifty::UI
 # Fire it up.
 Template::Declare->init( dispatch_to => ['Wifty::UI'] );
 
-use Test::More tests => 29;
+use Test::More tests => 30;
 require "t/utils.pl";
 
 ok( Wifty::UI::mixed_pkg->has_template('mixed'), 'Mixed package should have template' );
@@ -62,6 +64,7 @@ ok( !  Wifty::UI->has_template('mixed'), 'Unrelated package should not' );
 ok( Wifty::UI::mixed_subclass_pkg->has_template('mixed'), 'Subclass should' );
 
 ok( Template::Declare->has_template('mixed_pkg/mixed'), 'TD should find mix' );
+ok( Template::Declare->has_template('mixed_pkg2/shhhh', 1), 'TD should find private mix' );
 
 ok( Template::Declare->has_template('mixed_subclass_pkg/mixed'),
     'Mix should be visible in a subclass, too' );
