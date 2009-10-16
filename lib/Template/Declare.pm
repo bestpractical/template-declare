@@ -173,7 +173,7 @@ the dispatch classes.
 
 =item alias
 
-A temlate aliased into a template class via L</alias>. Aliased templates may
+A template aliased into a template class via L</alias>. Aliased templates may
 be added under prefix paths to distinguish them from the templates defined in
 the dispatch classes.
 
