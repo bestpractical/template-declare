@@ -171,6 +171,12 @@ A template mixed into a template class via L</mix>. Mixed-in templates may be
 mixed in under prefix paths to distinguish them from the templates defined in
 the dispatch classes.
 
+=item alias
+
+A temlate aliased into a template class via L</alias>. Aliased templates may
+be added under prefix paths to distinguish them from the templates defined in
+the dispatch classes.
+
 =item package variable
 
 Variables defined when mixing templates into a template class. These variables
