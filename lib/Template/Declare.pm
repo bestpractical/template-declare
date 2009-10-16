@@ -1529,7 +1529,6 @@ sub _register_template {
     my $coderef = shift;
     no strict 'refs';
     no warnings 'redefine';
-    die 'WTF?' unless $coderef;
     *{ $class . '::' . $subname } = $coderef;
 }
 
