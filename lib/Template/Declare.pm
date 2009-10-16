@@ -1118,7 +1118,7 @@ Mixes templates from one template class into another class. When the mixed-in
 template is called, its invocant will be the class into which it was mixed.
 This type of composition is known as a "mixin" in object-oriented parlance.
 See L<Template Composition|/"Template Composition"> for extended examples and
-a comparision to C<alias>.
+a comparison to C<alias>.
 
 The first parameter is the name of the template class to be mixed in. The
 C<under> keyword tells C<mix> where to put the templates. For example,
@@ -1129,7 +1129,7 @@ mixed-in copies of templates. These are available to the templates as
 C<< $self->package_variable($varname) >>.
 
 The C<into> keyword tells C<mix> into what class to mix the templates. Without
-theis keyword, C<mix> will mix them into the calling class.
+this keyword, C<mix> will mix them into the calling class.
 
 For those who prefer a direct OO syntax for mixins, just call C<mix()> as a
 method on the class to be mixed in. To replicate the above three examples
@@ -1167,7 +1167,7 @@ The C<setting> keyword specifies package variables available only to the
 aliases. These are available to the templates as
 C<< $self->package_variable($varname) >>.
 
-The C<into> keyword tells C<alias> into what class to aliase the templates.
+The C<into> keyword tells C<alias> into what class to alias the templates.
 Without this keyword, C<alias> will alias them into the calling class.
 
 For those who prefer a direct OO syntax for mixins, just call C<alias()> as a
@@ -1294,8 +1294,9 @@ sub register_template {
 
     MyApp::Templates->register_private_template( howdy => sub { ... } );
 
-This method registers a private template called C<TEMPLATE_NAME> in the caling
-class. As you might guess, C<CODEREF> defines the template's implementation.
+This method registers a private template called C<TEMPLATE_NAME> in the
+calling class. As you might guess, C<CODEREF> defines the template's
+implementation.
 
 Private templates can't be called directly from user code but only from other
 templates.
@@ -1589,7 +1590,7 @@ sub _import_code {
 
 =head1 PITFALLS
 
-We're reusing the perl interpreter for our templating langauge, but Perl was
+We're reusing the perl interpreter for our templating language, but Perl was
 not designed specifically for our purpose here. Here are some known pitfalls
 while you're scripting your templates with this module.
 
@@ -1686,11 +1687,11 @@ produces
 
  <p>0</p>
 
-instead of the more intutive output:
+instead of the more intuitive output:
 
  <p></p>
 
-This's because C<if ( 0 )> is the last expression, so C<0> is returned as the
+This is because C<if ( 0 )> is the last expression, so C<0> is returned as the
 value of the whole block, which is used as the content of <p> tag.
 
 To get rid of this, just put an empty string at the end so it returns empty
