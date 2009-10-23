@@ -1,4 +1,6 @@
-0.41
+0.40_02 2009-10-23
+* David (Theory) Wheeler spent considerable effort on cleaning up
+  Template-Declare for this release.
 * Reworked all the documentation, neatening things, expanding the "USAGE"
   section, fixing bugs in the examples, and adding missing docs for various
   functions and methods.
