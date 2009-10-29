@@ -6,7 +6,7 @@ use strict;
 
 package Template::Declare::Tags;
 
-our $VERSION = '0.40';
+our $VERSION = '0.41';
 
 use Template::Declare;
 use base 'Exporter';
