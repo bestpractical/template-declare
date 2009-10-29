@@ -194,7 +194,7 @@ templates.
 
 =back
 
-=head1 Basics
+=head1 USAGE
 
 Like other Perl templating systems, there are two parts to Template::Declare:
 the templates and the code that loads and executes the templates. Unlike other
@@ -783,7 +783,7 @@ for the next request.
 There are two methods of template composition: mixins and delegation. Their
 interfaces are very similar, the only difference being the template invocant.
 
-=head2 Mixins
+=head3 Mixins
 
 Let's start with a mixin.
 
