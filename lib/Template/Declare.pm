@@ -12,6 +12,7 @@ our $VERSION = '0.41';
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('dispatch_to');
 __PACKAGE__->mk_classdata('postprocessor');
+__PACKAGE__->mk_classdata('strict');
 __PACKAGE__->mk_classdata('templates');
 __PACKAGE__->mk_classdata('private_templates');
 __PACKAGE__->mk_classdata('buffer');
@@ -473,6 +474,7 @@ Now let's have a look at how we use these templates with a post-processor:
     Template::Declare->init(
         dispatch_to   => ['MyApp::Templates'],
         postprocessor => \&emphasize,
+        strict        => 1,
     );
 
     print Template::Declare->show( 'before' );
@@ -1056,6 +1058,12 @@ of the template itself. You can use this for instrumentation. For example:
         warn "Rendering $path took " . (time - $start) . " seconds.";
     });
 
+=item strict
+
+Die in exceptional situations, such as when a template can't be found, rather
+than just warn. False by default for backward compatibility. The default may
+be changed in the future, so specifying the value explicitly is recommended.
+
 =back
 
 =cut
@@ -1064,20 +1072,15 @@ sub init {
     my $class = shift;
     my %args  = (@_);
 
-    if ( $args{'dispatch_to'} ) {
-        $class->dispatch_to( $args{'dispatch_to'} );
-    } elsif ( $args{'roots'} ) {
-        $class->roots( $args{'roots'} );
+    if ( $args{dispatch_to} ) {
+        $class->dispatch_to( $args{dispatch_to} );
+    } elsif ( $args{roots} ) {
+        $class->roots( $args{roots} );
     }
 
-    if ( $args{'postprocessor'} ) {
-        $class->postprocessor( $args{'postprocessor'} );
-    }
-
-    if ( $args{'around_template'} ) {
-        $class->around_template( $args{'around_template'} );
-    }
-
+    $class->strict( $args{strict} ) if exists $args{strict};
+    $class->postprocessor( $args{postprocessor} ) if $args{postprocessor};
+    $class->around_template( $args{around_template} ) if $args{around_template};
 }
 
 =head2 show TEMPLATE_NAME

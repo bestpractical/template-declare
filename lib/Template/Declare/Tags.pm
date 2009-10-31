@@ -465,8 +465,9 @@ sub with (@) {
 
         if ( lc($key) eq 'id' ) {
             if ( $ELEMENT_ID_CACHE{$val}++ ) {
-                warn
-                    "HTML appears to contain illegal duplicate element id: $val";
+                my $msg = "HTML appears to contain illegal duplicate element id: $val";
+                die $msg if Template::Declare->strict;
+                warn $msg;
             }
         }
 
@@ -866,6 +867,7 @@ sub _show_template {
     unless ($callable) {
         my $msg = "The template '$template' could not be found";
         $msg .= " (it might be private)" if !$inside_template;
+        croak $msg if Template::Declare->strict;
         carp $msg;
         return '';
     }
