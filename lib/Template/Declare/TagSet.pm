@@ -5,7 +5,7 @@ use warnings;
 use base qw(Class::Accessor::Fast);
 
 __PACKAGE__->mk_ro_accessors(
-    qw{ namespace package implementor }
+    qw{ namespace package }
 );
 
 sub get_alternate_spelling {
