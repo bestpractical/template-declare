@@ -14,8 +14,8 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 b0a4d3b5bacd1c1ae7022f77379f704c42f04f86 Changes
-SHA1 1bab0077b133b2d3cdd4d66ef63dafa3ef4adf67 MANIFEST
+SHA1 7cff9cc5fac2ce5a6a95ef53b1a7eec956e38cef Changes
+SHA1 a5d3db06dc839282824ffa638a6cfe2ffdee78a9 MANIFEST
 SHA1 6c79a8c5140fc8b0146fbc8f77acc613797eeb6f MANIFEST.SKIP
 SHA1 ab968279525d26d23e4bf76e3d15e4951f87996f META.yml
 SHA1 ee899bc436e17646223925d431d3e9727c1254d1 Makefile.PL
@@ -31,14 +31,14 @@ SHA1 9f6beaa2f4749ceb5dd0c9b0c647d0f3289c7b46 inc/Module/Install/Makefile.pm
 SHA1 bd988ba3fb7eee0ad889eadc2f5338a8d98fc2a3 inc/Module/Install/Metadata.pm
 SHA1 e9aa83f3e8b16ccfce544a90a57b63b70a497759 inc/Module/Install/Win32.pm
 SHA1 ade2ac0b0246d4d8e28fa46942e53f6925abda46 inc/Module/Install/WriteAll.pm
-SHA1 01bc4e1b5e6731544a07ddebbefb995f0c7ace20 lib/Template/Declare.pm
+SHA1 bd3aacdeeec829929f7f9ab7c669510b6e315266 lib/Template/Declare.pm
 SHA1 4202a05659532bea1d800bc7296d9c1312624f9b lib/Template/Declare/Buffer.pm
-SHA1 2794aeecd4d243899d80881376502e5444664e55 lib/Template/Declare/TagSet.pm
+SHA1 c86b1e4749f76137c854358f496e8a8030d39fe7 lib/Template/Declare/TagSet.pm
 SHA1 bd39d582e69e0725124a0ffcee10c5d12a2377b3 lib/Template/Declare/TagSet/HTML.pm
 SHA1 c1703c1f999d27878117e0aaf59dcae1d9d98645 lib/Template/Declare/TagSet/RDF.pm
 SHA1 8ba58a5c640010febb799bb03b7857eda34c86bc lib/Template/Declare/TagSet/RDF/EM.pm
 SHA1 2941a453d2627e0c0c02b8f50e7600c648867831 lib/Template/Declare/TagSet/XUL.pm
-SHA1 c64560b8308421deffdc124d87d2f27f2c0b35d9 lib/Template/Declare/Tags.pm
+SHA1 f12037ad41f686043f0bfbb8e7a8ad643424b072 lib/Template/Declare/Tags.pm
 SHA1 238e8999db8b1a8221dcac8afbf0c60448670974 t/99-pod-coverage.t
 SHA1 bb0da54f2b3f2d7955baa41ee458cb3d1887f475 t/99-pod.t
 SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
@@ -76,6 +76,7 @@ SHA1 dad25f5c714947cf7fb5954fb876b18114c43ed5 t/self.t
 SHA1 771c903ee077531f0829b9d4efda1ca4fbd2fdfd t/siblings.t
 SHA1 31a78875cd464b5b2c21cee53c5498c97c395ebb t/similar-aliases.t
 SHA1 fe981469874ceb8b32100e82559d5eea14db3259 t/smart_tag_wrapper.t
+SHA1 3827af507d9d6f29c64be94d1444d6c146ece611 t/strict.t
 SHA1 5a4d6002efea9daf71d3d291bf2a35751a51cba8 t/subclassing.t
 SHA1 679b39abb4812ca1c61ad9e9dd3f5aab97f8829c t/subtemplates.t
 SHA1 44f81200ec38ebf8bc9c836e34942f70990e7207 t/tag_sub_list.t
@@ -92,7 +93,7 @@ SHA1 7bdcccbdd5253f4eae12d3c279183e10577a0184 t/xss.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.7 (Darwin)
 
-iD8DBQFK6eivsxfQtHhyRPoRApQpAJ9ed3HQZaHJpNJqx7Q4FAQfIZQMVACePkQ2
-yDQgnPWhv7oNpYKl/cMI/M4=
-=HEfH
+iD8DBQFK7fTjsxfQtHhyRPoRAoS6AJ4tPTryahUgXsB7i655g8PN6YVF3QCeKeVK
+04wL4T14yJ+WzU5iR0ILz+o=
+=oL96
 -----END PGP SIGNATURE-----

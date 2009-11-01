@@ -1,6 +1,6 @@
-0.42
-* Added the "strict" attribute to make exceptional situations fatal.
-* Removed unused "implementor" attribute in Template::Declare::TagSet.
+0.42 2009-11-01
+* Added the "strict" attribute to make exceptional situations fatal. (Theory)
+* Removed unused "implementor" attribute in Template::Declare::TagSet. (Theory)
 
 0.41 2009-10-29
 * Documentation tweaks (Theory)

@@ -61,6 +61,7 @@ t/self.t
 t/siblings.t
 t/similar-aliases.t
 t/smart_tag_wrapper.t
+t/strict.t
 t/subclassing.t
 t/subtemplates.t
 t/tag_sub_list.t
