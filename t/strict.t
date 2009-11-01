@@ -52,7 +52,7 @@ like $err,
 
 undef $@;
 eval { Template::Declare->show('oops' ) };
-ok my $err = $@, 'Should get exception for duplicate "id"';
+ok $err = $@, 'Should get exception for duplicate "id"';
 like $err,
     qr/HTML appears to contain illegal duplicate element id: foo/,
     '... and it should be about the duplicate "id" attribute';
