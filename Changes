@@ -1,3 +1,7 @@
+0.43 2009-11-18
+* Test warning fixes (Theory)
+* Dist fixes suggested by rafl (Sartak)
+
 0.42 2009-11-01
 * Added the "strict" attribute to make exceptional situations fatal. (Theory)
 * Removed unused "implementor" attribute in Template::Declare::TagSet. (Theory)

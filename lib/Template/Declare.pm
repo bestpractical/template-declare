@@ -7,7 +7,7 @@ use Template::Declare::Buffer;
 use Class::ISA;
 use String::BufferStack;
 
-our $VERSION = '0.42';
+our $VERSION = '0.43';
 
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata('dispatch_to');
