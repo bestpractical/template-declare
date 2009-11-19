@@ -3,10 +3,13 @@ abstract: 'Perlish declarative templates'
 author:
   - 'Jesse Vincent <jesse@bestpractical.com>'
 build_requires:
+  ExtUtils::MakeMaker: 6.42
   Test::More: 0
   Test::Warn: 0.11
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.79'
+generated_by: 'Module::Install version 0.91'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -24,4 +27,4 @@ requires:
   perl: 5.8.2
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.39
+version: 0.42
