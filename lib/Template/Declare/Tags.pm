@@ -16,7 +16,7 @@ use Symbol 'qualify_to_ref';
 our $self;
 
 our @EXPORT = qw(
-    template private current_template
+    template private current_template current_base_path
     show show_page
     attr with get_current_attr 
     outs outs_raw
@@ -724,6 +724,28 @@ Returns the absolute path of the current template
 
 sub current_template {
     return $TEMPLATE_STACK[-1] || '';
+}
+
+=head3 current_base_path
+
+    my $path = current_base_path();
+
+Returns the absolute base path of the current template
+
+=cut
+
+sub current_base_path {
+    # Rip it apart
+    my @parts = split('/', current_template());
+
+    # Remove the last element
+    pop @parts;
+
+    # Put it back together again
+    my $path = join('/', @parts);
+
+    # And serve
+    return $path;
 }
 
 =head3 under
