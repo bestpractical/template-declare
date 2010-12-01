@@ -33,6 +33,8 @@ our @TagSubs;
 our %ATTRIBUTES       = ();
 our %ELEMENT_ID_CACHE = ();
 our $TAG_NEST_DEPTH   = 0;
+our $TAG_INDENTATION  = 1;
+our $EOL              = "\n";
 our @TEMPLATE_STACK   = ();
 
 our $SKIP_XML_ESCAPING = 0;
@@ -600,7 +602,7 @@ of a template based on attributes passed to C<with>.
 sub smart_tag_wrapper (&) {
     my $coderef = shift;
 
-    Template::Declare->buffer->append("\n");
+    Template::Declare->buffer->append($EOL);
     Template::Declare->buffer->push( from => "T::D tag wrapper", private => 1 );
 
     my %attr = %ATTRIBUTES;
@@ -710,7 +712,7 @@ sub xml_decl (&;$) {
     while ( my ( $field, $val ) = splice( @rv, 0, 2 ) ) {
         outs_raw(qq/ $field="$val"/);
     }
-    outs_raw("?>\n");
+    outs_raw("?>$EOL");
     return @_;
 }
 
@@ -788,7 +790,7 @@ sub _tag {
     $tag = $tagset->namespace . ":$tag" if defined $tagset->namespace;
 
     Template::Declare->buffer->append(
-              "\n" 
+              $EOL
             . ( " " x $TAG_NEST_DEPTH )
             . "<$tag"
             . join( '',
@@ -824,7 +826,7 @@ sub _tag {
             wantarray ? () : '';
         };
 
-        local $TAG_NEST_DEPTH = $TAG_NEST_DEPTH + 1;
+        local $TAG_NEST_DEPTH = $TAG_NEST_DEPTH + $TAG_INDENTATION;
         %ATTRIBUTES = ();
         Template::Declare->buffer->push( private => 1, from => "T::D tag $tag" );
         $last = join '', map { ref($_) && $_->isa('Template::Declare::Tag') ? $_ : _postprocess($_) } $code->();
@@ -835,7 +837,7 @@ sub _tag {
 
     if (length $content) {
         Template::Declare->buffer->append(">$content");
-        Template::Declare->buffer->append("\n" . ( " " x $TAG_NEST_DEPTH )) if $content =~ /\</;
+        Template::Declare->buffer->append( $EOL . ( " " x $TAG_NEST_DEPTH )) if $content =~ /\</;
         Template::Declare->buffer->append("</$tag>");
     } elsif ( $tagset->can_combine_empty_tags($tag) ) {
         Template::Declare->buffer->append(" />");
