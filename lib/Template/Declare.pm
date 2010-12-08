@@ -1021,10 +1021,10 @@ Wherein we will eventually provide a brief tutorial on creating custom tag sets.
 
 =head2 Indentation configuration
 
-by default, Template::Declare renders a readable xml adding end of lines and a
+by default, Template::Declare renders a readable XML adding end of lines and a
 one column indentation. This behavior could break a webpage design or add a
-significant amount of chars to your xml output. This could be changed by
-overwritting the default values. so
+significant amount of chars to your XML output. This could be changed by
+overwriting the default values. so
 
     $Template::Declare::Tags::TAG_INDENTATION  = 0;
     $Template::Declare::Tags::EOL              = "";
