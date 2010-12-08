@@ -1760,7 +1760,7 @@ Jesse Vincent <jesse@bestpractical.com>
 
 =head1 LICENSE
 
-Template::Declare is Copyright 2006-2009 Best Practical Solutions, LLC.
+Template::Declare is Copyright 2006-2010 Best Practical Solutions, LLC.
 
 Template::Declare is distributed under the same terms as Perl itself.
 
