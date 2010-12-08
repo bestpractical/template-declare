@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.55.
+signed via the Module::Signature module, version 0.66.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,33 +14,33 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 1f0796eb8283c5a5fbdd61bbff4871a4b52a95b3 Changes
-SHA1 a5d3db06dc839282824ffa638a6cfe2ffdee78a9 MANIFEST
+SHA1 bea50ba2a1ec3c02864b92948ab28c1b525646ae Changes
+SHA1 8da2ce69008bcb411301caba38aeed06d94aff41 MANIFEST
 SHA1 6c79a8c5140fc8b0146fbc8f77acc613797eeb6f MANIFEST.SKIP
-SHA1 b14321a19c6631b4d3a528314efe655534ad4bd7 META.yml
+SHA1 d39dd57d522a3fbbc56a138af2a7bf1d0c81aced META.yml
 SHA1 ee899bc436e17646223925d431d3e9727c1254d1 Makefile.PL
-SHA1 1af5061c03daaf9d18c76108b6fb7cea29b315ed README
-SHA1 e5fb92ac217988bfc7a6af739b0459627020a27e inc/Module/AutoInstall.pm
-SHA1 fd5f3c4f0418efee3b9b16cf8c3902e8374909df inc/Module/Install.pm
-SHA1 5c529e96420d964b192f011b121283a4916f7331 inc/Module/Install/AutoInstall.pm
-SHA1 7cd7c349afdf3f012e475507b1017bdfa796bfbd inc/Module/Install/Base.pm
-SHA1 ba186541bbf6439111f01fc70769cf24d22869bf inc/Module/Install/Can.pm
-SHA1 aaa50eca0d7751db7a4d953fac9bc72c6294e238 inc/Module/Install/Fetch.pm
-SHA1 219da5a95c290312a81477b226f005997d97dcfd inc/Module/Install/Include.pm
-SHA1 3e83972921d54198d1246f7278f08664006cd65d inc/Module/Install/Makefile.pm
-SHA1 12bf1867955480d47d5171a9e9c6a96fabe0b58f inc/Module/Install/Metadata.pm
-SHA1 f7ee667e878bd2faf22ee9358a7b5a2cc8e91ba4 inc/Module/Install/Win32.pm
-SHA1 8ed29d6cf217e0977469575d788599cbfb53a5ca inc/Module/Install/WriteAll.pm
-SHA1 ae08fdca2d014fdcf9a1ae6541d6167a429449ef lib/Template/Declare.pm
+SHA1 6b14974531d0b5bfad494febf88d6e43f1a1de12 README
+SHA1 20c73697e1713638140c719d8eaa19a275ed43a5 inc/Module/AutoInstall.pm
+SHA1 7305dbe2904416e28decb05396988a5d51d578be inc/Module/Install.pm
+SHA1 ca13d9875e1249f6e84f7070be8152c34837955e inc/Module/Install/AutoInstall.pm
+SHA1 129960509127732258570c122042bc48615222e1 inc/Module/Install/Base.pm
+SHA1 cf3356ed9a5bd2f732527ef9e7bc5ef4458c8a93 inc/Module/Install/Can.pm
+SHA1 bf0a3e1977effc2832d7a813a76dce3f31b437b6 inc/Module/Install/Fetch.pm
+SHA1 b501b0df59a5cd235cca473889f82c3d3429f39e inc/Module/Install/Include.pm
+SHA1 b721c93ca5bc9a6aa863b49af15f1b1de6125935 inc/Module/Install/Makefile.pm
+SHA1 026cc0551a0ad399d195e395b46bdf842e115192 inc/Module/Install/Metadata.pm
+SHA1 5457015ea5a50e93465bf2dafa29feebd547f85b inc/Module/Install/Win32.pm
+SHA1 051e7fa8063908befa3440508d0584a2497b97db inc/Module/Install/WriteAll.pm
+SHA1 32b5a4c5a0f15af69f1a2bc1066f5f604502b241 lib/Template/Declare.pm
 SHA1 4202a05659532bea1d800bc7296d9c1312624f9b lib/Template/Declare/Buffer.pm
 SHA1 c86b1e4749f76137c854358f496e8a8030d39fe7 lib/Template/Declare/TagSet.pm
 SHA1 bd39d582e69e0725124a0ffcee10c5d12a2377b3 lib/Template/Declare/TagSet/HTML.pm
 SHA1 c1703c1f999d27878117e0aaf59dcae1d9d98645 lib/Template/Declare/TagSet/RDF.pm
 SHA1 8ba58a5c640010febb799bb03b7857eda34c86bc lib/Template/Declare/TagSet/RDF/EM.pm
 SHA1 2941a453d2627e0c0c02b8f50e7600c648867831 lib/Template/Declare/TagSet/XUL.pm
-SHA1 87a35c3fa0902118bc32540c8c4462db5408f89a lib/Template/Declare/Tags.pm
-SHA1 238e8999db8b1a8221dcac8afbf0c60448670974 t/99-pod-coverage.t
-SHA1 bb0da54f2b3f2d7955baa41ee458cb3d1887f475 t/99-pod.t
+SHA1 63cf6e9db9d122f0714589ae20869fa968e11f3c lib/Template/Declare/Tags.pm
+SHA1 f01b9a79b8f508729ce33693f0bb58d9cce54a3f t/99-pod-coverage.t
+SHA1 332d20b7b38fc5728b89d46b80f5b4e9e0ce4e29 t/99-pod.t
 SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
 SHA1 b29bbf71af87b128afb6899f024bbd4f5d87a98d t/aliasing.t
 SHA1 ecc1013f49f12123c78393cc67afc09f8bdfb607 t/alternative.t
@@ -60,6 +60,7 @@ SHA1 bf1dfd4cf42d43798b4ea9c89c21e87c91ce9d3e t/importing.t
 SHA1 11343aaa0aeae231361997ccd44abf188de98fe2 t/indent.t
 SHA1 176eeceeac1b46d5ff1ce7d9e6363b3ec6b5a9d8 t/indexhtml.t
 SHA1 56a834f2099d3956f2b4a490c04063b36edbf0cd t/inline-tagset.t
+SHA1 407d9dbbe3c8da6ed865f014ccdb8a3e10c4c7c3 t/inline_xml_rendering.t
 SHA1 ef67dee0bb8db682889745e0cb8cee8c7c61edc5 t/instrumentation.t
 SHA1 b6e93d9604ede87001d1ad15f824afafa66964f2 t/mixing.t
 SHA1 728aec74c8e41ef019743d3b1de48421e2e3b69e t/namespace.t
@@ -91,9 +92,9 @@ SHA1 c6780f36485d147ee0a7b295f095995532e19618 t/utils.pl
 SHA1 506e99d34f44e087b0d0f6880513648bb37de32a t/wrappers.t
 SHA1 7bdcccbdd5253f4eae12d3c279183e10577a0184 t/xss.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.7 (Darwin)
+Version: GnuPG v1.4.10 (Darwin)
 
-iD8DBQFLBJOEsxfQtHhyRPoRAvGYAJ4uu5W2pD0CF0d7TGh+4UL0I3a51QCfasjc
-slIwJcJ+UPqB60eHY04q2GQ=
-=ehsE
+iEYEARECAAYFAkz/2UAACgkQsxfQtHhyRPoQkQCfXdF9WZ19xP9Gf0aT4WMN6gnP
++UwAniwBytP+w9P9gy9zFEC6R5eFRr8+
+=jHQM
 -----END PGP SIGNATURE-----
