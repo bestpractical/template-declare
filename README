@@ -913,10 +913,10 @@ USAGE
     same functionality exists for "alias" as well.
 
   Indentation configuration
-    by default, Template::Declare renders a readable xml adding end of lines
+    by default, Template::Declare renders a readable XML adding end of lines
     and a one column indentation. This behavior could break a webpage design
-    or add a significant amount of chars to your xml output. This could be
-    changed by overwritting the default values. so
+    or add a significant amount of chars to your XML output. This could be
+    changed by overwriting the default values. so
 
         $Template::Declare::Tags::TAG_INDENTATION  = 0;
         $Template::Declare::Tags::EOL              = "";
@@ -1310,7 +1310,7 @@ AUTHOR
     Jesse Vincent <jesse@bestpractical.com>
 
 LICENSE
-    Template::Declare is Copyright 2006-2009 Best Practical Solutions, LLC.
+    Template::Declare is Copyright 2006-2010 Best Practical Solutions, LLC.
 
     Template::Declare is distributed under the same terms as Perl itself.
 

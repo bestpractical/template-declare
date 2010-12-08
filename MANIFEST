@@ -44,6 +44,7 @@ t/importing.t
 t/indent.t
 t/indexhtml.t
 t/inline-tagset.t
+t/inline_xml_rendering.t
 t/instrumentation.t
 t/mixing.t
 t/MyTagSet.pm
