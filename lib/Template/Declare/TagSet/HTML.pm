@@ -40,7 +40,9 @@ sub get_tag_list {
         radio_group popup_menu button autoescape scrolling_list image_button
         start_form end_form startform endform start_multipart_form
         end_multipart_form isindex tmpfilename uploadinfo url_encoded
-        multipart form canvas
+        multipart form canvas section article aside hgroup header footer nav
+        figure figcaption video audio embed mark progress meter time ruby rt
+        rp bdi wbr command details datalist keygen output
     )]
 }
 
@@ -370,6 +372,58 @@ Template::Declare::TagSet::HTML. Here is the complete list:
 =item C<form>
 
 =item C<canvas>
+
+=item C<section>
+
+=item C<article>
+
+=item C<aside>
+
+=item C<hgroup>
+
+=item C<header>
+
+=item C<footer>
+
+=item C<nav>
+
+=item C<figure>
+
+=item C<figcaption>
+
+=item C<video>
+
+=item C<audio>
+
+=item C<embed>
+
+=item C<mark>
+
+=item C<progress>
+
+=item C<meter>
+
+=item C<time>
+
+=item C<ruby>
+
+=item C<rt>
+
+=item C<rp>
+
+=item C<bdi>
+
+=item C<wbr>
+
+=item C<command>
+
+=item C<details>
+
+=item C<datalist>
+
+=item C<keygen>
+
+=item C<output>
 
 =back
 
