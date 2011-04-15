@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 bea50ba2a1ec3c02864b92948ab28c1b525646ae Changes
+SHA1 229e9d22495ced90449f67a93df813c185250269 Changes
 SHA1 8da2ce69008bcb411301caba38aeed06d94aff41 MANIFEST
 SHA1 6c79a8c5140fc8b0146fbc8f77acc613797eeb6f MANIFEST.SKIP
-SHA1 d39dd57d522a3fbbc56a138af2a7bf1d0c81aced META.yml
+SHA1 9c889d95945f64dd7d159944d21d3b2760390046 META.yml
 SHA1 ee899bc436e17646223925d431d3e9727c1254d1 Makefile.PL
 SHA1 6b14974531d0b5bfad494febf88d6e43f1a1de12 README
 SHA1 20c73697e1713638140c719d8eaa19a275ed43a5 inc/Module/AutoInstall.pm
@@ -31,14 +31,14 @@ SHA1 b721c93ca5bc9a6aa863b49af15f1b1de6125935 inc/Module/Install/Makefile.pm
 SHA1 026cc0551a0ad399d195e395b46bdf842e115192 inc/Module/Install/Metadata.pm
 SHA1 5457015ea5a50e93465bf2dafa29feebd547f85b inc/Module/Install/Win32.pm
 SHA1 051e7fa8063908befa3440508d0584a2497b97db inc/Module/Install/WriteAll.pm
-SHA1 32b5a4c5a0f15af69f1a2bc1066f5f604502b241 lib/Template/Declare.pm
+SHA1 abce91386f0010f7d0a21ae294dbc479826e498f lib/Template/Declare.pm
 SHA1 4202a05659532bea1d800bc7296d9c1312624f9b lib/Template/Declare/Buffer.pm
 SHA1 c86b1e4749f76137c854358f496e8a8030d39fe7 lib/Template/Declare/TagSet.pm
-SHA1 bd39d582e69e0725124a0ffcee10c5d12a2377b3 lib/Template/Declare/TagSet/HTML.pm
+SHA1 3db3c3d4ecf402d8309014d2bb703eddeb100846 lib/Template/Declare/TagSet/HTML.pm
 SHA1 c1703c1f999d27878117e0aaf59dcae1d9d98645 lib/Template/Declare/TagSet/RDF.pm
 SHA1 8ba58a5c640010febb799bb03b7857eda34c86bc lib/Template/Declare/TagSet/RDF/EM.pm
 SHA1 2941a453d2627e0c0c02b8f50e7600c648867831 lib/Template/Declare/TagSet/XUL.pm
-SHA1 63cf6e9db9d122f0714589ae20869fa968e11f3c lib/Template/Declare/Tags.pm
+SHA1 e58cac12b1f429e78723c147090746841b3a3065 lib/Template/Declare/Tags.pm
 SHA1 f01b9a79b8f508729ce33693f0bb58d9cce54a3f t/99-pod-coverage.t
 SHA1 332d20b7b38fc5728b89d46b80f5b4e9e0ce4e29 t/99-pod.t
 SHA1 8de6d59c7ed7c771f9cdc5e2dbaef0c31c7ab439 t/MyTagSet.pm
@@ -81,7 +81,7 @@ SHA1 b4e187860320bbcdffa8036a76b47752521fb1ff t/strict.t
 SHA1 5a4d6002efea9daf71d3d291bf2a35751a51cba8 t/subclassing.t
 SHA1 679b39abb4812ca1c61ad9e9dd3f5aab97f8829c t/subtemplates.t
 SHA1 44f81200ec38ebf8bc9c836e34942f70990e7207 t/tag_sub_list.t
-SHA1 706c1919716723253eb62dc79b094dd48b7815ad t/tagset_html.t
+SHA1 72fcdef5a4a16376dcb45b858864652a44287d17 t/tagset_html.t
 SHA1 17263784a1a80112896cd157de834709a387fbff t/tagset_mix.t
 SHA1 cb48ee69151cf5b07ef19f4b2c727cb5580b1471 t/tagset_rdf.t
 SHA1 d6b90c5e540749b6f2b7ffa9f6ae84838a234503 t/tagset_rdf_em.t
@@ -94,7 +94,7 @@ SHA1 7bdcccbdd5253f4eae12d3c279183e10577a0184 t/xss.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (Darwin)
 
-iEYEARECAAYFAkz/2UAACgkQsxfQtHhyRPoQkQCfXdF9WZ19xP9Gf0aT4WMN6gnP
-+UwAniwBytP+w9P9gy9zFEC6R5eFRr8+
-=jHQM
+iEYEARECAAYFAk2oi4UACgkQsxfQtHhyRPqOVwCeOT81Lxrg0OW20K9UtKZldRBR
+eWoAnixLN/tIa5iKIlMojG9YqAWsERyG
+=bSv7
 -----END PGP SIGNATURE-----
