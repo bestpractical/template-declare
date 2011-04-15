@@ -1,5 +1,5 @@
-0.45
-* Added new HTML 5 elements to the hTML Tag set. (Theory)
+0.45 2011-04-15
+* Added new HTML 5 elements to the HTML Tag set. (Theory)
 
 0.44 2010-12-08
 * Added support for $TAG_INDENTATION and $EOL (Marc Chantreux)
