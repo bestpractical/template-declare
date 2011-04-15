@@ -10,6 +10,7 @@ our %AlternateSpelling = (
     td   => 'cell',
     base => 'html_base',
     q    => 'quote',
+    time => 'datetime',
 );
 
 sub get_alternate_spelling {
@@ -432,10 +433,11 @@ Template::Declare::TagSet::HTML. Here is the complete list:
     $bool = $obj->get_alternate_spelling($tag);
 
 Returns the alternative spelling for a given tag if any or undef otherwise.
-Currently, C<tr> is mapped to C<row>, C<td> is mapped to C<cell>, and C<base>
-is mapped to C<html_base>. These alternates are to avoid conflicts with the
-Perl operator C<tr> and the L<base|base> module, with C<td> changed so as to
-keep consistent with table rows.
+Currently, C<tr> is mapped to C<row>, C<td> is mapped to C<cell>, C<q> is
+mapped to C<quote>, C<base> is mapped to C<html_base>, and C<time> is mapped
+to C<datetime>. These alternates are to avoid conflicts with the Perl C<tr>
+and C<q> operators, the C<time> function, and the L<base|base> module, with
+C<td> changed so as to keep consistent with table rows.
 
 =head2 can_combine_empty_tags( TAG )
 
