@@ -5,14 +5,19 @@ package MyApp::Templates;
 
 use base 'Template::Declare';
 use Template::Declare::Tags qw/ HTML /;
+my $time;
 
 template main => sub {
+    $time = time;
     caption { attr { id => 'a' } }
     link {};
     table {
         row {
             cell { "Hello, world!" }
-        }
+        };
+        row {
+            cell { datetime { $time } };
+        };
     }
     img { attr { src => 'cat.gif' } }
     label {}
@@ -37,6 +42,11 @@ is $out, <<_EOC_;
 <table>
  <tr>
   <td>Hello, world!</td>
+ </tr>
+ <tr>
+  <td>
+   <time>$time</time>
+  </td>
  </tr>
 </table>
 <img src="cat.gif" />

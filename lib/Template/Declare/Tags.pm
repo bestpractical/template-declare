@@ -528,7 +528,7 @@ sub install_tag {
         );
         ### Exporting place-holder sub: $name
         # XXX TODO: more checking here
-        if ($name !~ /^(?:base|tr)$/) {
+        if ($name !~ /^(?:base|tr|time)$/) {
             push @EXPORT, $name;
             push @TAG_SUB_LIST, $name;
         }

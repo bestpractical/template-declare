@@ -10,6 +10,7 @@ our %AlternateSpelling = (
     td   => 'cell',
     base => 'html_base',
     q    => 'quote',
+    time => 'datetime',
 );
 
 sub get_alternate_spelling {
@@ -40,7 +41,9 @@ sub get_tag_list {
         radio_group popup_menu button autoescape scrolling_list image_button
         start_form end_form startform endform start_multipart_form
         end_multipart_form isindex tmpfilename uploadinfo url_encoded
-        multipart form canvas
+        multipart form canvas section article aside hgroup header footer nav
+        figure figcaption video audio embed mark progress meter time ruby rt
+        rp bdi wbr command details datalist keygen output
     )]
 }
 
@@ -117,259 +120,311 @@ Template::Declare::TagSet::HTML. Here is the complete list:
 
 =over
 
-=item C<h1>
+=item * C<h1>
 
-=item C<h2>
+=item * C<h2>
 
-=item C<h3>
+=item * C<h3>
 
-=item C<h4>
+=item * C<h4>
 
-=item C<h5>
+=item * C<h5>
 
-=item C<h6>
+=item * C<h6>
 
-=item C<p>
+=item * C<p>
 
-=item C<br>
+=item * C<br>
 
-=item C<hr>
+=item * C<hr>
 
-=item C<ol>
+=item * C<ol>
 
-=item C<ul>
+=item * C<ul>
 
-=item C<li>
+=item * C<li>
 
-=item C<dl>
+=item * C<dl>
 
-=item C<dt>
+=item * C<dt>
 
-=item C<dd>
+=item * C<dd>
 
-=item C<menu>
+=item * C<menu>
 
-=item C<code>
+=item * C<code>
 
-=item C<var>
+=item * C<var>
 
-=item C<strong>
+=item * C<strong>
 
-=item C<em>
+=item * C<em>
 
-=item C<tt>
+=item * C<tt>
 
-=item C<u>
+=item * C<u>
 
-=item C<i>
+=item * C<i>
 
-=item C<b>
+=item * C<b>
 
-=item C<blockquote>
+=item * C<blockquote>
 
-=item C<pre>
+=item * C<pre>
 
-=item C<img>
+=item * C<img>
 
-=item C<a>
+=item * C<a>
 
-=item C<address>
+=item * C<address>
 
-=item C<cite>
+=item * C<cite>
 
-=item C<samp>
+=item * C<samp>
 
-=item C<dfn>
+=item * C<dfn>
 
-=item C<html>
+=item * C<html>
 
-=item C<head>
+=item * C<head>
 
-=item C<base>
+=item * C<base>
 
-=item C<body>
+=item * C<body>
 
-=item C<link>
+=item * C<link>
 
-=item C<nextid>
+=item * C<nextid>
 
-=item C<title>
+=item * C<title>
 
-=item C<meta>
+=item * C<meta>
 
-=item C<kbd>
+=item * C<kbd>
 
-=item C<start_html>
+=item * C<start_html>
 
-=item C<end_html>
+=item * C<end_html>
 
-=item C<input>
+=item * C<input>
 
-=item C<select>
+=item * C<select>
 
-=item C<option>
+=item * C<option>
 
-=item C<comment>
+=item * C<comment>
 
-=item C<charset>
+=item * C<charset>
 
-=item C<escapehtml>
+=item * C<escapehtml>
 
-=item C<div>
+=item * C<div>
 
-=item C<table>
+=item * C<table>
 
-=item C<caption>
+=item * C<caption>
 
-=item C<th>
+=item * C<th>
 
-=item C<td>
+=item * C<td>
 
-=item C<tr>
+=item * C<tr>
 
-=item C<tr>
+=item * C<tr>
 
-=item C<sup>
+=item * C<sup>
 
-=item C<sub>
+=item * C<sub>
 
-=item C<strike>
+=item * C<strike>
 
-=item C<applet>
+=item * C<applet>
 
-=item C<param>
+=item * C<param>
 
-=item C<nobr>
+=item * C<nobr>
 
-=item C<embed>
+=item * C<embed>
 
-=item C<basefont>
+=item * C<basefont>
 
-=item C<style>
+=item * C<style>
 
-=item C<span>
+=item * C<span>
 
-=item C<layer>
+=item * C<layer>
 
-=item C<ilayer>
+=item * C<ilayer>
 
-=item C<font>
+=item * C<font>
 
-=item C<frameset>
+=item * C<frameset>
 
-=item C<frame>
+=item * C<frame>
 
-=item C<script>
+=item * C<script>
 
-=item C<small>
+=item * C<small>
 
-=item C<big>
+=item * C<big>
 
-=item C<area>
+=item * C<area>
 
-=item C<map>
+=item * C<map>
 
-=item C<abbr>
+=item * C<abbr>
 
-=item C<acronym>
+=item * C<acronym>
 
-=item C<bdo>
+=item * C<bdo>
 
-=item C<col>
+=item * C<col>
 
-=item C<colgroup>
+=item * C<colgroup>
 
-=item C<del>
+=item * C<del>
 
-=item C<fieldset>
+=item * C<fieldset>
 
-=item C<iframe>
+=item * C<iframe>
 
-=item C<ins>
+=item * C<ins>
 
-=item C<label>
+=item * C<label>
 
-=item C<legend>
+=item * C<legend>
 
-=item C<noframes>
+=item * C<noframes>
 
-=item C<noscript>
+=item * C<noscript>
 
-=item C<object>
+=item * C<object>
 
-=item C<optgroup>
+=item * C<optgroup>
 
-=item C<q>
+=item * C<q>
 
-=item C<thead>
+=item * C<thead>
 
-=item C<tbody>
+=item * C<tbody>
 
-=item C<tfoot>
+=item * C<tfoot>
 
-=item C<blink>
+=item * C<blink>
 
-=item C<fontsize>
+=item * C<fontsize>
 
-=item C<center>
+=item * C<center>
 
-=item C<textfield>
+=item * C<textfield>
 
-=item C<textarea>
+=item * C<textarea>
 
-=item C<filefield>
+=item * C<filefield>
 
-=item C<password_field>
+=item * C<password_field>
 
-=item C<hidden>
+=item * C<hidden>
 
-=item C<checkbox>
+=item * C<checkbox>
 
-=item C<checkbox_group>
+=item * C<checkbox_group>
 
-=item C<submit>
+=item * C<submit>
 
-=item C<reset>
+=item * C<reset>
 
-=item C<defaults>
+=item * C<defaults>
 
-=item C<radio_group>
+=item * C<radio_group>
 
-=item C<popup_menu>
+=item * C<popup_menu>
 
-=item C<button>
+=item * C<button>
 
-=item C<autoescape>
+=item * C<autoescape>
 
-=item C<scrolling_list>
+=item * C<scrolling_list>
 
-=item C<image_button>
+=item * C<image_button>
 
-=item C<start_form>
+=item * C<start_form>
 
-=item C<end_form>
+=item * C<end_form>
 
-=item C<startform>
+=item * C<startform>
 
-=item C<endform>
+=item * C<endform>
 
-=item C<start_multipart_form>
+=item * C<start_multipart_form>
 
-=item C<end_multipart_form>
+=item * C<end_multipart_form>
 
-=item C<isindex>
+=item * C<isindex>
 
-=item C<tmpfilename>
+=item * C<tmpfilename>
 
-=item C<uploadinfo>
+=item * C<uploadinfo>
 
-=item C<url_encoded>
+=item * C<url_encoded>
 
-=item C<multipart>
+=item * C<multipart>
 
-=item C<form>
+=item * C<form>
 
-=item C<canvas>
+=item * C<canvas>
+
+=item * C<section>
+
+=item * C<article>
+
+=item * C<aside>
+
+=item * C<hgroup>
+
+=item * C<header>
+
+=item * C<footer>
+
+=item * C<nav>
+
+=item * C<figure>
+
+=item * C<figcaption>
+
+=item * C<video>
+
+=item * C<audio>
+
+=item * C<embed>
+
+=item * C<mark>
+
+=item * C<progress>
+
+=item * C<meter>
+
+=item * C<time>
+
+=item * C<ruby>
+
+=item * C<rt>
+
+=item * C<rp>
+
+=item * C<bdi>
+
+=item * C<wbr>
+
+=item * C<command>
+
+=item * C<details>
+
+=item * C<datalist>
+
+=item * C<keygen>
+
+=item * C<output>
 
 =back
 
@@ -378,10 +433,11 @@ Template::Declare::TagSet::HTML. Here is the complete list:
     $bool = $obj->get_alternate_spelling($tag);
 
 Returns the alternative spelling for a given tag if any or undef otherwise.
-Currently, C<tr> is mapped to C<row>, C<td> is mapped to C<cell>, and C<base>
-is mapped to C<html_base>. These alternates are to avoid conflicts with the
-Perl operator C<tr> and the L<base|base> module, with C<td> changed so as to
-keep consistent with table rows.
+Currently, C<tr> is mapped to C<row>, C<td> is mapped to C<cell>, C<q> is
+mapped to C<quote>, C<base> is mapped to C<html_base>, and C<time> is mapped
+to C<datetime>. These alternates are to avoid conflicts with the Perl C<tr>
+and C<q> operators, the C<time> function, and the L<base|base> module, with
+C<td> changed so as to keep consistent with table rows.
 
 =head2 can_combine_empty_tags( TAG )
 
@@ -392,25 +448,25 @@ C<< <tag /> >>. Currently, only a few HTML tags are allowed to be combined:
 
 =over
 
-=item C<base>
+=item * C<base>
 
-=item C<meta>
+=item * C<meta>
 
-=item C<link>
+=item * C<link>
 
-=item C<hr>
+=item * C<hr>
 
-=item C<br>
+=item * C<br>
 
-=item C<param>
+=item * C<param>
 
-=item C<img>
+=item * C<img>
 
-=item C<area>
+=item * C<area>
 
-=item C<input>
+=item * C<input>
 
-=item C<col>
+=item * C<col>
 
 =back
 
