@@ -287,7 +287,7 @@ execute those private templates in the appropriate places.
 =item *
 
 Additional arguments to C<show> are passed on to the template being executed.
-here, C<show('util/footer', 'noon')> is passing "noon" to the C<util/footer>
+Here, C<show('util/footer', 'noon')> is passing "noon" to the C<util/footer>
 template, with the result that the "last generated at" string will display
 "noon" instead of the default C<gmtime>.
 
@@ -408,7 +408,7 @@ C<radio> tag for each of three different colors:
 
 Note the C<attr> sub. This helper function is used to add attributes to the
 element created by the tag in which they appear. In the previous example, the
-the C<id>, C<label>, and C<selected> attributes are added to each C<radio>
+C<id>, C<label>, and C<selected> attributes are added to each C<radio>
 output.
 
 Once you've written your templates, you'll want to execute them. You do so by
@@ -538,7 +538,7 @@ override some of those methods:
     };
 
 Here we have two template classes; the second, C<MyApp::Templates::BlogPost>,
-inherits from the first, C<MyApp::Templates::GeniricItem>. Note also that
+inherits from the first, C<MyApp::Templates::GenericItem>. Note also that
 C<MyApp::Templates::BlogPost> overrides the C<item> template. So execute these
 templates:
 
@@ -624,7 +624,7 @@ The output from the "inner" template will look something like this:
 
 Tag wrappers are similar to template wrappers, but mainly function as syntax
 sugar for creating subroutines that behave just like tags but are allowed to
-contain arbitrary Perl code and to dispatch to other tag. To create one,
+contain arbitrary Perl code and to dispatch to other tags. To create one,
 simply create a named subroutine with the prototype C<(&)> so that its
 interface is the same as tags. Within it, use
 L<C<smart_tag_wrapper>|Template::Declare::Tags/"smart_tag_wrapper"> to do the
@@ -682,12 +682,12 @@ Yields this output:
 
 The classes passed via the C<dispatch_to> parameter to C<init()> specify all
 of the templates that can be executed by subsequent calls to C<show()>.
-Template searches through these classes in order to find those templates. Thus
-it can be useful, when you're creating your template classes and determining
-which to use for particular class to C<show()>, to have templates that
-override other templates. This is similar to how an operating system will
-search all the paths in the C<$PATH> environment variable for a program to
-run, and to L<HTML::Mason> component roots or L<Template::Toolkit>'s
+Template::Declare searches through these classes in order to find those
+templates. Thus it can be useful, when you're creating your template classes
+and determining which to use for particular class to C<show()>, to have
+templates that override other templates. This is similar to how an operating
+system will search all the paths in the C<$PATH> environment variable for a
+program to run, and to L<HTML::Mason> component roots or L<Template::Toolkit>'s
 C<INCLUDE_PATH> parameter.
 
 For example, say you have this template class that defines a template that
@@ -750,9 +750,9 @@ so:
     };
 
 
-This, too, will work as expected, but the useful bit that comes in when you're
+This, too, will work as expected, but the useful bit comes in when you're
 mixing and matching template classes to pass to C<dispatch_to> before
-rendering a page. Maybe you always pass have MyApp::UI::Standard to
+rendering a page. Maybe you always pass C<MyApp::UI::Standard> to
 C<dispatch_to> because it has all of your standard formatting templates.
 But when the code realizes that a particular page needs the more formal
 treatment, you can prepend the formal class to the list:
@@ -767,7 +767,7 @@ treatment, you can prepend the formal class to the list:
     );
     shift @template_classes;
 
-In this way, made the formal C<image> template will be found first, yielding
+In this way, the formal C<image> template will be found first, yielding
 this output:
 
  <div class="formal">
@@ -777,8 +777,8 @@ this output:
  </div>
 
 At the end, we've shifted the formal template class off the C<dispatch_to>
-list in order to restore the template classes the default configuration, ready
-for the next request.
+list in order to restore the template classes to the default configuration,
+ready for the next request.
 
 =head2 Template Composition
 
@@ -998,7 +998,7 @@ specific to the composition. Do so via the C<setting> keyword:
 
 The templates mixed from C<Some::Mixin> into C<My::Templates> have package
 variables set for them that are accessible I<only> from their mixed-in paths.
-For example, if this template was defined in C<Some::Mixin>:
+For example, if you define this template in C<Some::Mixin>:
 
     template howdy => sub {
         my $self = shift;
@@ -1021,10 +1021,10 @@ Wherein we will eventually provide a brief tutorial on creating custom tag sets.
 
 =head2 Indentation configuration
 
-by default, Template::Declare renders a readable XML adding end of lines and a
+By default, Template::Declare renders a readable XML adding end of lines and a
 one column indentation. This behavior could break a webpage design or add a
 significant amount of chars to your XML output. This could be changed by
-overwriting the default values. so
+overwriting the default values. So,
 
     $Template::Declare::Tags::TAG_INDENTATION  = 0;
     $Template::Declare::Tags::EOL              = "";
@@ -1063,7 +1063,7 @@ is to alleviate using Tags for simple text markup.
 =item around_template
 
 A coderef called B<instead> of rendering each template. The coderef will
-receive three arguments: a coderef to invoke to render the template, the
+receive four arguments: a coderef to invoke to render the template, the
 template's path, an arrayref of the arguments to the template, and the coderef
 of the template itself. You can use this for instrumentation. For example:
 
@@ -1141,7 +1141,7 @@ a comparison to C<alias>.
 
 The first parameter is the name of the template class to be mixed in. The
 C<under> keyword tells C<mix> where to put the templates. For example,
-a C<foo> template in C<Some::Clever::Mixin> will be mixed in as C<mymixin/foo>.
+a C<foo> template in C<Some::Clever::Mixin> will be mixed in as C<mixin/foo>.
 
 The C<setting> keyword specifies package variables available only to the
 mixed-in copies of templates. These are available to the templates as
@@ -1250,7 +1250,7 @@ sub package_variables {
     my $code = Template::Declare->has_template($template, 1);
 
 Turns a template path (C<TEMPLATE_PATH>) into a C<CODEREF>.  If the
-boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private template
+boolean C<INCLUDE_PRIVATE_TEMPLATES> is true, resolves private templates
 in addition to public ones. C<has_template()> is an alias for this method.
 
 First it looks through all the valid Template::Declare classes defined via
@@ -1644,7 +1644,7 @@ after C<xml_decl { ... }>, or you'll mess up the order of output.
 =item *
 
 Another place that requires trailing semicolon is the statements before a Perl
-looping statement, an if statement, or a C<show> call. For example:
+looping statement, an C<if> statement, or a C<show> call. For example:
 
     p { "My links:" };
     for (@links) {
