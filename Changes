@@ -1,3 +1,7 @@
+0.46 2012-12-23
+* Documentation fixes (Brigham Johnson)
+* Hash ordering fixes for 5.17 (Kent Fredric)
+
 0.45 2011-04-15
 * Added new HTML 5 elements to the HTML Tag set. (Theory)
 
