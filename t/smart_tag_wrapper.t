@@ -63,7 +63,7 @@ is(
         smart_tag_wrapper {
             my %params = @_; # set using 'with'
             form {
-                attr { %{ $params{attr} } };
+                attr { map {$_ => $params{attr}{$_} } sort keys %{ $params{attr} } };
                 $code->();
                 input { attr { type => 'submit', value => $params{value} } };
             };
