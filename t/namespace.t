@@ -55,7 +55,7 @@ template main => sub {
 
 eval "htm::div {};";
 ::ok $@, 'htm:: is invalid';
-::like $@, qr/Can't locate object method "div" via package "htm"/, 'package htm is intact';
+::ok !defined &htm::div, 'package htm is intact';
 
 package main;
 Template::Declare->init( dispatch_to => ['MyApp::Templates']);
