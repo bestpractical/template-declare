@@ -1,885 +1,125 @@
+0.47 2014-12-16
+ - Stop checking warning message contents explictly (Aaron Crane)
+
 0.46 2012-12-23
-* Documentation fixes (Brigham Johnson)
-* Hash ordering fixes for 5.17 (Kent Fredric)
+ - Documentation fixes (Brigham Johnson)
+ - Hash ordering fixes for 5.17 (Kent Fredric)
 
 0.45 2011-04-15
-* Added new HTML 5 elements to the HTML Tag set. (Theory)
+ - Added new HTML 5 elements to the HTML Tag set. (Theory)
 
 0.44 2010-12-08
-* Added support for $TAG_INDENTATION and $EOL (Marc Chantreux)
-* Add a current_base_path() convenience function (trs)
+ - Added support for $TAG_INDENTATION and $EOL (Marc Chantreux)
+ - Add a current_base_path() convenience function (trs)
 
 0.43 2009-11-18
-* Test warning fixes (Theory)
-* Dist fixes suggested by rafl (Sartak)
+ - Test warning fixes (Theory)
+ - Dist fixes suggested by rafl (Sartak)
 
 0.42 2009-11-01
-* Added the "strict" attribute to make exceptional situations fatal. (Theory)
-* Removed unused "implementor" attribute in Template::Declare::TagSet. (Theory)
+ - Added the "strict" attribute to make exceptional situations fatal.
+   (Theory)
+ - Removed unused "implementor" attribute in Template::Declare::TagSet.
+   (Theory)
 
 0.41 2009-10-29
-* Documentation tweaks (Theory)
+ - Documentation tweaks (Theory)
 
 0.40_02 2009-10-23
-* David (Theory) Wheeler spent considerable effort on cleaning up
-  Template-Declare for this release.
-* Reworked all the documentation, neatening things, expanding the "USAGE"
-  section, fixing bugs in the examples, and adding missing docs for various
-  functions and methods.
-* Added "dispatch_to" to replace "roots", which is now deprecated. Note that
-  "dispatch_to" resolves to template classes in the opposite order to "roots".
-  This won't be an issue if you only use a single temlate class.
-* Converted the implementation of "alias" to be the same as that used for
-  "import_templates", which is much more efficient.
-* Added the "into" parameter to "alias" and "import_templates".
-* Added the "setting" syntactical sugar keyword for use with "alias".
-* Renamed "import_templates" to "mix". The former is still around, but is
-  deprecated.
-* Added support for package variables with "mix".
-* Deprecated the undocumented "aliases()" and "alias_metadata()" methods, as
-  they are no longer needed. They're now no-ops that issue warnings. To be
-  removed altogether in a future version.
+ - David (Theory) Wheeler spent considerable effort on cleaning up
+   Template-Declare for this release.
+ - Reworked all the documentation, neatening things, expanding the "USAGE"
+   section, fixing bugs in the examples, and adding missing docs for
+   various functions and methods.
+ - Added "dispatch_to" to replace "roots", which is now deprecated. Note
+   that "dispatch_to" resolves to template classes in the opposite order to
+   "roots". This won't be an issue if you only use a single temlate class.
+ - Converted the implementation of "alias" to be the same as that used for
+   "import_templates", which is much more efficient.
+ - Added the "into" parameter to "alias" and "import_templates".
+ - Added the "setting" syntactical sugar keyword for use with "alias".
+ - Renamed "import_templates" to "mix". The former is still around, but is
+   deprecated.
+ - Added support for package variables with "mix".
+ - Deprecated the undocumented "aliases()" and "alias_metadata()" methods,
+   as they are no longer needed. They're now no-ops that issue warnings. To
+   be removed altogether in a future version.
 
 0.40_01 2009-08-12
-* Support for inline tagset definitions. Thanks to Olivier 'dolmen' Mengué
-	[rt.cpan.org #48642]
-
-0.40 - 2009-07-08
-* Fix subname issue with the debugger and specifically Devel::NYTProf
-* String::BufferStack usage improvements
-
-0.39 - 2009-03-05
-* No code changes; increase Test::Warn dependency to 0.11, as 0.10 was
-  broken
-
-0.38 - 2009-02-27
-* Support, but deprecate, Template::Declare->buffer->data(...) usage
-
-0.37 - 2009-02-19
-* Make HTML::Lint an optional dependency
-
-0.36 - 2009-02-05
-* Hint to the source of the buffer using a 'from' argument.  This
-  allows us to inspect the call stack by looking at the buffer stack.
-
-0.35 - 2009-01-20
-* Buffers have been moved to using String::BufferStack, for better
-  interopability with other templating systems.  Code which
-  manipulated Template::Declare::Buffer objects by hand may need to be
-  adjusted.
-
-0.31_01 - 2008-12-19
-* INCOMPATIBLE: there were inconsistency in arguments passing.
-  show in TD::Tags could pass arguments into template as array
-  reference depending on a way it's called. Now arguments
-  are always passwed the same way they passed into show.
-
-  This change is only backwards incompatible for those who
-  were using this incorrect behaviour.
-
-* stringify argument in TD::Buffer::append as we can deal with
-  an object with overloaded stringification that puts data into
-  buffer when stringified
-* correctly escape objects with overloaded stringification
-* use less buffers for operations and a few other small optimizations
-
-0.30 - 2008-11-26
-* Remove the "wrapper" export, its name is too generic and clashes with a lot
-  of existing code. It's a negligible amount of sugar.
-
-0.29 - 2008-07-01
-* Sugar for defining a tag-like wrapper. Thanks Theory! #37624
-* Don't load all of CGI.pm to get a list of tags. #37630
-* Don't add attrs to the first tag in smart_tag_wrapper. #37622.
-
-0.28 - 2008-02-14
-* Added the missing dependency Class::ISA to Makefile.PL
-* Added the "canvas" tag to the HTML tagset.
-* Added around_template for instrumentation.
-
-0.27 - 2007-11-02
-* Added support for the RDF tag set (T::D::TagSet::RDF).
-* Added support for the Mozilla EM RDF tag set (T::D::TagSet::RDF::EM)
-
-0.26 - 2007-08-14
-* Refactored Template::Declare::Tags to make the tag sets configurable.
-* Added Template::Declare::TagSet::HTML and Template::Declare::TagSet::XUL,
-  respectively, as well as their common base class, Template::Declare::TagSet.
-  Added Template::Declare::TagSet::HTML and Template::Declare::TagSet::XUL,
-  respectively.
-* Added support for XML namespace:
-   use Template::Declare::Tags 'XUL', 'HTML' => { namespace => 'html' };
-  and
-  ... 'HTML' => { namespace => 'html', package => 'MyHtml' };
-* And we can now say 'use Template::Declare::Tags qw/ HTML XUL /;
-* Added @Template::Declare::Tags::TAG_SUB_LIST which records all the tag subroutines
-  generated on-the-fly, which is necessary for secondary symbol exporting
-  in Jifty::View::Declare::Helpers.
-* Implemented C< use Template::Declare::Tags HTML => { from => 'My::HTML::TagSet' } >.
-* Allow content post-proceessing with a callback.
-* Added a PITFALLS section to T::D's POD.
-* Added a global sub append_attr to provide friendly diagnostics and the infamous "Undefined subroutine &Template::Declare::Tags::append_attr called at ..." is now gone.
-
-----------------------------------------------------------------------
-r57045 (orig r3286):  jesse | 2007-05-22 15:58:58 -0400
-
- r57043@pinglin:  jesse | 2007-05-22 15:58:29 -0400
-  * 0.21
-
-----------------------------------------------------------------------
-r57044 (orig r3285):  jesse | 2007-05-22 15:58:47 -0400
-
- r57042@pinglin:  jesse | 2007-05-22 15:56:19 -0400
-  * 5.6 didn't like using undef as an array ref
-
-----------------------------------------------------------------------
-r57013 (orig r3280):  jesse | 2007-05-20 22:44:23 -0400
-
- r57012@pinglin:  jesse | 2007-05-20 22:43:53 -0400
- * 0.20
-
-----------------------------------------------------------------------
-r57011 (orig r3279):  jesse | 2007-05-20 22:09:57 -0400
-
- r57010@pinglin:  jesse | 2007-05-20 22:09:31 -0400
- * chmrr++ noticed a bit of extra debugging info
-
-----------------------------------------------------------------------
-r57003 (orig r3275):  jesse | 2007-05-20 20:16:26 -0400
-
- r57000@pinglin:  jesse | 2007-05-20 20:15:49 -0400
- * Allow calling "show" with arguments
- 
-
-----------------------------------------------------------------------
-r57002 (orig r3274):  jesse | 2007-05-20 20:16:13 -0400
-
- r56999@pinglin:  jesse | 2007-05-20 19:16:38 -0400
- * Be a little bit brighter about whether we should be appending to the TD buffer or returning the content.  Never do both.
-
-----------------------------------------------------------------------
-r56998 (orig r3272):  jesse | 2007-05-20 17:51:35 -0400
-
- r56997@pinglin:  jesse | 2007-05-20 17:51:13 -0400
-  * made relative template paths work
-
-----------------------------------------------------------------------
-r56996 (orig r3271):  jesse | 2007-05-20 16:28:52 -0400
-
- r56995@232:  jesse | 2007-05-20 16:28:32 -0400
- * Tag nesting cleanups. Now don't introduce extra whitespace (newlines and spaces) at the ends of a tag
-
-----------------------------------------------------------------------
-r56994 (orig r3270):  jesse | 2007-05-20 16:22:24 -0400
-
- r56992@232:  jesse | 2007-05-20 16:21:55 -0400
- * minor refactoring
-
-----------------------------------------------------------------------
-r56993 (orig r3269):  jesse | 2007-05-20 16:22:17 -0400
-
- r56991@232:  jesse | 2007-05-20 15:52:10 -0400
- minor refacotring
-
-----------------------------------------------------------------------
-r56990 (orig r3268):  jesse | 2007-05-20 15:35:56 -0400
-
- r56989@232:  jesse | 2007-05-20 15:35:32 -0400
- * mnore minor simplifications. Working ot decrease needless complexity
- 
- 
-
-----------------------------------------------------------------------
-r56988 (orig r3267):  jesse | 2007-05-20 15:26:22 -0400
-
- r56987@232:  jesse | 2007-05-20 15:25:58 -0400
- more cleanup
-
-----------------------------------------------------------------------
-r56986 (orig r3266):  jesse | 2007-05-20 15:21:47 -0400
-
- r56984@232:  jesse | 2007-05-20 15:21:14 -0400
- * Refactoring to remove redundant code
- 
-
-----------------------------------------------------------------------
-r56985 (orig r3265):  jesse | 2007-05-20 15:21:39 -0400
-
- r56983@232:  jesse | 2007-05-20 15:21:06 -0400
- * fixed test count 
-
-----------------------------------------------------------------------
-r56982 (orig r3264):  jesse | 2007-05-20 03:56:06 -0400
-
- r56981@pinglin:  jesse | 2007-05-20 03:54:21 -0400
- * Tests for new relative template calling syntax
- 
-
-----------------------------------------------------------------------
-r56980 (orig r3263):  jesse | 2007-05-19 16:17:40 -0400
-
- r56979@pinglin:  jesse | 2007-05-19 16:17:20 -0400
-  * refactor refactor ok
-
-----------------------------------------------------------------------
-r56978 (orig r3262):  jesse | 2007-05-19 15:57:16 -0400
-
- r56977@pinglin:  jesse | 2007-05-19 15:56:57 -0400
- * Test suite now actually tests the warnings we expect to provide
-
-----------------------------------------------------------------------
-r56976 (orig r3261):  jesse | 2007-05-19 15:43:30 -0400
-
- r56974@pinglin:  jesse | 2007-05-19 15:43:02 -0400
- * Test suite cleanup
-
-----------------------------------------------------------------------
-r56975 (orig r3260):  jesse | 2007-05-19 15:43:22 -0400
-
- r56973@pinglin:  jesse | 2007-05-19 15:13:55 -0400
-  perltidy
-
-----------------------------------------------------------------------
-r56808 (orig r3234):  jesse | 2007-05-12 03:11:44 -0400
-
- r56807@pinglin:  jesse | 2007-05-12 03:11:35 -0400
- Allow recursive aliasing.
-
-----------------------------------------------------------------------
-r56806 (orig r3233):  jesse | 2007-05-12 01:25:52 -0400
-
- r56805@pinglin:  jesse | 2007-05-12 01:25:45 -0400
-  deep import tests
-
-----------------------------------------------------------------------
-r56804 (orig r3232):  jesse | 2007-05-12 01:25:37 -0400
-
- r56803@pinglin:  jesse | 2007-05-12 00:37:02 -0400
-  Tests to show that recursive aliasing breaks
-
-----------------------------------------------------------------------
-r56792 (orig r3228):  jesse | 2007-05-11 18:15:31 -0400
-
- r56786@pinglin:  jesse | 2007-05-11 18:15:20 -0400
-  * make the import and alias method be extra-slash agnostic
-
-----------------------------------------------------------------------
-r56762 (orig r3214):  jesse | 2007-05-07 22:05:51 -0400
-
- r56761@pinglin:  jesse | 2007-05-07 22:05:40 -0400
- * First pass at package variables for templates
-
-----------------------------------------------------------------------
-r56760 (orig r3213):  jesse | 2007-05-07 21:23:49 -0400
-
- r56759@pinglin:  jesse | 2007-05-07 21:23:39 -0400
- * Reabstracting a bit to support setting variables on aliases template libs
-
-----------------------------------------------------------------------
-r56758 (orig r3212):  jesse | 2007-05-07 20:16:02 -0400
-
- r56756@pinglin:  jesse | 2007-05-07 20:07:43 -0400
- * typo in test count
-
-----------------------------------------------------------------------
-r56757 (orig r3211):  jesse | 2007-05-07 20:15:54 -0400
-
- r56755@pinglin:  jesse | 2007-05-07 20:07:18 -0400
- * makde the closure tests use the proper syntax (and hence actually pass)
-
-----------------------------------------------------------------------
-r56734 (orig r3195):  ruz | 2007-05-05 21:22:36 -0400
-
-* drop 'use bytes' as it actually breaks utf8 strings.
-
-If we're in bytes mode and had a string with UTF-8 flag set
-then after escaping we'll get a string without flag, but it
-still would be valid UTF-8 and must have flag set. Effect
-is not obviouse at this step, but later if you'll try to
-concatenate the result with a flagged UTF-8 string then perl
-"auto-upgrade" the result using 'latin1 -> UTF-8' transformation
-applied to your valid UTF-8 string and you'll get corruption.
-
-* tests
-
-----------------------------------------------------------------------
-r56717 (orig r3192):  ruz | 2007-05-02 19:48:55 -0400
-
-* add simple tests for utf8 happines
-----------------------------------------------------------------------
-r55442 (orig r3129):  jesse | 2007-04-15 11:05:41 -0400
-
- r55437@pinglin:  jesse | 2007-04-15 11:04:41 -0400
-  manifest update
-
-----------------------------------------------------------------------
-r55441 (orig r3128):  jesse | 2007-04-15 11:05:37 -0400
-
- r55436@pinglin:  jesse | 2007-04-15 11:04:22 -0400
-  0.07
-
-----------------------------------------------------------------------
-r55440 (orig r3127):  jesse | 2007-04-15 11:05:23 -0400
-
- r55435@pinglin:  jesse | 2007-04-15 11:03:34 -0400
- * Bumped the version, added a Changelog
-
-----------------------------------------------------------------------
-r55439 (orig r3126):  jesse | 2007-04-15 11:05:18 -0400
-
- r55434@pinglin:  jesse | 2007-04-15 10:59:48 -0400
- * todoified new tests for a CPAN release
-
-----------------------------------------------------------------------
-r55438 (orig r3125):  jesse | 2007-04-15 11:05:11 -0400
-
- r55433@pinglin:  jesse | 2007-04-15 10:59:06 -0400
- * shut up a warning
-
-----------------------------------------------------------------------
-r54526 (orig r3102):  jesse | 2007-04-06 10:07:35 -0400
-
- r54525@dhcp207:  jesse | 2007-04-06 23:07:11 +0900
-  * duplicate id tests.
-
-----------------------------------------------------------------------
-r54524 (orig r3101):  jesse | 2007-04-06 10:04:34 -0400
-
- r54523@dhcp207:  jesse | 2007-04-06 23:04:19 +0900
- * Patch from gugod++ to perform detection of duplicate html id elements
-
-----------------------------------------------------------------------
-r54518 (orig r3100):  jesse | 2007-04-06 06:36:26 -0400
-
- r54517@dhcp207:  jesse | 2007-04-06 19:36:06 +0900
- * Better handling of 'private' templates for gugod
-
-----------------------------------------------------------------------
-r54400 (orig r3076):  jesse | 2007-03-31 21:49:35 -0400
-
- r54399@pinglin:  jesse | 2007-03-31 18:49:21 -0700
-  * This broke nav menus on live. i suck
-
-----------------------------------------------------------------------
-r54394 (orig r3074):  jesse | 2007-03-31 21:20:45 -0400
-
- r54393@pinglin:  jesse | 2007-03-31 18:20:31 -0700
- * more work on closures 
-
-----------------------------------------------------------------------
-r54390 (orig r3073):  jesse | 2007-03-31 03:21:23 -0400
-
- r54389@pinglin:  jesse | 2007-03-31 00:19:30 -0700
- * Closer to right handling of embedded tags as closures.  I think all that's left is stringification.
- 
-
-----------------------------------------------------------------------
-r54260 (orig r3071):  jesse | 2007-03-28 01:51:18 -0400
-
- r54259@pinglin:  jesse | 2007-03-27 22:50:53 -0700
-  * So sad. this broke live apps
-
-----------------------------------------------------------------------
-r54257 (orig r3070):  jesse | 2007-03-27 23:21:29 -0400
-
- r54255@pinglin:  jesse | 2007-03-27 20:20:21 -0700
- * Tests for closures
-
-----------------------------------------------------------------------
-r54256 (orig r3069):  jesse | 2007-03-27 23:21:18 -0400
-
- r54254@pinglin:  jesse | 2007-03-27 20:18:21 -0700
- * Getting closer to supporting closures of tags.
-
-----------------------------------------------------------------------
-r54253 (orig r3068):  jesse | 2007-03-27 17:47:21 -0400
-
- r54252@pinglin:  jesse | 2007-03-27 14:41:20 -0700
- * Refactoring outs to make tags into closures
-
-----------------------------------------------------------------------
-r54250 (orig r3067):  ruz | 2007-03-27 13:43:19 -0400
-
-* idea about adding attributes to all tags on one level
-  is good, but 'with' is not good candidate for that.
-  Fix a test to according to the current behaviour.
-----------------------------------------------------------------------
-r54248 (orig r3066):  ruz | 2007-03-27 06:56:33 -0400
-
-* change prototype of attr function so all tag functions
-  on the same level are called in array context. This
-  fixes a failing test in t/attributes.t
-----------------------------------------------------------------------
-r54247 (orig r3065):  ruz | 2007-03-27 06:25:10 -0400
-
-* clear buffer after each test
-----------------------------------------------------------------------
-r54246 (orig r3064):  ruz | 2007-03-26 22:40:29 -0400
-
-* tests for attributes
-----------------------------------------------------------------------
-r53849 (orig r3057):  clkao | 2007-03-24 14:10:55 -0400
-
-rollback r3052 as it's breaking multiroot resolution.
-----------------------------------------------------------------------
-r53844 (orig r3052):  clkao | 2007-03-23 22:22:25 -0400
-
-When calling show, look at the current context rather than global.
-This breaks a test that is arguably wrong by introducing collision.
-
-----------------------------------------------------------------------
-r53842 (orig r3050):  clkao | 2007-03-23 21:56:01 -0400
-
-path_for method to do resolution for imported templates.
-----------------------------------------------------------------------
-r53531 (orig r2989):  evdb | 2007-03-16 05:15:53 -0400
-
-Added function 'smart_tag_wrapper' that allows tags to be created that have access to the ATTRIBUTES set using 'with'. It attempts to hide most of the complexity of the call from the user and tidies up after itself.
-
-----------------------------------------------------------------------
-r53454 (orig r2971):  evdb | 2007-03-15 12:30:44 -0400
-
-Added 'Test::More' build dependency
-----------------------------------------------------------------------
-r53453 (orig r2970):  evdb | 2007-03-15 12:27:59 -0400
-
-Added carped warning when you try to 'show' a template that either does not exist or is private and so cannot be used.
-
-----------------------------------------------------------------------
-r52916 (orig r2885):  jesse | 2007-03-03 04:17:27 -0500
-
- r52903@152:  jesse | 2007-03-03 00:54:03 +0000
- 0.06
-
-----------------------------------------------------------------------
-r50024 (orig r2877):  jesse | 2007-03-01 12:27:25 -0500
-
- r49940@pinglin:  jesse | 2007-03-01 12:26:05 -0500
-  * Added missing dependency on Class::Accessor
-
-----------------------------------------------------------------------
-r48608 (orig r2869):  jesse | 2007-02-28 14:53:40 -0500
-
- r48606@pinglin:  jesse | 2007-02-28 14:53:09 -0500
- * signature for 0.03
-
-----------------------------------------------------------------------
-r48607 (orig r2868):  jesse | 2007-02-28 14:53:33 -0500
-
- r48605@pinglin:  jesse | 2007-02-28 14:49:48 -0500
- * 0.03
-
-----------------------------------------------------------------------
-r48508 (orig r2833):  jesse | 2007-02-23 17:30:09 -0500
-
- r48504@233:  jesse | 2007-02-23 17:24:34 -0500
- * Better warnings when invalid things get shoved in your Template::Declare root list
-
-----------------------------------------------------------------------
-r47589 (orig r2760):  audreyt | 2007-02-07 22:45:56 -0500
-
-* Buffer.pm: Fix the bug where existing content '0' will be eaten away;
-  also squash warnings.
-----------------------------------------------------------------------
-r47588 (orig r2759):  clkao | 2007-02-07 03:29:02 -0500
-
-* Fix $self for importing.
-* Rename import to import_templates for now as it's conflicting with
-  jifty::view::declare's import.
-
-----------------------------------------------------------------------
-r47583 (orig r2754):  jesse | 2007-02-05 23:14:33 -0500
-
- r21797@hualien:  jesse | 2007-02-06 17:11:57 +1300
-  * Switched from Template::Declare::BUFFER to a buffer object
-
-----------------------------------------------------------------------
-r47413 (orig r2584):  jesse | 2007-01-26 07:00:12 -0500
-
- r21351@hualien:  jesse | 2007-01-26 19:46:44 +0800
-  * deprecated too soon
-
-----------------------------------------------------------------------
-r47406 (orig r2577):  audreyt | 2007-01-26 06:41:29 -0500
-
-* More misc releng fix.
-----------------------------------------------------------------------
-r47405 (orig r2576):  audreyt | 2007-01-26 06:39:30 -0500
-
-* Makefile.PL - Modernize Module::Install usage, as well as listing HTML::Lint 
-  as build_requires() so that tests won't randomly fail.
-----------------------------------------------------------------------
-r47354 (orig r2525):  jesse | 2007-01-18 00:13:29 -0500
-
- r21085@hualien:  jesse | 2007-01-18 00:12:37 -0500
-  * 0.02
-
-----------------------------------------------------------------------
-r47352 (orig r2523):  jesse | 2007-01-18 00:07:08 -0500
-
- r21082@hualien:  jesse | 2007-01-18 00:06:05 -0500
-  * Module::Install update
-
-----------------------------------------------------------------------
-r47351 (orig r2522):  jesse | 2007-01-18 00:06:43 -0500
-
- r21081@hualien:  jesse | 2007-01-18 00:05:40 -0500
-  * Better test coverage
-
-----------------------------------------------------------------------
-r47350 (orig r2521):  jesse | 2007-01-17 23:29:12 -0500
-
- r21079@hualien:  jesse | 2007-01-17 23:28:57 -0500
- * More docs!
- * pod testing
-
-----------------------------------------------------------------------
-r47335 (orig r2506):  jesse | 2007-01-16 13:34:54 -0500
-
- r21007@hualien:  jesse | 2007-01-16 13:23:33 -0500
-  *0.01_01
-
-----------------------------------------------------------------------
-r47332 (orig r2503):  jesse | 2007-01-15 21:18:02 -0500
-
- r21001@hualien:  jesse | 2007-01-15 21:17:57 -0500
- * that local should have been a my
-
-----------------------------------------------------------------------
-r47331 (orig r2502):  jesse | 2007-01-15 20:59:31 -0500
-
- r20995@hualien:  jesse | 2007-01-15 20:57:42 -0500
- * doc
-
-----------------------------------------------------------------------
-r47330 (orig r2501):  jesse | 2007-01-15 20:59:25 -0500
-
- r20994@hualien:  jesse | 2007-01-15 20:57:36 -0500
- * tests for aliasing
-
-----------------------------------------------------------------------
-r47329 (orig r2500):  jesse | 2007-01-15 20:59:10 -0500
-
- r20993@hualien:  jesse | 2007-01-15 18:56:56 -0500
-  Evil, evil, evil tricks to make self the right packagename
-
-----------------------------------------------------------------------
-r47328 (orig r2499):  jesse | 2007-01-15 20:58:56 -0500
-
- r20992@hualien:  jesse | 2007-01-15 17:58:08 -0500
-  * refactoring for readability
-
-----------------------------------------------------------------------
-r47327 (orig r2498):  jesse | 2007-01-15 20:58:25 -0500
-
- r20991@hualien:  jesse | 2007-01-15 17:57:23 -0500
-  * refactoring for readability
-
-----------------------------------------------------------------------
-r47326 (orig r2497):  jesse | 2007-01-15 17:04:23 -0500
-
- r20989@hualien:  jesse | 2007-01-15 17:03:19 -0500
- * work on making sure there's a $self available to the template
-
-----------------------------------------------------------------------
-r47325 (orig r2496):  jesse | 2007-01-15 16:15:15 -0500
-
- r20985@hualien:  jesse | 2007-01-15 16:11:22 -0500
-  * refactoring the tests utility fucntions
-
-----------------------------------------------------------------------
-r47324 (orig r2495):  jesse | 2007-01-15 15:56:41 -0500
-
- r20982@hualien:  jesse | 2007-01-15 15:54:40 -0500
- * allow imported subclass items
-
-----------------------------------------------------------------------
-r47323 (orig r2494):  jesse | 2007-01-15 15:56:29 -0500
-
- r20981@hualien:  jesse | 2007-01-15 15:52:48 -0500
- * Remove code that had been abstracted to a function
-
-----------------------------------------------------------------------
-r46838 (orig r2475):  clkao | 2007-01-06 06:55:43 -0500
-
-Change has_template to lookup only in calling pkg unless used with Template::Declare itself.
-----------------------------------------------------------------------
-r46837 (orig r2474):  clkao | 2007-01-06 05:13:34 -0500
-
-failing tests for imported template that uses base.
-----------------------------------------------------------------------
-r46836 (orig r2473):  clkao | 2007-01-06 05:09:28 -0500
-
-failing tests expecting correct $self in template blocks.
-----------------------------------------------------------------------
-r46769 (orig r2467):  jesse | 2007-01-05 01:03:22 -0500
-
- r46767@pinglin:  jesse | 2007-01-05 01:02:30 -0500
- * Importing semantics deployed
-
-----------------------------------------------------------------------
-r46768 (orig r2466):  jesse | 2007-01-05 01:03:14 -0500
-
- r46753@pinglin:  jesse | 2007-01-04 23:21:33 -0500
- * more work on import. it now _parses
-
-----------------------------------------------------------------------
-r46505 (orig r2425):  jesse | 2006-12-26 23:16:33 -0500
-
- r46503@pinglin:  jesse | 2006-12-26 23:16:22 -0500
-  * default to escaping user content
-
-----------------------------------------------------------------------
-r46504 (orig r2424):  jesse | 2006-12-26 23:16:23 -0500
-
-
-----------------------------------------------------------------------
-r46376 (orig r2415):  clkao | 2006-12-20 18:01:46 -0500
-
-plan for tests.
-----------------------------------------------------------------------
-r46375 (orig r2414):  clkao | 2006-12-20 17:59:32 -0500
-
-failing tests for non-toplevel templates.
-----------------------------------------------------------------------
-r46340 (orig r2410):  jesse | 2006-12-20 02:54:02 -0500
-
- r46333@dhcp64-134-35-102:  jesse | 2006-12-19 20:25:21 -0800
-  stray warning
-
-----------------------------------------------------------------------
-r46339 (orig r2409):  jesse | 2006-12-20 02:53:18 -0500
-
- r46332@dhcp64-134-35-102:  jesse | 2006-12-19 18:42:56 -0800
- * only one private tempalte was permitted
-
-----------------------------------------------------------------------
-r46337 (orig r2408):  bartb | 2006-12-19 23:02:54 -0500
-
-typo fixes
-----------------------------------------------------------------------
-r46268 (orig r2406):  jesse | 2006-12-19 03:08:34 -0500
-
- r46259@pinglin:  jesse | 2006-12-19 03:02:51 -0500
- * show is no longer called as a method
- * better handling of client code calling templates with a leading /
- 
- r46267@pinglin:  jesse | 2006-12-19 03:08:30 -0500
- * warning avoidance
-
-----------------------------------------------------------------------
-r46256 (orig r2401):  jesse | 2006-12-18 19:45:48 -0500
-
- r46255@185:  jesse | 2006-12-18 19:45:21 -0500
-  * Publish the resolve_template API
-
-----------------------------------------------------------------------
-r46224 (orig r2395):  jesse | 2006-12-16 22:48:26 -0500
-
- r46221@pinglin:  jesse | 2006-12-16 21:30:23 -0500
- * Added support for multiple template roots to template::declare
- 
-
-----------------------------------------------------------------------
-r46223 (orig r2394):  jesse | 2006-12-16 22:48:10 -0500
-
- r46220@pinglin:  jesse | 2006-12-16 21:18:51 -0500
- * tests converted to use the ->init method.
- 
-
-----------------------------------------------------------------------
-r46222 (orig r2393):  jesse | 2006-12-16 22:48:04 -0500
-
- r46219@pinglin:  jesse | 2006-12-16 20:44:13 -0500
- * Removed the old inheritance system
- 
-
-----------------------------------------------------------------------
-r46216 (orig r2390):  jesse | 2006-12-16 17:22:36 -0500
-
- r46213@66:  jesse | 2006-12-16 12:57:42 -0800
- * still not working right. 
- * Code cleanup
-
-----------------------------------------------------------------------
-r46215 (orig r2389):  jesse | 2006-12-16 17:22:21 -0500
-
- r46212@66:  jesse | 2006-12-16 12:41:51 -0800
- * working templates with dots and dashes in their names. (Jifty apps now work again)
-
-----------------------------------------------------------------------
-r46214 (orig r2388):  jesse | 2006-12-16 17:22:05 -0500
-
- r46211@66:  jesse | 2006-12-16 11:41:31 -0800
- * Unbroke support for subtemplates
-
-----------------------------------------------------------------------
-r46084 (orig r2365):  jesse | 2006-12-10 21:15:46 -0500
-
- r46081@pinglin:  jesse | 2006-12-11 02:14:42 +0000
- * _tests_ for private templates.
- 
-
-----------------------------------------------------------------------
-r46083 (orig r2364):  jesse | 2006-12-10 21:15:34 -0500
-
- r46080@pinglin:  jesse | 2006-12-11 02:06:21 +0000
-  * private templates
-
-----------------------------------------------------------------------
-r46009 (orig r2347):  audreyt | 2006-12-08 10:01:27 -0500
-
-* Fix tests to agree with code ;)
-----------------------------------------------------------------------
-r46008 (orig r2346):  audreyt | 2006-12-08 10:00:54 -0500
-
-* Semicolon is now optional in T::D declarators:
-    p { }
-    p { }
-    p { }
-----------------------------------------------------------------------
-r46004 (orig r2343):  jesse | 2006-12-07 20:08:12 -0500
-
- r46002@pinglin:  jesse | 2006-12-07 18:13:57 +0000
- * If we're used in an oo manner, don't blow away the caller's lexical
-
-----------------------------------------------------------------------
-r45865 (orig r2340):  audreyt | 2006-12-06 11:17:51 -0500
-
-* Template::Declare - Revert obra++'s treatment:
-
-    # default to <tag/> rather than <tag></tag> if there's no content
-
-  and added this comment:
-
-    # We should, in theory, default to <tag /> rather than <tag></tag> if there's no content,
-    # but until all we output is strict XHTML, "<iframe src='...' />" and "<a name='...' />"
-    # are rendered incorrectly by gecko -- they require the use of an explicit closing tag
-    # So intead of the correct treatment:
-    #
-    #   $BUFFER .= $buf." />";
-    #
-    # we supply a closing tag for now:
-    #
-    $BUFFER .= $buf."></$tag>";
-
-----------------------------------------------------------------------
-r45864 (orig r2339):  audreyt | 2006-12-06 11:01:26 -0500
-
-* Template::Declare::Tags: Support for all five style (all mixable):
-
-    div {{ id is 'moose' } span { 'Hi!' } };
-    div { attr { id is 'moose' } span { 'Hi!' } };
-    div { attr { id => 'moose' } span { 'Hi!' } };
-    div { attr { id is 'moose' }; span { 'Hi!' } };
-    div { attr { id => 'moose' }; span { 'Hi!' } };
-
-  The old style is still supported as well:
-
-    with(id => 'moose'), div { span { 'Hi!' } };
-
-----------------------------------------------------------------------
-r45862 (orig r2337):  jesse | 2006-12-06 02:23:17 -0500
-
- r45839@pinglin:  jesse | 2006-12-06 01:06:54 -0500
- 
- r45842@pinglin:  jesse | 2006-12-06 02:13:13 -0500
- * Added support for:
- 
- div {
-     attr( id => 'foo');
-     
-     outs('my text');
- }
-     
- In addition to the existing support for:
- 
- div {
-     {  id is 'foo' }
-     
-     outs('my text');
- }
-     
- Tested both.
- 
-
-----------------------------------------------------------------------
-r45837 (orig r2336):  jesse | 2006-12-06 01:03:18 -0500
-
-t/trivial was failing tests because meta elements were being expanded to container nodes. which they are not.
-----------------------------------------------------------------------
-r45780 (orig r2305):  audreyt | 2006-12-03 10:57:34 -0500
-
-* Template::Declare::Tags - Encode HTML attributes with underscores:
-
-    # Single underscore: http_equiv ====> http-equiv
-    meta {{ http_equiv is "Refresh", content is "0; $url" }};
-
-    # Double underscore: xml__lang ====> xml:lang
-    body {{ xml__lang is 'x-lojban' }};
-
-----------------------------------------------------------------------
-r45718 (orig r2251):  audreyt | 2006-12-01 05:26:17 -0500
-
-* T::D::Tags - Tidy up and avoid redefinition warning.
-----------------------------------------------------------------------
-r45716 (orig r2249):  audreyt | 2006-12-01 04:54:52 -0500
-
-* Template::Declare::Tags - Output "<tr>...</tr>" not "<Tr>...</Tr>"
-----------------------------------------------------------------------
-r45713 (orig r2246):  audreyt | 2006-12-01 03:58:26 -0500
-
-* Ditch the intermediate CURRENT_ATTRIBUTE structure; now all "attr is foo"
-  immediately emits attributes.
-----------------------------------------------------------------------
-r45711 (orig r2244):  audreyt | 2006-12-01 02:32:44 -0500
-
-* Template::Declare - Support for declarative "is" copula on attributes.
-  For example:
-
-    table {{width is '100%'} row {
-        cell {{width is '50%'} $search_region->render };
-        cell {{width is '50%'} $result_region->render };
-    } };
-
-----------------------------------------------------------------------
-r45655 (orig r2241):  audreyt | 2006-12-01 00:19:18 -0500
-
-* Template::Declare::Tags - More uniform treatment of hiding &base.
-----------------------------------------------------------------------
-r45654 (orig r2240):  audreyt | 2006-12-01 00:12:29 -0500
-
-* Template::Declare::Tags - Tr/td is now row/cell.
-----------------------------------------------------------------------
-r45588 (orig r2220):  audreyt | 2006-11-29 13:06:55 -0500
-
-* Template::Declare::Tags - hide the "base" declarator because it conflicts with -base
-  in import line when refreshing.
-----------------------------------------------------------------------
-r45584 (orig r2216):  audreyt | 2006-11-29 09:13:25 -0500
-
-* Template::Declare - new utility get_current_attr to get the with() context.
-* Also allow for qualified template declaration and show.
-----------------------------------------------------------------------
-r45583 (orig r2215):  audreyt | 2006-11-29 08:44:19 -0500
-
-* Template::Declare - Allow has_template('foo/bar') and has_template('foo::bar').
-* Also, negative version numbers is really hard to deploy.  Make it positive.
-----------------------------------------------------------------------
-r45133 (orig r2177):  clkao | 2006-11-18 19:15:24 -0500
-
-Export $self.
-----------------------------------------------------------------------
-r44901 (orig r2168):  jesse | 2006-11-15 23:55:49 -0500
-
-* License was typoed. -- Thanks to Matt Trout
-----------------------------------------------------------------------
-r44889 (orig r2167):  jesse | 2006-11-15 21:42:11 -0500
-
-  * Initial version of Template::Declare
-
-----------------------------------------------------------------------
-r44888 (orig r2166):  jesse | 2006-11-15 21:40:31 -0500
-
-
-----------------------------------------------------------------------
+ - Support for inline tagset definitions. Thanks to Olivier 'dolmen'
+   Mengué [rt.cpan.org #48642]
+
+0.40 2009-07-08
+ - Fix subname issue with the debugger and specifically Devel::NYTProf
+ - String::BufferStack usage improvements
+
+0.39 2009-03-05
+ - No code changes; increase Test::Warn dependency to 0.11, as 0.10 was
+   broken
+
+0.38 2009-02-27
+ - Support, but deprecate, Template::Declare->buffer->data(...) usage
+
+0.37 2009-02-19
+ - Make HTML::Lint an optional dependency
+
+0.36 2009-02-05
+ - Hint to the source of the buffer using a 'from' argument.  This allows
+   us to inspect the call stack by looking at the buffer stack.
+
+0.35 2009-01-20
+ - Buffers have been moved to using String::BufferStack, for better
+   interopability with other templating systems.  Code which manipulated
+   Template::Declare::Buffer objects by hand may need to be adjusted.
+
+0.31_01 2008-12-19
+ - INCOMPATIBLE: there were inconsistency in arguments passing. show in
+   TD::Tags could pass arguments into template as array reference depending
+   on a way it's called. Now arguments are always passwed the same way they
+   passed into show. This change is only backwards incompatible for those
+   who were using this incorrect behaviour.
+ - stringify argument in TD::Buffer::append as we can deal with an object
+   with overloaded stringification that puts data into buffer when
+   stringified
+ - correctly escape objects with overloaded stringification
+ - use less buffers for operations and a few other small optimizations
+
+0.30 2008-11-26
+ - Remove the "wrapper" export, its name is too generic and clashes with a
+   lot of existing code. It's a negligible amount of sugar.
+
+0.29 2008-07-01
+ - Sugar for defining a tag-like wrapper. Thanks Theory! #37624
+ - Don't load all of CGI.pm to get a list of tags. #37630
+ - Don't add attrs to the first tag in smart_tag_wrapper. #37622.
+
+0.28 2008-02-14
+ - Added the missing dependency Class::ISA to Makefile.PL
+ - Added the "canvas" tag to the HTML tagset.
+ - Added around_template for instrumentation.
+
+0.27 2007-11-02
+ - Added support for the RDF tag set (T::D::TagSet::RDF).
+ - Added support for the Mozilla EM RDF tag set (T::D::TagSet::RDF::EM)
+
+0.26 2007-08-14
+ - Refactored Template::Declare::Tags to make the tag sets configurable.
+ - Added Template::Declare::TagSet::HTML and
+   Template::Declare::TagSet::XUL, respectively, as well as their common
+   base class, Template::Declare::TagSet. Added
+   Template::Declare::TagSet::HTML and Template::Declare::TagSet::XUL,
+   respectively.
+ - Added support for XML namespace: use Template::Declare::Tags 'XUL',
+   'HTML' => { namespace => 'html' }; and ... 'HTML' => { namespace =>
+   'html', package => 'MyHtml' };
+ - And we can now say 'use Template::Declare::Tags qw/ HTML XUL /;
+ - Added @Template::Declare::Tags::TAG_SUB_LIST which records all the tag
+   subroutines generated on-the-fly, which is necessary for secondary
+   symbol exporting in Jifty::View::Declare::Helpers.
+ - Implemented C< use Template::Declare::Tags HTML => { from =>
+   'My::HTML::TagSet' } >.
+ - Allow content post-proceessing with a callback.
+ - Added a PITFALLS section to T::D's POD.
+ - Added a global sub append_attr to provide friendly diagnostics and the
+   infamous "Undefined subroutine &Template::Declare::Tags::append_attr
+   called at ..." is now gone.

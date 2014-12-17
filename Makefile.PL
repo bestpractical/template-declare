@@ -18,5 +18,7 @@ requires 'String::BufferStack' => 1.10;
 feature 'HTML Lint testing' => 
     -default => 0,
     'HTML::Lint' => 0;
+
+sign;
 auto_install;
 WriteAll;

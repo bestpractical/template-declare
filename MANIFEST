@@ -20,11 +20,11 @@ lib/Template/Declare/TagSet/RDF/EM.pm
 lib/Template/Declare/TagSet/XUL.pm
 Makefile.PL
 MANIFEST			This list of files
-MANIFEST.SKIP
 META.yml
 README
 SIGNATURE
 t/99-pod-coverage.t
+t/99-pod-spelling.t
 t/99-pod.t
 t/aliasing.t
 t/alternative.t

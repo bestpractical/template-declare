@@ -1,10 +1,8 @@
-MANIFEST
 MANIFEST.bak
-META.yml
 Makefile
 Makefile.old
 SIGNATURE
-blib/
-inc/
+/blib/
 pm_to_blib
 *.swp
+/MYMETA.*
