@@ -6,6 +6,7 @@ package Template::Declare;
 use Template::Declare::Buffer;
 use Class::ISA;
 use String::BufferStack;
+use Path::Class;
 
 our $VERSION = '0.47';
 
@@ -1388,6 +1389,98 @@ All it does is return the name of the class on which it was called.
 =cut
 
 sub into { shift }
+
+=head3 import_template_files
+
+    __PACKAGE__->import_template_files( root => '/some/where', extension => 'td' )
+
+Looks recursively into the directory I<root> and converts all files with the
+given I<extension> to local templates. 
+
+If I<root> is not given, it defaults to the shared directory of the module,
+as given by L<File::ShareDir>. I<extension> defaults to 
+'td'. 
+
+For example, assuming that we have the file
+C</usr/share/my/template/foo/bar.td> looking like
+
+    html {
+        body { 
+            h1 { 'hi there ' . $args->{name} }
+        }
+    }
+
+then writing
+
+    My::Template->import_template_files( root => '/usr/share/my/template' );
+
+is going to be equivalent to having the following writing within the 
+C<My::Template> class:
+
+    template '/foo/bar' => sub {
+        my ( $self, $args ) = @_;
+ 
+        html {
+            body { 
+                h1 { 'hi there ' . $args->{name} }
+            }
+        }
+
+    };
+
+=cut
+
+sub import_template_files {
+    my $class = shift;
+    my %args = @_;
+
+    unless ( exists $args{root} ) {
+        require File::ShareDir;
+        $args{root} = File::ShareDir::module_dir($class);
+    }
+
+    my $root = dir( $args{root} );
+    my $ext = defined($args{extension}) ? $args{extension} : 'td';
+
+    $root->recurse(
+        callback => sub {
+            _import_template_file( 
+                class => $class, root => $root, ext => $ext, file => shift
+            );
+        },
+    );
+
+}
+
+sub _import_template_file {
+    my %args = @_;
+
+    my $file = $args{file};
+ 
+    return unless $file->isa( 'Path::Class::File' );
+
+    return unless $file =~ /\.$args{ext}$/;
+ 
+    my $content = $file->slurp;
+ 
+    my $name = $file->relative( $args{root} );
+ 
+    $name =~ s/\.$args{ext}$//;
+ 
+    eval <<"END_CODE";
+package $args{class};
+
+template '$name' => sub {
+    my ( \$self, \$args ) = \@_;
+ 
+#line 1 $args{root}/$file
+    $content;
+}
+END_CODE
+ 
+    die $@ if $@;
+}
+
 
 =head2 Old, deprecated or just better to avoid
 
